@@ -1,0 +1,4 @@
+[tool.black]
+target-version = ['py311']
+line-length = 100
+extend-exclude = '(\.venv|node_modules|dist|rt-iot2022|temporary-test-files|verification/electron|memory-baseline-engine\.py)'

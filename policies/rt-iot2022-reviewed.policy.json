@@ -1,0 +1,19 @@
+{
+  "schema": "surge-policy-v1",
+  "settings": {
+    "event_id": "source_record",
+    "features": [
+      "flow_duration",
+      "fwd_pkts_payload.avg"
+    ],
+    "rules": [],
+    "session": null,
+    "threshold": 1.5,
+    "time": null,
+    "time_format": "milliseconds",
+    "reference_by": [
+      "proto",
+      "service"
+    ]
+  }
+}

@@ -1,0 +1,29 @@
+{
+  "name": "surge-desktop",
+  "version": "0.3.0",
+  "private": true,
+  "main": "main.cjs",
+  "scripts": {
+    "build": "node build.cjs",
+    "start": "electron .",
+    "test": "node --test security.test.cjs runtime.test.cjs",
+    "test:ui": "node parity.cjs && node evaluation.test.cjs",
+    "format:check": "prettier --check \"*.cjs\" \"src/**/*.{jsx,css,html}\" package.json",
+    "format": "prettier --write \"*.cjs\" \"src/**/*.{jsx,css,html}\" package.json"
+  },
+  "dependencies": {
+    "react": "19.3.1",
+    "react-dom": "19.3.1"
+  },
+  "devDependencies": {
+    "electron": "44.9.1",
+    "esbuild": "0.25.12",
+    "playwright": "1.62.1",
+    "prettier": "3.9.10"
+  },
+  "description": "Local telemetry investigation and detection evaluation",
+  "engines": {
+    "node": ">=22.12.0"
+  },
+  "packageManager": "pnpm@11.25.0"
+}
