@@ -11,7 +11,9 @@ The extracted copy passed:
 - The dependency advisory audit, with no known vulnerabilities reported at the time of this pass.
 - Both archived round-three cases and their complete evaluation reports reproduced with the portable engine: 193 to 167 false positives, with one missed target in each case.
 
-This was a fresh setup on the same Windows host, not an independent test on a second computer. GitHub Actions is configured to repeat the checks on Windows, but no hosted workflow run is claimed until the repository is published and the workflow runs.
+The local fresh setup used the same Windows host. [GitHub Actions](https://github.com/seaboose/Surge/actions/workflows/ci.yml) repeats installation, Python tests, desktop checks, evaluation reproduction, formatting, and release hygiene on a clean Windows runner. Each run records its commit and individual check results.
+
+The first hosted runs exposed two portability issues: HTML and JSON line endings varied on checkout, and a desktop test read Details before its asynchronous response arrived. Explicit line-ending rules and a content-based wait address these issues. The Details test now includes a deliberate response delay. No application behavior or detection logic changed.
 
 All 13 production Python modules retain the original syntax tree after formatting. Runtime selection now uses the project environment or an explicit interpreter path. The renderer, engine decisions, saved-case formats, and security boundaries retain their behavior. The working source archive and evaluation records were not changed.
 

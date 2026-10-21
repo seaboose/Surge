@@ -1,5 +1,7 @@
 # Surge
 
+[![Windows checks](https://github.com/seaboose/Surge/actions/workflows/ci.yml/badge.svg)](https://github.com/seaboose/Surge/actions/workflows/ci.yml)
+
 Surge is a Windows desktop tool for investigating telemetry and checking detection rules. Import a dataset, map its fields, inspect the evidence behind a finding, and compare results before and after a policy change.
 
 The interface uses Electron and React. A separate Python process owns the data and runs the analysis. Once installed, Surge works locally without accounts, network access, or a listening server.

@@ -19,6 +19,7 @@ global.__requests=[];global.__comparisonDelay=0;global.__chartDelay=0;
 const handle=ipcMain.handle.bind(ipcMain);
 ipcMain.handle=(channel,handler)=>handle(channel,async(event,method,args)=>{
   global.__requests.push(method);
+  if(method==='details')await new Promise(resolve=>setTimeout(resolve,200));
   if(method==='comparison'&&args.row)await new Promise(resolve=>setTimeout(resolve,global.__comparisonDelay));
   if(method==='chart'&&args.row)await new Promise(resolve=>setTimeout(resolve,global.__chartDelay));
   return handler(event,method,args);
@@ -554,6 +555,9 @@ async function screenshot(name) {
       );
       await screenshot("findings-minimum");
       await click("Details");
+      await visible(
+        page.getByText("Constant references use", { exact: false }),
+      );
       assert.match(await page.locator("main").innerText(), /accuracy|Accuracy/);
     },
   );
