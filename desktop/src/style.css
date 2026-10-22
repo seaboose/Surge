@@ -24,7 +24,7 @@ input,
 select,
 textarea {
   font:
-    12px Consolas,
+    0.92308rem Consolas,
     "Cascadia Code",
     monospace;
   color: inherit;
@@ -114,7 +114,7 @@ pre {
   white-space: pre-wrap;
   overflow-wrap: anywhere;
   font:
-    13px/1.65 Consolas,
+    1rem/1.65 Consolas,
     monospace;
   margin: 8px 0;
   tab-size: 2;
@@ -130,10 +130,13 @@ th,
   height: 100vh;
   display: grid;
   grid-template-columns: auto minmax(0, 1fr);
-  grid-template-rows: minmax(0, 1fr) 30px;
+  grid-template-rows: minmax(0, 1fr) auto;
 }
 nav {
-  width: 104px;
+  width: 8rem;
+  overflow: auto;
+  min-height: 0;
+  flex-shrink: 0;
   padding: 18px 8px;
   background: #05080d;
   border-right: 1px solid #203944;
@@ -159,16 +162,50 @@ main {
 .workspace {
   height: 100%;
 }
+main.with-capture {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  overflow: auto;
+}
+.with-capture > .workspace {
+  flex: 1;
+  height: auto;
+  min-height: 160px;
+}
+.capture-controls {
+  flex-shrink: 0;
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--line);
+}
+.capture-status {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 16px;
+  margin-top: 8px;
+  overflow-wrap: anywhere;
+}
+.capture-controls > small {
+  display: block;
+}
+.capture-status > :first-child {
+  color: var(--cyan);
+}
+.capture-status > :not(:first-child) {
+  color: var(--muted);
+}
 footer {
   grid-column: 1/3;
   border-top: 1px solid var(--line);
   font:
-    11px Consolas,
+    0.84615rem Consolas,
     monospace;
   display: flex;
   align-items: center;
   gap: 9px;
-  padding: 0 16px;
+  padding: 6px 16px;
+  min-height: 30px;
+  overflow-wrap: anywhere;
   color: var(--muted);
   background: #0b111a;
 }
@@ -181,6 +218,7 @@ footer {
 }
 .status-light {
   width: 5px;
+  flex-shrink: 0;
   height: 5px;
   background: #00e399;
   box-shadow: 0 0 7px #00ff6644;
@@ -245,7 +283,7 @@ footer {
   gap: 4px;
   min-width: 0;
   font:
-    12px/1.5 Consolas,
+    0.92308rem/1.5 Consolas,
     monospace;
 }
 .control select {
@@ -283,7 +321,7 @@ footer {
 }
 .note {
   font:
-    12px/1.5 "Segoe UI",
+    0.92308rem/1.5 "Segoe UI",
     sans-serif;
   text-align: left;
   white-space: normal;
@@ -314,7 +352,7 @@ footer {
   background: #0c141d;
 }
 .source-strip {
-  font-size: 11px;
+  font-size: 0.84615rem;
   color: var(--muted);
   overflow-wrap: anywhere;
 }
@@ -333,7 +371,7 @@ table {
   border-spacing: 0;
   width: 100%;
   font:
-    12px/1.5 Consolas,
+    0.92308rem/1.5 Consolas,
     monospace;
   text-align: left;
 }
@@ -371,7 +409,7 @@ tr.selected {
 .pager {
   flex-shrink: 0;
   font:
-    11px Consolas,
+    0.84615rem Consolas,
     monospace;
   color: var(--muted);
 }
@@ -392,7 +430,7 @@ tr.selected {
   margin: 4px 0;
 }
 .comparison-source pre {
-  font-size: 12px;
+  font-size: 0.92308rem;
 }
 .comparison-sources {
   flex-shrink: 0;
@@ -442,7 +480,7 @@ table[aria-label="Findings"] td:last-child {
 }
 .inspector-controls p {
   margin: 0;
-  font-size: 12px;
+  font-size: 0.92308rem;
 }
 .search-label {
   display: flex;
@@ -450,7 +488,7 @@ table[aria-label="Findings"] td:last-child {
   align-items: center;
   flex: 1;
   font:
-    12px Consolas,
+    0.92308rem Consolas,
     monospace;
 }
 .search-label input {
@@ -468,7 +506,7 @@ table[aria-label="Findings"] td:last-child {
   overflow-wrap: anywhere;
 }
 .field-name {
-  font-size: 12px;
+  font-size: 0.92308rem;
   color: #9ec7d4;
 }
 .field-value pre {
@@ -498,7 +536,7 @@ mark {
 .split-pane {
   min-height: 0;
   min-width: 0;
-  overflow: hidden;
+  overflow: auto;
 }
 .divider {
   cursor: col-resize;
@@ -538,7 +576,7 @@ mark {
 }
 .observed {
   color: #b8faff;
-  font-size: 14px;
+  font-size: 1.07692rem;
 }
 .condition {
   white-space: pre-wrap;
@@ -551,7 +589,7 @@ summary {
   color: #a0b8c9;
   padding: 5px 0;
   font:
-    12px Consolas,
+    0.92308rem Consolas,
     monospace;
 }
 details[open] > summary {
@@ -587,7 +625,7 @@ details[open] > summary {
 .chart text {
   fill: #9bacbb;
   font:
-    11px Consolas,
+    0.84615rem Consolas,
     monospace;
 }
 .chart .threshold {
@@ -614,7 +652,7 @@ details[open] > summary {
 }
 .chart-readout {
   font:
-    12px/1.5 Consolas,
+    0.92308rem/1.5 Consolas,
     monospace;
   overflow-wrap: anywhere;
   max-height: 100px;
@@ -647,7 +685,7 @@ details[open] > summary {
   padding: 0 12px 8px;
 }
 .comparison-sources pre {
-  font-size: 12px;
+  font-size: 0.92308rem;
   color: var(--muted);
 }
 .details {
@@ -677,7 +715,7 @@ dialog .actions {
   margin-top: 12px;
 }
 .error-message {
-  font-size: 13px;
+  font-size: 1rem;
 }
 .empty {
   height: 100%;
@@ -692,7 +730,7 @@ dialog .actions {
   gap: 14px;
 }
 .empty button {
-  font-size: 14px;
+  font-size: 1.07692rem;
   padding: 12px 18px;
 }
 .empty p {
@@ -726,7 +764,7 @@ dialog .actions {
   flex-wrap: wrap;
   gap: 5px 16px;
   font:
-    12px/1.6 Consolas,
+    0.92308rem/1.6 Consolas,
     monospace;
 }
 .evaluation {
@@ -772,7 +810,7 @@ dialog .actions {
     padding: 12px;
   }
   nav {
-    width: 88px;
+    width: 7.5rem;
     padding: 12px 5px;
   }
   .data-layout {
@@ -788,4 +826,112 @@ dialog .actions {
   .actions {
     gap: 6px;
   }
+}
+
+/* Keep controls and original evidence reachable when text or zoom grows. */
+button,
+.control,
+.feature-list label,
+.evidence,
+.details,
+.pinned {
+  overflow-wrap: anywhere;
+}
+button {
+  white-space: normal;
+}
+.setup > *,
+.column > .actions {
+  flex-shrink: 0;
+}
+.preview,
+.record-inspector {
+  overflow: auto;
+}
+.record-inspector {
+  min-height: 20rem;
+}
+.full-values {
+  flex-shrink: 0;
+}
+.pinned,
+.search-label {
+  flex-wrap: wrap;
+}
+.search-label input {
+  min-width: 6rem;
+}
+nav button {
+  flex-shrink: 0;
+}
+@media (max-width: 950px) {
+  .view {
+    overflow: auto;
+  }
+  .data-layout {
+    height: auto;
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .setup {
+    overflow: visible;
+    padding: 4px;
+  }
+  .preview {
+    min-height: 32rem;
+    overflow: visible;
+  }
+  .preview-table {
+    flex: none;
+    height: 15rem;
+  }
+  .record-inspector {
+    flex: none;
+    height: auto;
+  }
+  .full-values {
+    max-height: 28rem;
+  }
+  .split {
+    height: auto;
+    grid-template-columns: minmax(0, 1fr) !important;
+    gap: 16px;
+  }
+  .split-pane {
+    overflow: visible;
+    padding: 0 !important;
+  }
+  .split-pane > .full {
+    height: auto;
+  }
+  .split-pane .grow {
+    flex: none;
+    max-height: 24rem;
+  }
+  .divider {
+    display: none;
+  }
+  .evidence {
+    height: auto;
+  }
+  .comparison-sources {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .empty {
+    overflow: auto;
+  }
+}
+@media (forced-colors: active) {
+  tr.selected,
+  .current-match,
+  nav button.active {
+    outline: 2px solid Highlight;
+    outline-offset: -2px;
+  }
+  :focus-visible {
+    outline-color: Highlight;
+  }
+}
+
+.actions > .control > span {
+  flex-shrink: 0;
 }

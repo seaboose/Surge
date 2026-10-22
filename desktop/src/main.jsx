@@ -10,6 +10,7 @@ import React, {
 import { createRoot } from "react-dom/client";
 
 const Context = createContext(null);
+const VIEWS = ["Data", "Findings", "Compare", "Evaluate", "Details"];
 async function request(method, args = {}) {
   const reply = await window.surge.request(method, args);
   if (!reply.ok) throw new Error(reply.error);
@@ -93,6 +94,7 @@ function Select({ label, value, onChange, options, ...props }) {
       <span>{label}</span>
       <select
         aria-label={label}
+        title={String(value ?? "Not mapped")}
         value={value ?? ""}
         onChange={(e) => onChange(e.target.value || null)}
         {...props}
@@ -336,6 +338,13 @@ function Split({ left, right, name }) {
   );
 }
 function App() {
+  const pending = useRef(false);
+  const [working, setWorking] = useState(false);
+  const [mappingUndo, setMappingUndo] = useState(null);
+  const [capture, setCapture] = useState(null);
+  const [captureVisible, setCaptureVisible] = useState(false);
+  const [captureBuild, setCaptureBuild] = useState("v1");
+  const captureEpoch = useRef(0);
   const [state, setState] = useState(null),
     [busy, setBusy] = useState(false),
     [status, setStatus] = useState("Opening Surge…");
@@ -345,20 +354,86 @@ function App() {
     request("state")
       .then((v) => {
         setState(v);
+        if (v.capture) {
+          setCapture(v.capture);
+          setCaptureVisible(true);
+        }
         setStatus("Import data or open a case.");
       })
       .catch((e) => setError(e.message));
   }, []);
-  async function run(method, args = {}, after) {
-    if (busy) return;
-    setBusy(true);
-    setStatus("Working…");
+  useEffect(() => {
+    if (capture?.state !== "running") return;
+    let alive = true;
+    let timer;
+    const poll = async () => {
+      const epoch = captureEpoch.current;
+      if (!pending.current) {
+        try {
+          const value = await request("native_status");
+          if (alive && epoch === captureEpoch.current)
+            setCapture(value.capture);
+        } catch (e) {
+          if (alive && epoch === captureEpoch.current)
+            setCapture((old) => ({
+              ...old,
+              error: `Status unavailable: ${e.message}`,
+            }));
+        }
+      }
+      if (alive) timer = setTimeout(poll, 1000);
+    };
+    timer = setTimeout(poll, 1000);
+    return () => {
+      alive = false;
+      clearTimeout(timer);
+    };
+  }, [capture?.state]);
+  async function run(method, args = {}, after, restoring = false) {
+    if (pending.current) {
+      setStatus("An action is still running. Try again when it finishes.");
+      return;
+    }
+    pending.current = true;
+    setWorking(true);
+    // Reading and exporting do not replace the workspace. Keep investigation
+    // controls available, while serializing commands that may change state.
+    const reading = [
+      "copy",
+      "save",
+      "alerts",
+      "policy_save",
+      "labels_template",
+      "evaluation_save",
+      "native_start",
+      "native_export",
+    ].includes(method);
+    setBusy(!reading);
+    setStatus(
+      {
+        copy: "Copying…",
+        save: "Saving case…",
+        alerts: "Exporting alerts…",
+        policy_save: "Saving policy…",
+        labels_template: "Saving label template…",
+        evaluation_save: "Saving evaluation…",
+        analyze: "Analyzing records…",
+        import: "Importing data…",
+        open: "Opening case…",
+        configure: "Updating mapping…",
+        native_start: "Starting collection…",
+        native_snapshot: "Opening captured evidence…",
+        native_stop: "Stopping collection…",
+        native_export: "Saving captured evidence…",
+      }[method] || "Updating workspace…",
+    );
     try {
       const v = await request(method, {
         ...(state &&
         method !== "import" &&
         method !== "open" &&
-        method !== "state"
+        method !== "state" &&
+        !method.startsWith("native_")
           ? { revision: state.revision }
           : {}),
         ...args,
@@ -367,7 +442,32 @@ function App() {
         setStatus("Canceled. Your workspace is unchanged.");
         return;
       }
+      if (v.capture) {
+        captureEpoch.current++;
+        setCapture(v.capture);
+      }
       if (v.protocol) {
+        if (method === "configure") {
+          if (restoring) setMappingUndo(null);
+          else if (
+            JSON.stringify(v.config) !== JSON.stringify(state.config) ||
+            v.rules_text !== state.rules_text
+          )
+            setMappingUndo({
+              config: structuredClone(state.config),
+              rules_text: state.rules_text,
+            });
+        } else if (
+          [
+            "import",
+            "open",
+            "policy_load",
+            "native_snapshot",
+            "native_stop",
+          ].includes(method)
+        ) {
+          setMappingUndo(null);
+        }
         setState(v);
         setStatus(
           v.summary
@@ -380,13 +480,19 @@ function App() {
           setState((old) => ({ ...old, case_file: v.case_file }));
       }
       if (["open", "analyze"].includes(method)) setPage("Findings");
+      if (["native_snapshot", "native_stop"].includes(method) && v.summary)
+        setPage("Findings");
       if (["import", "policy_load", "configure"].includes(method))
         setPage("Data");
+      if (restoring)
+        setStatus("Mapping restored. Analyze to refresh findings.");
       after?.(v);
     } catch (e) {
       setError(e.message);
       setStatus("Operation failed. Previous evidence was retained.");
     } finally {
+      pending.current = false;
+      setWorking(false);
       setBusy(false);
     }
   }
@@ -414,10 +520,14 @@ function App() {
           );
         }
       }
-      if (e.altKey && ["1", "2", "3", "4"].includes(e.key)) {
-        const target = ["Findings", "Data", "Compare", "Details"][
-          Number(e.key) - 1
-        ];
+      if (
+        e.altKey &&
+        !e.ctrlKey &&
+        !e.metaKey &&
+        !e.shiftKey &&
+        /^[1-5]$/.test(e.key)
+      ) {
+        const target = VIEWS[Number(e.key) - 1];
         if (state?.current && (target === "Data" || state.summary)) {
           e.preventDefault();
           setPage(target);
@@ -428,7 +538,16 @@ function App() {
     return () => document.removeEventListener("keydown", shortcut);
   }, [state, busy]);
   const setupPosition = useRef({ top: 0, focus: null });
-  const ctx = { state, run, busy, setError, setStatus, setupPosition };
+  const ctx = {
+    state,
+    run,
+    busy,
+    setError,
+    setStatus,
+    setupPosition,
+    mappingUndo,
+    showCapture: () => setCaptureVisible(true),
+  };
   if (!state)
     return (
       <main className="loading">
@@ -437,12 +556,15 @@ function App() {
     );
   return (
     <Context.Provider value={ctx}>
-      <div className={`app ${busy ? "busy" : ""}`}>
+      <div className={`app ${busy ? "busy" : ""}`} data-working={working}>
         {state.current && (
           <nav aria-label="Views">
-            {["Data", "Findings", "Compare", "Evaluate", "Details"].map((p) => (
+            {VIEWS.map((p, index) => (
               <Button
                 key={p}
+                title={`${p} (Alt+${index + 1})`}
+                aria-keyshortcuts={`Alt+${index + 1}`}
+                aria-current={p === page ? "page" : undefined}
                 className={p === page ? "active" : ""}
                 disabled={busy || (p !== "Data" && !state.summary)}
                 onClick={() => setPage(p)}
@@ -452,7 +574,85 @@ function App() {
             ))}
           </nav>
         )}
-        <main>
+        <main className={captureVisible ? "with-capture" : undefined}>
+          {captureVisible && (
+            <section
+              className="capture-controls"
+              aria-label="Our app collection"
+            >
+              <div className="actions">
+                <Select
+                  label="Build"
+                  value={captureBuild}
+                  onChange={setCaptureBuild}
+                  disabled={working || capture?.state === "running"}
+                  options={[
+                    { value: "v1", label: "v1" },
+                    { value: "v2", label: "v2" },
+                  ]}
+                />
+                <Button
+                  disabled={working || capture?.state === "running"}
+                  onClick={() => run("native_start", { build: captureBuild })}
+                >
+                  Start
+                </Button>
+                <Button
+                  disabled={working || !capture?.has_evidence}
+                  onClick={() => run("native_snapshot")}
+                >
+                  Inspect
+                </Button>
+                <Button
+                  disabled={working || capture?.state !== "running"}
+                  onClick={() => run("native_stop")}
+                >
+                  Stop
+                </Button>
+                <Button
+                  disabled={working || !capture?.has_evidence}
+                  onClick={() => run("native_export")}
+                >
+                  Export
+                </Button>
+              </div>
+              <div className="capture-status">
+                <span role="status">
+                  Our app ·{" "}
+                  {capture?.state === "running"
+                    ? "Collecting"
+                    : capture?.state === "failed"
+                      ? "Collection failed"
+                      : capture
+                        ? "Stopped"
+                        : "Ready"}
+                </span>
+                {capture && (
+                  <span>
+                    {capture.build} · {capture.records.toLocaleString()} records
+                    · {(capture.elapsed_ms / 1000).toFixed(1)} s elapsed ·{" "}
+                    {capture.dropped_samples.toLocaleString()} missing samples
+                    {capture.evicted_samples > 0 &&
+                      ` · ${capture.evicted_samples.toLocaleString()} earlier samples removed`}
+                  </span>
+                )}
+              </div>
+              <small>
+                {capture?.error ||
+                  (capture?.state === "running"
+                    ? "Inspect opens a stable snapshot while collection continues. Only configured code ranges are checked."
+                    : capture?.records
+                      ? "Inspect or export the captured records. Only configured code ranges were checked."
+                      : capture
+                        ? "No observations captured. Existing evidence is unchanged."
+                        : "Start our app to collect evidence. Only configured code ranges are checked.")}
+              </small>
+              <small>
+                Keeps the latest {capture?.limit_samples || 500} samples · Stops
+                after 10 minutes
+              </small>
+            </section>
+          )}
           {!state.current ? (
             <div className="empty">
               <div className="empty-orbit" aria-hidden="true" />
@@ -467,6 +667,14 @@ function App() {
                 <Button disabled={busy} onClick={() => run("open")}>
                   Open case
                 </Button>
+                {!captureVisible && (
+                  <Button
+                    disabled={busy}
+                    onClick={() => setCaptureVisible(true)}
+                  >
+                    Our app
+                  </Button>
+                )}
               </div>
               <p>Choose your data. Follow the evidence.</p>
               <small>
@@ -519,7 +727,18 @@ function App() {
   );
 }
 function DataView({ active }) {
-  const { state: s, run, setupPosition } = useContext(Context);
+  const {
+    state: s,
+    run,
+    setupPosition,
+    mappingUndo,
+    showCapture,
+  } = useContext(Context);
+  const [optionsOpen, setOptionsOpen] = useState(
+    () =>
+      setupPosition.current.source === s.current.sha256 &&
+      !!setupPosition.current.optionsOpen,
+  );
   const setup = useRef();
   useEffect(() => {
     const pane = setup.current;
@@ -596,7 +815,15 @@ function DataView({ active }) {
             Import data
           </Button>
           <Button onClick={() => run("open")}>Open case</Button>
+          <Button onClick={showCapture}>Our app</Button>
         </div>
+        {mappingUndo && (
+          <Button
+            onClick={() => run("configure", mappingUndo, undefined, true)}
+          >
+            Undo mapping
+          </Button>
+        )}
         <p className="filename">{s.current.name}</p>
         <small>
           {s.current.records.toLocaleString()} records ·{" "}
@@ -690,58 +917,71 @@ function DataView({ active }) {
             />
           </label>
         )}
-        {(!!s.config.features.length || !!s.config.reference_by?.length) && (
-          <>
-            <Select
-              label="Reference group"
-              value={s.config.reference_by?.[0] || ""}
-              options={options}
-              onChange={(v) => config({ reference_by: v ? [v] : [] })}
-            />
-            {!!s.config.reference_by?.length && (
+        <details
+          open={optionsOpen}
+          onToggle={(e) => {
+            const open = e.currentTarget.open;
+            setOptionsOpen(open);
+            setupPosition.current.optionsOpen = open;
+          }}
+        >
+          <summary>Options</summary>
+          <div className="column">
+            {(!!s.config.features.length ||
+              !!s.config.reference_by?.length) && (
               <>
                 <Select
-                  label="Also group by"
-                  value={s.config.reference_by?.[1] || ""}
+                  label="Reference group"
+                  value={s.config.reference_by?.[0] || ""}
                   options={options}
-                  onChange={(v) =>
-                    config({
-                      reference_by: v
-                        ? [s.config.reference_by[0], v]
-                        : [s.config.reference_by[0]],
-                    })
-                  }
+                  onChange={(v) => config({ reference_by: v ? [v] : [] })}
                 />
-                <small>
-                  Compare like categories. Each group needs 20 valid reference
-                  values per signal. Missing or small groups use the global
-                  profile with an explicit gap.
-                </small>
+                {!!s.config.reference_by?.length && (
+                  <>
+                    <Select
+                      label="Also group by"
+                      value={s.config.reference_by?.[1] || ""}
+                      options={options}
+                      onChange={(v) =>
+                        config({
+                          reference_by: v
+                            ? [s.config.reference_by[0], v]
+                            : [s.config.reference_by[0]],
+                        })
+                      }
+                    />
+                    <small>
+                      Compare like categories. Each group needs 20 valid
+                      reference values per signal. Missing or small groups use
+                      the global profile with an explicit gap.
+                    </small>
+                  </>
+                )}
               </>
             )}
-          </>
-        )}
-        <div className="actions">
-          <Button
-            onClick={() => {
-              setRules(s.rules_text);
-              setEditor("rules");
-            }}
-          >
-            Edit rules
-          </Button>
-          <Button onClick={() => setEditor("context")}>Map context</Button>
-        </div>
-        <small>
-          {s.config.rules.length} rules ·{" "}
-          {Object.keys(s.config.context || {}).length} context fields
-        </small>
-        <div className="actions">
-          <Button onClick={() => run("policy_load")}>Load policy</Button>
-          <Button disabled={s.blocked} onClick={() => run("policy_save")}>
-            Save policy
-          </Button>
-        </div>
+            <div className="actions">
+              <Button
+                onClick={() => {
+                  setRules(s.rules_text);
+                  setEditor("rules");
+                }}
+              >
+                Edit rules
+              </Button>
+              <Button onClick={() => setEditor("context")}>Map context</Button>
+            </div>
+            <small>
+              {s.config.rules.length} rules ·{" "}
+              {Object.keys(s.config.context || {}).length} context fields
+            </small>
+            <div className="actions">
+              <Button onClick={() => run("policy_load")}>Load policy</Button>
+              <Button disabled={s.blocked} onClick={() => run("policy_save")}>
+                Save policy
+              </Button>
+            </div>
+          </div>
+        </details>
         <div className="notes">
           {s.notes.map((n, i) => (
             <React.Fragment key={i}>
@@ -980,7 +1220,18 @@ function Highlight({ text, spans, field, part, matches, active, select }) {
       <mark
         key={start}
         data-match={index}
+        role="button"
+        tabIndex={index === active ? 0 : -1}
+        aria-label={`Match ${index + 1} in ${field}`}
+        aria-pressed={index === active}
         className={index === active ? "current-match" : ""}
+        onKeyDown={(e) => {
+          if (e.key === "Enter" || e.key === " ") {
+            e.preventDefault();
+            e.stopPropagation();
+            select(index);
+          }
+        }}
         onClick={() => {
           if (window.getSelection()?.isCollapsed !== false) select(index);
         }}
@@ -1141,8 +1392,18 @@ function RecordInspector({ source, row, note, warning, step, visible }) {
           </Button>
         </div>
       </div>
-      <div className="full-values scroll" ref={container}>
+      <div
+        className="full-values scroll"
+        tabIndex="0"
+        role="region"
+        aria-label="Field values"
+        ref={container}
+        aria-busy={visible && !ready && !error}
+      >
         {error && <p role="alert">{error}</p>}
+        {visible && !ready && !error && (
+          <p role="status">Loading record {row}…</p>
+        )}
         {ready &&
           value?.fields.map((f) => (
             <div
@@ -1384,7 +1645,14 @@ function Evidence({ row, active }) {
     active,
   );
   return (
-    <div className="evidence scroll">
+    <div
+      className="evidence scroll"
+      tabIndex="0"
+      role="region"
+      aria-label="Record evidence"
+      aria-busy={active && !data && !error}
+    >
+      {active && !data && !error && <p role="status">Loading record {row}…</p>}
       {error && <p role="alert">{error}</p>}
       {data && (
         <>

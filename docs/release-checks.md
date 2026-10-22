@@ -1,5 +1,17 @@
 # Release verification
 
+## Continuous owned-app collection
+
+Version 0.4 adds bounded C++ collection, stable investigation snapshots and independent scenario validation. The existing interface and file import workflow remain available. Local validation passed 249 Python tests, two native CTests, 20 existing desktop investigation/evaluation journeys, the native evidence journey, and the new continuous-capture journey. Scaling and keyboard checks cover 24 display/text combinations. Capture-specific checks cover restarts, retained-window omissions, failed processes, stale evidence, normal shutdown and forced worker shutdown.
+
+The [native validation report](../evidence/native-stream-validation.json) records zero false positives across 38 clean covered-range checks, all four persistent covered changes detected, and six unavailable observations kept Unknown. Controlled changes outside coverage and wholly between samples demonstrate known misses. These are fixture checks, not real-cheat accuracy or a representative production holdout.
+
+The 90-second native measurement collected 817 samples at a requested 100 ms interval, using approximately 0.577% of one CPU core and 6.2 MB peak working memory. Private bytes decreased from 1,040,384 to 995,328 between the first and last measurements. Per-range collection time was about 0.133 ms at the 95th percentile. These figures measure the native process on one Windows host, not the complete Electron application, and do not establish long-term leak freedom. Actual intervals can exceed the target; transport loss and delayed sampling are separate conditions.
+
+The archived network evaluation remains byte-for-byte unchanged. The source package now includes that already-published archive, while excluding local baselines, captures, environments and test output. CI rebuilds the native app and repeats collection, replay, desktop and release-hygiene checks on a fresh Windows runner.
+
+## Earlier portable release
+
 The portable source package was extracted into a separate Windows folder with spaces in its path. It contained no Python environment, installed Node packages, or renderer build. Setup created a new environment, installed from the lockfile, and built the interface. Package downloads reused the package manager's cache where available.
 
 The extracted copy passed:

@@ -1,4 +1,4 @@
-"""Create a source zip and a SHA-256 manifest; never include local evidence."""
+"""Create a source zip and manifest with published evidence, excluding local captures."""
 
 import hashlib
 import json

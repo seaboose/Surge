@@ -32,3 +32,26 @@ test("requests are bounded, revisioned and object-shaped", () => {
   );
   assert.doesNotThrow(() => validate("import", { role: "current" }));
 });
+test("collection can only start a fixed owned build", () => {
+  for (const build of ["v1", "v2"])
+    assert.doesNotThrow(() => validate("native_start", { build }));
+  for (const build of [undefined, null, "external", "../v1", "v1 --pid 1", 1])
+    assert.throws(() => validate("native_start", { build }));
+  for (const args of [
+    { build: "v1", pid: 12 },
+    { build: "v1", scenario: "memory-change" },
+    { build: "v1", executable: "another.exe" },
+    { build: "v1", interval_ms: 0 },
+  ])
+    assert.throws(() => validate("native_start", args));
+  for (const method of [
+    "native_status",
+    "native_snapshot",
+    "native_stop",
+    "native_export",
+  ]) {
+    assert.doesNotThrow(() => validate(method, {}));
+    assert.throws(() => validate(method, { build: "v2" }));
+    assert.throws(() => validate(method, { revision: 1 }));
+  }
+});

@@ -1,6 +1,11 @@
 "use strict";
 const operations = Object.freeze({
   state: [],
+  native_start: ["build"],
+  native_status: [],
+  native_snapshot: [],
+  native_stop: [],
+  native_export: [],
   import: ["role"],
   open: [],
   configure: ["revision", "config", "rules_text"],
@@ -54,10 +59,13 @@ function validate(method, args) {
     throw new Error("Unexpected request field.");
   if (Buffer.byteLength(JSON.stringify(args), "utf8") > 300 * 1024)
     throw new Error("Request exceeds the desktop limit.");
+  if (method === "native_start" && !["v1", "v2"].includes(args.build))
+    throw new Error("Choose an available app build.");
   if (
     method !== "state" &&
     method !== "import" &&
     method !== "open" &&
+    !method.startsWith("native_") &&
     !Number.isSafeInteger(args.revision)
   )
     throw new Error("Missing workspace revision.");

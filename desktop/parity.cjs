@@ -89,7 +89,9 @@ async function check(name, fn) {
   console.log("PASS", name);
 }
 async function ready() {
-  await page.waitForFunction(() => !document.querySelector(".app.busy"));
+  await page.waitForFunction(
+    () => !document.querySelector('.app[data-working="true"]'),
+  );
   await page.locator("dialog").count();
 }
 async function fileDialog(file, save = false) {
@@ -110,6 +112,15 @@ async function fileDialog(file, save = false) {
   );
 }
 async function click(text) {
+  if (
+    ["Load policy", "Save policy", "Edit rules", "Map context"].includes(text)
+  ) {
+    const options = page
+      .locator(".setup details")
+      .filter({ has: page.locator("summary", { hasText: /^Options$/ }) });
+    if ((await options.getAttribute("open")) === null)
+      await options.locator("summary").click();
+  }
   await page.getByRole("button", { name: text, exact: true }).click();
   await ready();
 }
@@ -620,7 +631,7 @@ async function screenshot(name) {
           .getAttribute("aria-valuenow"),
         position,
       );
-      await page.keyboard.press("Alt+2");
+      await page.keyboard.press("Alt+1");
       await visible(
         page.getByRole("button", { name: "Import data", exact: true }),
       );
@@ -632,11 +643,11 @@ async function screenshot(name) {
           .evaluate((el) => el === document.activeElement),
         true,
       );
-      await page.keyboard.press("Alt+4");
+      await page.keyboard.press("Alt+5");
       await visible(
         page.getByText("Constant references use", { exact: false }),
       );
-      await page.keyboard.press("Alt+1");
+      await page.keyboard.press("Alt+2");
       await page.emulateMedia({ reducedMotion: "reduce" });
       assert.equal(
         await page
@@ -1166,6 +1177,89 @@ async function screenshot(name) {
       );
       await screenshot("completed-findings");
       assert.equal(await page.locator("h1,h2,h3,header").count(), 0);
+    },
+  );
+  await check(
+    "ordered shortcuts, compact options and bounded mapping undo",
+    async () => {
+      const views = ["Data", "Findings", "Compare", "Evaluate", "Details"];
+      for (let i = 0; i < views.length; i++) {
+        await page.keyboard.press(`Alt+${i + 1}`);
+        await page.waitForFunction(
+          (name) =>
+            document.querySelector("nav button.active")?.textContent === name,
+          views[i],
+        );
+        assert.equal(
+          await page
+            .getByRole("button", { name: views[i], exact: true })
+            .getAttribute("aria-keyshortcuts"),
+          `Alt+${i + 1}`,
+        );
+      }
+      await click("Data");
+      await fileDialog(incoming);
+      await click("Import data");
+      const options = page
+        .locator(".setup details")
+        .filter({ has: page.locator("summary", { hasText: /^Options$/ }) });
+      assert.equal(await options.getAttribute("open"), null);
+      assert.equal(
+        await page
+          .getByRole("button", { name: "Undo mapping", exact: true })
+          .count(),
+        0,
+      );
+      await page.getByLabel("Session", { exact: true }).selectOption("session");
+      await ready();
+      const before = (await rpc("state")).config;
+      await page.getByLabel("Record ID", { exact: true }).selectOption("id");
+      await ready();
+      await click("Undo mapping");
+      assert.deepEqual((await rpc("state")).config, before);
+      assert.equal(
+        await page
+          .getByRole("button", { name: "Undo mapping", exact: true })
+          .count(),
+        0,
+      );
+      await options.locator("summary").click();
+      await page.getByLabel("Time", { exact: true }).selectOption("time");
+      await ready();
+      assert.notEqual(await options.getAttribute("open"), null);
+      await fileDialog(malformed);
+      await click("Import data");
+      await click("Close");
+      assert.equal(
+        await page
+          .getByRole("button", { name: "Undo mapping", exact: true })
+          .isVisible(),
+        true,
+      );
+      await click("Undo mapping");
+      assert.deepEqual((await rpc("state")).config, before);
+      await page.getByLabel("Record ID", { exact: true }).selectOption("id");
+      await ready();
+      await fileDialog(policy);
+      await click("Load policy");
+      assert.equal(
+        await page
+          .getByRole("button", { name: "Undo mapping", exact: true })
+          .count(),
+        0,
+      );
+      await page.getByLabel("Session", { exact: true }).selectOption("");
+      await ready();
+      await fileDialog(incoming);
+      await click("Import data");
+      assert.equal(
+        await page
+          .getByRole("button", { name: "Undo mapping", exact: true })
+          .count(),
+        0,
+      );
+      assert.equal(await page.locator("h1,h2,h3,header").count(), 0);
+      await screenshot("configuration");
     },
   );
   assert.deepEqual(errors, []);

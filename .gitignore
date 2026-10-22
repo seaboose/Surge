@@ -13,6 +13,9 @@ verification/temporary-test-files/
 verification/*.json
 benchmarks/rt-iot2022/
 dist/
+native/build/
+native/baselines.json
+native/captures/
 *.zip
 !evidence/surge-evaluation-evidence.zip
 *.case.json

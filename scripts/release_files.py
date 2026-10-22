@@ -1,4 +1,4 @@
-"""List source-package files without local environments, evidence, or test output."""
+"""List source-package files, including the published evaluation archive only."""
 
 import os
 from pathlib import Path
@@ -13,6 +13,8 @@ EXCLUDED = {
     "rt-iot2022",
     "temporary-test-files",
     "electron",
+    "build",
+    "captures",
 }
 
 
@@ -23,9 +25,13 @@ def source_files(root=ROOT):
             path = Path(folder) / name
             relative = path.relative_to(root)
             if (
-                path.suffix in {".pyc", ".log", ".zip"}
+                (
+                    path.suffix in {".pyc", ".log", ".zip"}
+                    and relative.as_posix() != "evidence/surge-evaluation-evidence.zip"
+                )
                 or name.startswith(".env")
                 or name == ".surge-ui.json"
+                or relative.as_posix() == "native/baselines.json"
             ):
                 continue
             if relative.parts[0] == "verification" and path.suffix != ".py":

@@ -21,6 +21,8 @@ import investigation
 import mapping_checks
 import record_search
 import workflow
+import native_integrity
+import native_stream
 from evidence_labels import source_label, time_label
 from import_errors import ImportFailure
 
@@ -46,6 +48,11 @@ def default_config():
 
 
 def short_reason(record):
+    native_reasons = {
+        "Code differs from approved baseline": "Code changed",
+        "Build is not approved": "Build not approved",
+        "Code page is not execute-read": "Page protection changed",
+    }
     phrases = {
         "gt": "above limit",
         "ge": "at or above limit",
@@ -57,7 +64,7 @@ def short_reason(record):
     reasons = list(
         dict.fromkeys(
             (
-                f"{e['field']} {phrases[e['operator']]}"
+                native_reasons.get(e["name"], f"{e['field']} {phrases[e['operator']]}")
                 if e["kind"] == "rule"
                 else f"{e['field']} outside reference range"
             )
@@ -98,6 +105,28 @@ class Workspace:
         self.current_case = self.previous_file = None
         self.source_paths = {"current": None, "reference": None}
         self.labels = self.evaluation_cache = None
+        self.capture = None
+
+    def close(self):
+        if self.capture:
+            self.capture.stop()
+
+    def inspect_capture(self):
+        rows = self.capture.snapshot()
+        if not rows:
+            raise ValueError("Waiting for the first collection sample.")
+        raw = ("\n".join(engine.canonical(row) for row in rows) + "\n").encode("utf-8")
+        data = engine.parse_bytes(raw, f"our-app-{self.capture.build}.jsonl")
+        config = native_integrity.default_policy(data)
+        result = engine.analyze(data, None, config)
+        # Publish a complete snapshot together; collection keeps its own window.
+        self.current, self.reference, self.config = data, None, config
+        self.labels = self.current_case = None
+        self.source_paths = {"current": None, "reference": None}
+        self.invalidate()
+        self.result = result
+        self.index = investigation.search_index(data, config, result)
+        return self.snapshot()
 
     def invalidate(self, report=None):
         self.evaluation_cache = None
@@ -145,10 +174,13 @@ class Workspace:
             numeric_evidence=bool(
                 self.result
                 and any(
-                    e["kind"] == "deviation" for r in self.result["records"] for e in r["evidence"]
+                    e["kind"] == "deviation"
+                    for r in self.result["records"]
+                    for e in r["evidence"]
                 )
             ),
             meaning=self.result["meaning"] if self.result else "",
+            capture=self.capture.status() if self.capture else None,
         )
 
     def case(self):
@@ -169,7 +201,14 @@ class Workspace:
     def preview_scope(self, args):
         note_id = args.get("note")
         if note_id is None:
-            return self.current, list(range(1, len(self.current.rows) + 1)), [], (), None, "current"
+            return (
+                self.current,
+                list(range(1, len(self.current.rows) + 1)),
+                [],
+                (),
+                None,
+                "current",
+            )
         if type(note_id) is not int or not 0 <= note_id < len(self.notes):
             raise ValueError("Mapping warning is no longer available.")
         note = self.notes[note_id]
@@ -179,7 +218,9 @@ class Workspace:
         if data is None:
             raise ValueError("Source is not loaded.")
         affected = (
-            list(note["rows"]) if note["rows"] is not None else list(range(1, len(data.rows) + 1))
+            list(note["rows"])
+            if note["rows"] is not None
+            else list(range(1, len(data.rows) + 1))
         )
         return data, affected, list(note["related"]), note["fields"], note, note["source"]
 
@@ -188,16 +229,51 @@ class Workspace:
             raise ValueError("Invalid request.")
         if method == "state":
             return self.snapshot()
+        if method == "native_start":
+            if set(args) != {"build"}:
+                raise ValueError("Choose an owned build only.")
+            if self.capture and self.capture.status()["state"] == "running":
+                raise ValueError("Stop the current collection first.")
+            if self.capture:
+                self.capture.stop()
+            self.capture = native_stream.NativeSession(args["build"])
+            return dict(
+                capture=self.capture.status(),
+                message="Collection started. Inspect to review a snapshot.",
+            )
+        if method in ("native_status", "native_snapshot", "native_stop", "native_export"):
+            if set(args) - ({"path"} if method == "native_export" else set()):
+                raise ValueError("Unexpected collection setting.")
+            if method == "native_status":
+                return dict(capture=self.capture.status() if self.capture else None)
+            if not self.capture:
+                raise ValueError("Start collection first.")
+            if method == "native_stop":
+                self.capture.stop()
+                return self.inspect_capture() if self.capture.snapshot() else self.snapshot()
+            if method == "native_snapshot":
+                return self.inspect_capture()
+            rows = self.capture.snapshot()
+            if not rows:
+                raise ValueError("There are no observations to export yet.")
+            raw = "\n".join(engine.canonical(row) for row in rows) + "\n"
+            with Path(args["path"]).open("x", encoding="utf-8", newline="\n") as stream:
+                stream.write(raw)
+            return dict(
+                capture=self.capture.status(),
+                message="Collection exported. Older samples beyond the retained window are excluded.",
+            )
         if method == "import":
             role = args.get("role")
             if role not in ("current", "reference"):
                 raise ValueError("Unknown import role.")
             data = engine.load_dataset(args["path"])
+            native_policy = native_integrity.default_policy(data) if role == "current" else None
             setattr(self, role, data)
             self.source_paths[role] = str(Path(args["path"]).resolve())
             if role == "current":
                 self.labels = None
-                self.config = default_config()
+                self.config = native_policy or default_config()
                 self.current_case = None
             self.invalidate()
             return self.snapshot()
@@ -256,7 +332,11 @@ class Workspace:
                 threshold=6,
                 reference_by=[],
             )
-            if config.get("time_origin", "unspecified") not in ("unspecified", "elapsed", "unix"):
+            if config.get("time_origin", "unspecified") not in (
+                "unspecified",
+                "elapsed",
+                "unix",
+            ):
                 raise ValueError("Invalid numeric clock meaning.")
             if trial["rules"]:
                 engine.validate_config(trial, self.current, self.reference)
@@ -450,12 +530,16 @@ class Workspace:
                 raise ValueError("Invalid direction.")
             row = args.get("row", 0)
             candidates = (
-                [r for r in affected if r > row] if step == 1 else [r for r in affected if r < row]
+                [r for r in affected if r > row]
+                if step == 1
+                else [r for r in affected if r < row]
             )
             target = (candidates[0] if step == 1 else candidates[-1]) if candidates else None
             positions = sorted(set(affected) | set(related))
             return dict(
-                row=target, page=positions.index(target) // 100 if target else None, source=source
+                row=target,
+                page=positions.index(target) // 100 if target else None,
+                source=source,
             )
         if method == "copy":
             data, values = self.selection(args)
@@ -492,13 +576,17 @@ class Workspace:
                         row=record["row"],
                         status=record["status"],
                         priority=workflow.priority(record, self.config),
-                        numeric_evidence=any(e["kind"] == "deviation" for e in record["evidence"]),
+                        numeric_evidence=any(
+                            e["kind"] == "deviation" for e in record["evidence"]
+                        ),
                         reason=short_reason(record),
                     )
                 )
             page = bounded_int(args.get("page", 0), 0, max((len(selected) - 1) // 100, 0))
             if args.get("locate") in [r["row"] for r in selected]:
-                page = next(i for i, r in enumerate(selected) if r["row"] == args["locate"]) // 100
+                page = (
+                    next(i for i, r in enumerate(selected) if r["row"] == args["locate"]) // 100
+                )
             return dict(
                 rows=selected[page * 100 : (page + 1) * 100],
                 total=len(selected),
@@ -548,6 +636,73 @@ class Workspace:
                             )
                         )
                 output.append(dict(field=field, value=display(raw[field]), lines=lines))
+            if raw.get("schema") == native_integrity.SCHEMA:
+                native_labels = {
+                    "memory_matches": ("Code", "Changed", "Matches baseline"),
+                    "baseline_approved": ("Build", "Not approved", "Approved"),
+                    "protection_matches": ("Page protection", "Changed", "Matches baseline"),
+                }
+                for group in output:
+                    if group["field"] in native_labels:
+                        field = group["field"]
+                        label, changed, matched = native_labels[field]
+                        group["field"] = label
+                        group["value"] = (
+                            matched
+                            if raw[field] is True
+                            else changed if raw[field] is False else "Unavailable"
+                        )
+                        for line in group["lines"]:
+                            line["details"] = (
+                                f"{field}: {display(raw[field])}\n{line['text']}\n{line['details']}".strip()
+                            )
+                            line["text"] = (
+                                "Review this observation; it does not establish malicious behavior."
+                            )
+                output.insert(
+                    0,
+                    dict(
+                        field="Code hash",
+                        value=raw.get("observed_sha256") or "Unavailable",
+                        lines=[
+                            dict(
+                                text=f"Expected: {raw.get('expected_sha256') or 'No approved baseline'}\nCollection: {raw.get('memory_status')}",
+                                details=f"Range: {raw.get('range_name', 'Unavailable')} · RVA: {raw.get('range_rva', 'Unavailable')} · Bytes: {raw.get('range_size', 'Unavailable')}\nBaseline SHA-256: {raw.get('baseline_sha256')}\n{raw.get('approval_reason', raw.get('collection_error', ''))}\nLocal observations and operator approvals are not proof of a trustworthy client or malicious behavior.",
+                            )
+                        ],
+                    ),
+                )
+                if "coverage_expected_ranges" in raw:
+                    output.append(
+                        dict(
+                            field="Coverage",
+                            value=f"{raw['coverage_read_ranges']}/{raw['coverage_expected_ranges']} ranges read",
+                            lines=[
+                                dict(
+                                    text=f"Range: {raw['range_name']}\n{raw['coverage_compared_ranges']} compared with approval; {raw['coverage_unavailable_ranges']} unavailable; {raw['coverage_unapproved_ranges']} unapproved; {raw['coverage_changed_ranges']} changed.",
+                                    details=f"{raw['coverage_read_bytes']}/{raw['coverage_expected_bytes']} configured bytes read. Covers only the declared ranges, not the entire DLL or process.\nManifest SHA-256: {raw['range_manifest_sha256']}",
+                                )
+                            ],
+                        )
+                    )
+                if "stream_sequence" in raw or raw.get("stream_health"):
+                    output.append(
+                        dict(
+                            field="Collection",
+                            value=(
+                                f"Sample {raw['stream_sequence']}"
+                                if "stream_sequence" in raw
+                                else "Incomplete"
+                            ),
+                            lines=[
+                                dict(
+                                    text=raw.get("collection_error")
+                                    or f"Elapsed: {raw['stream_elapsed_ms']:g} ms · Interval: {raw['stream_interval_ms']} ms",
+                                    details=f"{raw.get('stream_dropped_samples', 0)} samples lost in transport; {raw.get('stream_evicted_samples', 0)} older samples removed from the retained window. Changes between samples or outside configured ranges may not be observed.",
+                                )
+                            ],
+                        )
+                    )
             return dict(
                 row=record["row"],
                 event_id=record["event_id"],
@@ -574,7 +729,9 @@ class Workspace:
             if self.chart_cache is None or self.chart_cache[0] != width:
                 self.chart_cache = width, [
                     asdict(p)
-                    for p in chart.points(self.result["records"], width, self.config["threshold"])
+                    for p in chart.points(
+                        self.result["records"], width, self.config["threshold"]
+                    )
                 ]
             points = self.chart_cache[1]
             row = args.get("row")
@@ -599,8 +756,12 @@ class Workspace:
             if step not in (-1, 1):
                 raise ValueError("Invalid direction.")
             rows = [r["row"] for r in self.result["records"] if r["scores"]]
-            candidates = [r for r in rows if r > row] if step == 1 else [r for r in rows if r < row]
-            return {"row": (candidates[0] if step == 1 else candidates[-1]) if candidates else None}
+            candidates = (
+                [r for r in rows if r > row] if step == 1 else [r for r in rows if r < row]
+            )
+            return {
+                "row": (candidates[0] if step == 1 else candidates[-1]) if candidates else None
+            }
         if method in ("save", "alerts", "compare", "comparison", "details"):
             self.require_result()
             if method == "save":
@@ -715,6 +876,13 @@ def main():
     sys.stdin.reconfigure(encoding="utf-8")
     sys.stdout.reconfigure(encoding="utf-8")
     workspace = Workspace()
+    try:
+        serve(workspace)
+    finally:
+        workspace.close()
+
+
+def serve(workspace):
     while True:
         line = sys.stdin.buffer.readline(MAX_REQUEST + 1)
         if not line:
@@ -731,7 +899,10 @@ def main():
             reply = dict(id=request_id, ok=True, value=value)
         except Exception as exc:
             reply = dict(
-                id=request_id, ok=False, error=str(exc), import_error=isinstance(exc, ImportFailure)
+                id=request_id,
+                ok=False,
+                error=str(exc),
+                import_error=isinstance(exc, ImportFailure),
             )
         sys.stdout.write(json.dumps(reply, ensure_ascii=True, allow_nan=False) + "\n")
         sys.stdout.flush()

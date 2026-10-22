@@ -157,6 +157,7 @@ async function execute(method, args) {
     alerts: "surge.alerts.jsonl",
     labels_template: "surge.labels.json",
     evaluation_save: "surge.evaluation.json",
+    native_export: "native-stream.jsonl",
   };
   if (Object.hasOwn(saves, method)) {
     const result = await dialog.showSaveDialog(win, {
@@ -229,8 +230,8 @@ else {
       win = new BrowserWindow({
         width: 1360,
         height: 880,
-        minWidth: 1100,
-        minHeight: 760,
+        minWidth: 720,
+        minHeight: 540,
         title: "Surge",
         backgroundColor: "#080c12",
         show: false,
@@ -246,6 +247,24 @@ else {
         },
       });
       win.removeMenu();
+      // Keep standard zoom keys available even without a desktop menu.
+      win.webContents.on("before-input-event", (event, input) => {
+        if (
+          input.type !== "keyDown" ||
+          !(input.control || input.meta) ||
+          input.alt
+        )
+          return;
+        const key = input.key;
+        if (!["+", "=", "-", "0"].includes(key)) return;
+        event.preventDefault();
+        const current = win.webContents.getZoomFactor();
+        win.webContents.setZoomFactor(
+          key === "0"
+            ? 1
+            : Math.max(0.75, Math.min(2, current + (key === "-" ? -0.1 : 0.1))),
+        );
+      });
       win.webContents.setWindowOpenHandler(() => ({ action: "deny" }));
       win.webContents.on("will-navigate", (event) => event.preventDefault());
       win.webContents.on("will-attach-webview", (event) =>
@@ -283,7 +302,33 @@ else {
     });
 }
 app.on("window-all-closed", () => app.quit());
-app.on("before-quit", () => {
-  if (worker) worker.kill();
+let quitting = false;
+app.on("before-quit", (event) => {
   failWorker("Surge closed.");
+  if (
+    quitting ||
+    !worker ||
+    worker.exitCode !== null ||
+    worker.signalCode !== null
+  )
+    return;
+  // Keep Electron alive until the worker releases its owned child, or the
+  // bounded fallback terminates the worker and closes the child's pipes.
+  event.preventDefault();
+  quitting = true;
+  let finished = false;
+  let forced;
+  const finish = () => {
+    if (finished) return;
+    finished = true;
+    clearTimeout(grace);
+    clearTimeout(forced);
+    app.quit();
+  };
+  const grace = setTimeout(() => {
+    worker.kill();
+    forced = setTimeout(finish, 1000);
+  }, 5000);
+  worker.once("exit", finish);
+  worker.stdin.end();
 });

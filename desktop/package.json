@@ -1,12 +1,14 @@
 {
   "name": "surge-desktop",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "private": true,
   "main": "main.cjs",
   "scripts": {
     "build": "node build.cjs",
     "start": "electron .",
     "test": "node --test security.test.cjs runtime.test.cjs",
+    "test:accessibility": "node accessibility.test.cjs",
+    "test:stream": "node stream.test.cjs",
     "test:ui": "node parity.cjs && node evaluation.test.cjs",
     "format:check": "prettier --check \"*.cjs\" \"src/**/*.{jsx,css,html}\" package.json",
     "format": "prettier --write \"*.cjs\" \"src/**/*.{jsx,css,html}\" package.json"

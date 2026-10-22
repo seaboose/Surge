@@ -36,6 +36,21 @@ jobs:
       - name: Python and evaluation checks
         shell: pwsh
         run: ./.venv/Scripts/python.exe -B scripts/test.py
+      - name: Owned native fixture and baseline checks
+        shell: pwsh
+        run: |
+          cmake -S native -B native/build -A x64
+          if ($LASTEXITCODE) { exit $LASTEXITCODE }
+          cmake --build native/build --config Release
+          if ($LASTEXITCODE) { exit $LASTEXITCODE }
+          ctest --test-dir native/build -C Release --output-on-failure
+          if ($LASTEXITCODE) { exit $LASTEXITCODE }
+          ./.venv/Scripts/python.exe -B scripts/test_native_live.py
+          if ($LASTEXITCODE) { exit $LASTEXITCODE }
+          ./.venv/Scripts/python.exe -B -m unittest test_native_session -v
+          if ($LASTEXITCODE) { exit $LASTEXITCODE }
+          ./.venv/Scripts/python.exe -B scripts/test_native_stream.py
+          if ($LASTEXITCODE) { exit $LASTEXITCODE }
       - name: Desktop boundary and runtime checks
         working-directory: desktop
         run: pnpm test
@@ -56,5 +71,14 @@ jobs:
       - name: Investigation and evaluation journeys
         working-directory: desktop
         run: pnpm run test:ui
+      - name: Display scaling and keyboard access
+        working-directory: desktop
+        run: pnpm run test:accessibility
+      - name: Native evidence desktop journey
+        working-directory: desktop
+        run: node native.test.cjs
+      - name: Continuous collection desktop journey
+        working-directory: desktop
+        run: pnpm run test:stream
       - name: Release hygiene
         run: ./.venv/Scripts/python.exe -B scripts/check_release.py

@@ -31,8 +31,19 @@ async function file(name, save = false) {
   );
 }
 async function click(name) {
+  if (
+    ["Load policy", "Save policy", "Edit rules", "Map context"].includes(name)
+  ) {
+    const options = page
+      .locator(".setup details")
+      .filter({ has: page.locator("summary", { hasText: /^Options$/ }) });
+    if ((await options.getAttribute("open")) === null)
+      await options.locator("summary").click();
+  }
   await page.getByRole("button", { name, exact: true }).click();
-  await page.waitForFunction(() => !document.querySelector(".app.busy"));
+  await page.waitForFunction(
+    () => !document.querySelector('.app[data-working="true"]'),
+  );
 }
 async function rpc(method, args = {}) {
   const v = await page.evaluate(

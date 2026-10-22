@@ -1,5 +1,10 @@
 # Surge
 
+Native Windows evidence is available through the existing import workflow. The
+[owned C++ fixture and DLL collector](native/README.md) supports explicit approved
+baselines, code-range comparisons, and visible collection failures. Import its
+JSONL and select **Analyze**; Surge maps the evidence automatically.
+
 [![Windows checks](https://github.com/seaboose/Surge/actions/workflows/ci.yml/badge.svg)](https://github.com/seaboose/Surge/actions/workflows/ci.yml)
 
 Surge is a Windows desktop tool for investigating telemetry and checking detection rules. Import a dataset, map its fields, inspect the evidence behind a finding, and compare results before and after a policy change.
@@ -49,16 +54,19 @@ Setup creates `.venv`, installs the locked desktop dependencies, downloads Elect
 5. Use **Save case** to preserve the investigation. Use **Compare** to inspect changes against another case from the same source.
 6. Use **Evaluate** to import separately prepared labels. Keep development and holdout labels separate from detector configuration.
 
+Use **Alt+1** through **Alt+5** to switch views in sidebar order. **Ctrl+plus** and **Ctrl+minus** resize the interface; **Ctrl+0** resets zoom. At narrow widths, records and evidence stack vertically. Tab reaches evidence and field values for keyboard scrolling.
+
 ## Verification
 
 ```powershell
 .\.venv\Scripts\python.exe -B scripts/test.py
 pnpm --dir desktop test
 pnpm --dir desktop run test:ui
+pnpm --dir desktop run test:accessibility
 .\.venv\Scripts\python.exe -B scripts/check_release.py
 ```
 
-Desktop tests use isolated profiles and synthetic data. They intercept dialogs and clipboard operations without changing a running investigation. Benchmark-dependent journeys are separate from CI and require the original evaluation archive.
+Desktop tests use isolated profiles and synthetic data. They intercept dialogs and clipboard operations without changing a running investigation. Display checks cover Electron device scales from 100% to 200%, text enlargement, zoom, and keyboard access. They do not certify Windows text-setting integration or screen-reader support. Benchmark-dependent journeys are separate from CI and require the original evaluation archive.
 
 The [evaluation notes](docs/evaluation.md) explain the measured results and limitations. The latest accepted policy reduced false positives on a held-out IoT sample, but its remaining false-positive rate is too high for deployment. A later Wipro-focused candidate was rejected because it lost detections. These measurements do not establish effectiveness against game cheats or attacks on AI systems.
 
@@ -66,6 +74,6 @@ See the [release verification](docs/release-checks.md) for the completed fresh-s
 
 ## Code and boundaries
 
-Read the [architecture](docs/architecture.md), [security notes](SECURITY.md), and [development guide](desktop/README.md). The current bounded importer accepts up to 10,000 records and 16 MiB per source. Large-scale or continuous ingestion is outside this release.
+Read the [architecture](docs/architecture.md), [security notes](SECURITY.md), and [development guide](desktop/README.md). The bounded importer accepts up to 10,000 records and 16 MiB per source. Optional [owned-app collection](native/README.md) samples two approved code ranges through a local C++ process. Choose **Our app**, **Start**, then **Inspect** to investigate a stable snapshot in the same views. **Stop** opens the final retained snapshot; **Export** saves the current window for replay. Collection retains up to 500 samples and stops after ten minutes. It is not a general-purpose or full-history telemetry service.
 
 This repository is a source distribution, not a signed installer. The application code is MIT licensed; dependency and dataset terms are listed in [NOTICE](NOTICE.md).

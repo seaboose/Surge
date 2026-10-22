@@ -32,8 +32,19 @@ async function dialog(file, save = false) {
   );
 }
 async function click(name) {
+  if (
+    ["Load policy", "Save policy", "Edit rules", "Map context"].includes(name)
+  ) {
+    const options = page
+      .locator(".setup details")
+      .filter({ has: page.locator("summary", { hasText: /^Options$/ }) });
+    if ((await options.getAttribute("open")) === null)
+      await options.locator("summary").click();
+  }
   await page.getByRole("button", { name, exact: true }).click();
-  await page.waitForFunction(() => !document.querySelector(".app.busy"));
+  await page.waitForFunction(
+    () => !document.querySelector('.app[data-working="true"]'),
+  );
 }
 async function rpc(method, args = {}) {
   const v = await page.evaluate(
@@ -161,7 +172,9 @@ async function check(name, fn) {
         "fwd_pkts_payload.avg",
       ]) {
         await page.getByRole("checkbox", { name: field, exact: true }).click();
-        await page.waitForFunction(() => !document.querySelector(".app.busy"));
+        await page.waitForFunction(
+          () => !document.querySelector('.app[data-working="true"]'),
+        );
         assert.equal(
           await page
             .getByRole("checkbox", { name: field, exact: true })
@@ -172,7 +185,9 @@ async function check(name, fn) {
       await page
         .getByLabel("Reference group", { exact: true })
         .selectOption("");
-      await page.waitForFunction(() => !document.querySelector(".app.busy"));
+      await page.waitForFunction(
+        () => !document.querySelector('.app[data-working="true"]'),
+      );
       assert.deepEqual((await rpc("state")).config.reference_by, []);
       const source = path.join(files, "source.json"),
         ref = path.join(files, "ref.json"),
