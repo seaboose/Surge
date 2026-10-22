@@ -10,6 +10,8 @@ The 90-second native measurement collected 817 samples at a requested 100 ms int
 
 The archived network evaluation remains byte-for-byte unchanged. The source package now includes that already-published archive, while excluding local baselines, captures, environments and test output. CI rebuilds the native app and repeats collection, replay, desktop and release-hygiene checks on a fresh Windows runner.
 
+The milestone package was also extracted into a new local folder and installed independently. Fresh setup, the native build, 249 Python tests, both native CTests, four desktop boundary checks, the continuous desktop journey and archived evaluation reproduction passed. The first complete [hosted Windows run](https://github.com/seaboose/Surge/actions/runs/39730467188) passed every step. A direct native unit command exposed a test-directory assumption during the local check; that test now creates its own temporary directory.
+
 ## Earlier portable release
 
 The portable source package was extracted into a separate Windows folder with spaces in its path. It contained no Python environment, installed Node packages, or renderer build. Setup created a new environment, installed from the lockfile, and built the interface. Package downloads reused the package manager's cache where available.

@@ -121,9 +121,7 @@ class NativeTests(unittest.TestCase):
         self.assertIsNone(native.default_policy(ordinary))
 
     def test_collector_failure_exports_unknown_without_approving(self):
-        with tempfile.TemporaryDirectory(
-            dir=Path(__file__).parent / "verification/temporary-test-files"
-        ) as folder:
+        with tempfile.TemporaryDirectory(prefix="surge-native-unit-") as folder:
             root = Path(folder)
             registry = root / "baseline.json"
             output = root / "failure.jsonl"
