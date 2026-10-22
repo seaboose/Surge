@@ -1,32 +1,40 @@
 # Surge
 
-Native Windows evidence is available through the existing import workflow. The
-[owned C++ fixture and DLL collector](native/README.md) supports explicit approved
-baselines, code-range comparisons, and visible collection failures. Import its
-JSONL and select **Analyze**; Surge maps the evidence automatically.
-
 [![Windows checks](https://github.com/seaboose/Surge/actions/workflows/ci.yml/badge.svg)](https://github.com/seaboose/Surge/actions/workflows/ci.yml)
 
-Surge is a Windows desktop tool for investigating telemetry and checking detection rules. Import a dataset, map its fields, inspect the evidence behind a finding, and compare results before and after a policy change.
+Surge collects runtime-integrity evidence from its own Windows application and helps you investigate what changed. A C++ collector measures configured DLL code ranges; a Python engine checks approved baselines; an Electron/React interface shows the observations, reasons and coverage behind each result.
 
-The interface uses Electron and React. A separate Python process owns the data and runs the analysis. Once installed, Surge works locally without accounts, network access, or a listening server.
+Choose **Our app → Start → Inspect** to open a stable snapshot while collection continues. **Stop** opens the final retained snapshot; **Export** saves observations and **Save case** preserves an investigation. Once installed, Surge works locally without accounts or a listening server.
 
-![A synthetic investigation with a selected record and its exact evidence](docs/investigation.png)
+![Surge inspecting an approved code-range mismatch, with source evidence and coverage](docs/native-investigation.png)
 
-## What it does
+*Current interface replaying the sanitized code-change demo. Collection controls are ready; this screenshot is not a live capture.*
 
-- Imports CSV, JSON, and JSON Lines with record-level error messages and mapping checks.
-- Compares numeric signals with a separate reference dataset, optionally grouped by category.
-- Applies explicit field rules and keeps missing evidence visible.
-- Searches records and field values, copies exact values, and links chart points to evidence.
-- Saves self-contained cases and compares previous and current results record by record.
-- Evaluates results against separately supplied labels, including false positives, missed targets, unresolved records, and subgroup results.
+Surge also imports CSV, JSON and JSON Lines, supports field rules and separate numeric reference data, and evaluates findings against independent labels. Search, exact-value inspection, linked chart points and case comparison support investigation.
 
-Surge produces review leads. A deviation is not proof of malicious behavior, and an unflagged record is not a safety guarantee. It does not collect game memory, enforce bans, or run a trained classifier.
+Native coverage is **two ranges totaling 15 bytes**, with a **500 ms target interval**, a **500-sample window** and a **10-minute session limit**. Changes outside coverage or between samples can be missed. Missing approval requires review; missing observations remain Unknown. Local unsigned evidence is not client attestation. Surge never attaches to games or Vanguard and does not enforce bans.
+
+## Try the demo
+
+With Python 3.11 or newer, run from the repository root:
+
+```powershell
+python -B scripts/verify_native_demo.py
+```
+
+This replays five [sanitized cases](demos/native/README.md) and checks separately declared outcomes, without a compiler or running collector. After desktop setup, use **Open case** to inspect them:
+
+- **Approved update:** four No finding records.
+- **Unapproved update:** four Review records; an unknown build is not necessarily malicious.
+- **Changed code:** one Review, three No finding records.
+- **Unreadable range:** one Unknown, three No finding records.
+- **Outside coverage:** four No finding records despite a controlled change outside the checked ranges—a documented blind spot.
+
+The cases derive from our own app. Local paths and process identities are removed; dates and timing are normalized. Code bytes, permissions and approval comparisons are preserved. These are controlled correctness checks, not real-cheat accuracy results. [Demo notes](demos/native/README.md) explain normalization and optional regeneration.
 
 ## Set up on Windows
 
-Install Python 3.11 or newer with Tcl/Tk, Node.js 22.12 or newer, and pnpm 11.25.0. Python 3.12 and Node 24 are the CI configuration. The Python engine uses the standard library only.
+Install Python 3.11+ with Tcl/Tk, Node.js 22.12+, and pnpm 11.25.0. CI uses Python 3.12 and Node 24.
 
 From the repository root, run:
 
@@ -35,45 +43,31 @@ powershell -NoProfile -ExecutionPolicy Bypass -File .\Setup-Surge.ps1
 .\Start-Surge.cmd
 ```
 
-If Python is not on PATH, pass its executable explicitly:
+Setup creates `.venv`, installs locked dependencies and builds the interface. Run setup again after moving to another computer. Use `-Python 'C:\Python312\python.exe'` if Python is not on PATH.
 
-```powershell
-.\Setup-Surge.ps1 -Python 'C:\Python312\python.exe'
-```
+Live collection also requires the optional [native build](native/README.md#build-once), using CMake and Microsoft C++ Build Tools. Approving a build is a separate, explicit step documented there. Without approval, its observations require review. Demo replay and ordinary imports do not require the native build.
 
-Setup creates `.venv`, installs the locked desktop dependencies, downloads Electron, and builds the interface. It stops on failure. No administrator privileges are needed. An existing environment is reused; moving the source to another computer requires running setup there.
-
-`SURGE_PYTHON` can override the interpreter with an absolute executable path. Otherwise, Surge uses `.venv`. `Start-Surge-Legacy.cmd` opens the retained Tk interface; the newer evaluation and reference-group controls are in Electron.
-
-## First investigation
-
-1. Choose **Import data**, then map the fields you want to inspect.
-2. For numeric comparisons, choose **Import reference** with a separate reference source. For explicit conditions, configure rules.
-3. Resolve blocking mapping errors, review warnings, and choose **Analyze**.
-4. Select a finding to inspect its values, conditions, source, and evidence gaps.
-5. Use **Save case** to preserve the investigation. Use **Compare** to inspect changes against another case from the same source.
-6. Use **Evaluate** to import separately prepared labels. Keep development and holdout labels separate from detector configuration.
-
-Use **Alt+1** through **Alt+5** to switch views in sidebar order. **Ctrl+plus** and **Ctrl+minus** resize the interface; **Ctrl+0** resets zoom. At narrow widths, records and evidence stack vertically. Tab reaches evidence and field values for keyboard scrolling.
+For files, choose **Import data**, map fields or rules, then **Analyze**. Use separate reference data for numeric comparisons and independent labels in **Evaluate**. **Compare** examines decisions from the same source under different settings. **Alt+1–5** switches views; **Ctrl+plus/minus/0** adjusts or resets zoom.
 
 ## Verification
 
 ```powershell
 .\.venv\Scripts\python.exe -B scripts/test.py
+.\.venv\Scripts\python.exe -B scripts/verify_native_demo.py
 pnpm --dir desktop test
 pnpm --dir desktop run test:ui
 pnpm --dir desktop run test:accessibility
 .\.venv\Scripts\python.exe -B scripts/check_release.py
 ```
 
-Desktop tests use isolated profiles and synthetic data. They intercept dialogs and clipboard operations without changing a running investigation. Display checks cover Electron device scales from 100% to 200%, text enlargement, zoom, and keyboard access. They do not certify Windows text-setting integration or screen-reader support. Benchmark-dependent journeys are separate from CI and require the original evaluation archive.
+CI also replays the demo through the desktop interface. Tests use isolated profiles; scaling checks cover 100–200% Electron device scales, text enlargement and keyboard access, not screen-reader certification.
 
-The [evaluation notes](docs/evaluation.md) explain the measured results and limitations. The latest accepted policy reduced false positives on a held-out IoT sample, but its remaining false-positive rate is too high for deployment. A later Wipro-focused candidate was rejected because it lost detections. These measurements do not establish effectiveness against game cheats or attacks on AI systems.
+The [native validation report](evidence/native-stream-validation.json) and [release checks](docs/release-checks.md) record controlled scenarios, replay, resource measurements and fresh installation. Separate [IoT evaluation results](docs/evaluation.md) retain a false-positive rate too high for deployment; a later candidate was rejected for losing detections. Neither evaluation establishes effectiveness against game cheats or attacks on AI systems.
 
-See the [release verification](docs/release-checks.md) for the completed fresh-setup checks. To build a source-only zip, run `python scripts/package_source.py`. Local data, environments, and test output are excluded.
+To build a source package, run `python scripts/package_source.py`. Published demo and evaluation evidence are included; local captures, approvals, environments and test output are excluded.
 
 ## Code and boundaries
 
-Read the [architecture](docs/architecture.md), [security notes](SECURITY.md), and [development guide](desktop/README.md). The bounded importer accepts up to 10,000 records and 16 MiB per source. Optional [owned-app collection](native/README.md) samples two approved code ranges through a local C++ process. Choose **Our app**, **Start**, then **Inspect** to investigate a stable snapshot in the same views. **Stop** opens the final retained snapshot; **Export** saves the current window for replay. Collection retains up to 500 samples and stops after ten minutes. It is not a general-purpose or full-history telemetry service.
+Read the [architecture](docs/architecture.md), [security notes](SECURITY.md), and [development guide](desktop/README.md). File imports accept up to 10,000 records and 16 MiB per source. The renderer is sandboxed and cannot supply arbitrary paths or commands to collection.
 
 This repository is a source distribution, not a signed installer. The application code is MIT licensed; dependency and dataset terms are listed in [NOTICE](NOTICE.md).

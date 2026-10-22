@@ -36,6 +36,8 @@ jobs:
       - name: Python and evaluation checks
         shell: pwsh
         run: ./.venv/Scripts/python.exe -B scripts/test.py
+      - name: Replay sanitized native demo
+        run: ./.venv/Scripts/python.exe -B scripts/verify_native_demo.py
       - name: Owned native fixture and baseline checks
         shell: pwsh
         run: |
@@ -80,5 +82,8 @@ jobs:
       - name: Continuous collection desktop journey
         working-directory: desktop
         run: pnpm run test:stream
+      - name: Published demo desktop journey
+        working-directory: desktop
+        run: node demo.test.cjs
       - name: Release hygiene
         run: ./.venv/Scripts/python.exe -B scripts/check_release.py

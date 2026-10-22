@@ -36,6 +36,9 @@ def source_files(root=ROOT):
                 continue
             if relative.parts[0] == "verification" and path.suffix != ".py":
                 continue
-            if name.endswith(".case.json") and relative.parts[:2] != ("tests", "fixtures"):
+            if name.endswith(".case.json") and relative.parts[:2] not in (
+                ("tests", "fixtures"),
+                ("demos", "native"),
+            ):
                 continue
             yield path
