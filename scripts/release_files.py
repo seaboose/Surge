@@ -15,7 +15,9 @@ EXCLUDED = {
     "electron",
     "build",
     "build-manifest",
+    "build-asan",
     "captures",
+    "work",
 }
 
 
@@ -25,6 +27,8 @@ def source_files(root=ROOT):
         for name in sorted(files):
             path = Path(folder) / name
             relative = path.relative_to(root)
+            if relative.parts[:2] == ("verification", "qualification"):
+                continue
             if (
                 (
                     path.suffix in {".pyc", ".log", ".zip"}

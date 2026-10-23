@@ -10,6 +10,7 @@ desktop/dist/
 *.log
 verification/electron/
 verification/temporary-test-files/
+verification/qualification/
 verification/*.json
 benchmarks/rt-iot2022/
 dist/
@@ -22,3 +23,5 @@ native/captures/
 *.case.json
 !tests/fixtures/*.case.json
 !demos/native/*.case.json
+
+native/build-asan/

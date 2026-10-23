@@ -27,6 +27,8 @@ let win,
   queue = Promise.resolve(),
   queued = 0;
 const ROOT = path.resolve(__dirname, "..");
+const { CaseLibrary } = require("./case-library.cjs");
+let library;
 function failWorker(message) {
   for (const item of pending.values()) {
     clearTimeout(item.timer);
@@ -124,12 +126,68 @@ function call(method, args) {
   });
 }
 async function execute(method, args) {
+  if (method.startsWith("library_")) {
+    library ||= new CaseLibrary(
+      path.join(app.getPath("userData"), "cases"),
+      call,
+    );
+    if (method === "library_list") return library.list();
+    if (method === "library_save")
+      return library.save(args.name, args.revision);
+    if (method === "library_open") return library.open(args.id);
+    if (method === "library_rename") return library.rename(args.id, args.name);
+    if (method === "library_delete") {
+      const entry = await library.entry(args.id);
+      const answer = await dialog.showMessageBox(win, {
+        type: "question",
+        title: "Delete saved case?",
+        message: `Delete “${entry.meta.name}” from the library?`,
+        detail:
+          "This removes only this saved case. Original evidence, exported files, and the open investigation remain unchanged. This cannot be undone.",
+        buttons: ["Cancel", "Delete case"],
+        defaultId: 0,
+        cancelId: 0,
+        noLink: true,
+      });
+      if (answer.response !== 1) return { canceled: true };
+      return library.delete(args.id);
+    }
+    if (method === "library_import") {
+      const selected = await dialog.showOpenDialog(win, {
+        title: "Import case into library",
+        filters: [{ name: "Evidence case", extensions: ["json"] }],
+        properties: ["openFile"],
+      });
+      if (selected.canceled || selected.filePaths.length !== 1)
+        return { canceled: true };
+      const source = selected.filePaths[0];
+      return library.import(
+        source,
+        path
+          .basename(source)
+          .replace(/(?:\.case)?\.json$/i, "")
+          .slice(0, 100) || "Imported case",
+      );
+    }
+    if (method === "library_export") {
+      await library.entry(args.id);
+      const selected = await dialog.showSaveDialog(win, {
+        title: "Export portable case to a new file",
+        defaultPath: "investigation.case.json",
+      });
+      if (selected.canceled || !selected.filePath) return { canceled: true };
+      return library.export(args.id, selected.filePath);
+    }
+  }
   const files = {
     import: [
       "Choose data",
       [{ name: "Data", extensions: ["csv", "json", "jsonl", "ndjson"] }],
     ],
-    open: ["Open case", [{ name: "Evidence case", extensions: ["json"] }]],
+    open: [
+      "Open saved case",
+      [{ name: "Evidence case", extensions: ["json"] }],
+    ],
     compare: [
       "Compare case",
       [{ name: "Evidence case", extensions: ["json"] }],

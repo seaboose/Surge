@@ -29,7 +29,7 @@ let app;
   page.setDefaultTimeout(15000);
   const errors = [];
   page.on("pageerror", (error) => errors.push(error.message));
-  await page.getByRole("button", { name: "Our app", exact: true }).click();
+  await page.getByRole("button", { name: "Try Demo", exact: true }).waitFor();
   const call = (method, args = {}) =>
     page.evaluate(
       async ({ method, args }) => {
@@ -51,7 +51,12 @@ let app;
       },
       path.join(folder, spec.file),
     );
-    await page.getByRole("button", { name: "Open case", exact: true }).click();
+    await page
+      .getByRole("button", { name: "Case library", exact: true })
+      .click();
+    await page
+      .getByRole("button", { name: "Open case file", exact: true })
+      .click();
     await page.waitForFunction(
       () => document.querySelector(".app")?.dataset.working === "false",
     );
@@ -87,8 +92,10 @@ let app;
     .locator(".evidence")
     .getByText(/2\/2 ranges read/)
     .waitFor();
-  await page.getByText("Our app · Ready", { exact: true }).waitFor();
-  assert.equal(await page.locator("h1,h2,h3").count(), 0);
+  await page.getByRole("button", { name: "Data", exact: true }).click();
+  await page.getByRole("button", { name: "Try Demo", exact: true }).click();
+  await page.getByRole("button", { name: "Results", exact: true }).click();
+  await page.getByText("Demo app · Ready", { exact: true }).waitFor();
   await page.screenshot({
     path: process.argv.includes("--screenshot")
       ? path.join(root, "docs/native-investigation.png")

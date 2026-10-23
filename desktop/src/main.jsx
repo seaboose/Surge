@@ -10,11 +10,24 @@ import React, {
 import { createRoot } from "react-dom/client";
 
 const Context = createContext(null);
-const VIEWS = ["Data", "Findings", "Compare", "Evaluate", "Details"];
+const VIEWS = ["Data", "Results", "Compare", "Evaluate", "Details"];
+const VIEW_LABELS = { Details: "Case details" };
+const VIEW_HELP = {
+  Data: "Import evidence and configure analysis",
+  Results: "Review conclusions and inspect supporting records",
+  Compare: "Compare the current investigation with a saved case",
+  Evaluate: "Measure detection performance with independent labels",
+  Details: "Inspect source fingerprints, settings and provenance",
+};
 async function request(method, args = {}) {
   const reply = await window.surge.request(method, args);
   if (!reply.ok) throw new Error(reply.error);
   return reply.value;
+}
+function suggestedCopyName(name) {
+  const characters = Array.from(name);
+  while (characters.join("").length > 93) characters.pop();
+  return `${characters.join("").trimEnd()} — copy`;
 }
 function useData(method, args, enabled = true, refresh = 0) {
   const [result, setResult] = useState(null),
@@ -61,6 +74,48 @@ const Button = ({ children, ...props }) => (
     {children}
   </button>
 );
+function ExportOptions({ items }) {
+  const host = useRef();
+  useEffect(() => {
+    const dismiss = (event) => {
+      if (host.current?.open && !host.current.contains(event.target))
+        host.current.open = false;
+    };
+    document.addEventListener("pointerdown", dismiss);
+    return () => document.removeEventListener("pointerdown", dismiss);
+  }, []);
+  return (
+    <details
+      ref={host}
+      className="export-options"
+      onKeyDown={(event) => {
+        if (event.key === "Escape") {
+          event.preventDefault();
+          host.current.open = false;
+          host.current.querySelector("summary").focus();
+        }
+      }}
+    >
+      <summary>Export…</summary>
+      <div>
+        {items.map((item) => (
+          <div key={item.label}>
+            <Button
+              disabled={item.disabled}
+              onClick={() => {
+                host.current.open = false;
+                item.run();
+              }}
+            >
+              {item.label}
+            </Button>
+            <small>{item.description}</small>
+          </div>
+        ))}
+      </div>
+    </details>
+  );
+}
 function rowKey(event, items, row, select) {
   if (["Enter", " "].includes(event.key)) {
     event.preventDefault();
@@ -337,13 +392,70 @@ function Split({ left, right, name }) {
     </div>
   );
 }
+function SnapshotStatus({ snapshot, capture, hasEvidence }) {
+  const sameSession =
+    !!snapshot?.session_id && snapshot.session_id === capture?.session_id;
+  const newer =
+    sameSession &&
+    Number.isInteger(capture?.final_sequence) &&
+    Number.isInteger(snapshot.final_sequence) &&
+    capture.final_sequence > snapshot.final_sequence;
+  let relation = "";
+  if (snapshot && capture?.error)
+    relation = "Live status needs attention; the viewed snapshot is unchanged.";
+  else if (snapshot?.session_id && capture?.session_id && !sameSession)
+    relation =
+      "Snapshot is from an earlier collection. Inspect snapshot to view this collection.";
+  else if (snapshot && capture?.state === "running" && !capture.session_id)
+    relation = "Collection is starting; the viewed snapshot is unchanged.";
+  else if (snapshot?.final_sequence === null && capture?.records > 0)
+    relation =
+      "Collection has observations available. Inspect snapshot to view them.";
+  else if (newer)
+    relation =
+      "Newer samples available. Inspect snapshot to update the viewed evidence.";
+  else if (snapshot && sameSession)
+    relation =
+      "The viewed snapshot is fixed; collection never updates it automatically.";
+  return (
+    <div className="snapshot-status" aria-label="Viewed evidence">
+      {snapshot ? (
+        <>
+          <strong>
+            Viewing snapshot
+            {snapshot.final_sequence === null
+              ? " · no observations available"
+              : ` · through sample ${snapshot.final_sequence}`}
+          </strong>
+          <span>
+            {snapshot.samples} retained samples · {snapshot.records} observation
+            records
+            {snapshot.captured_at
+              ? ` · Last observation: ${snapshot.captured_at}`
+              : ""}
+          </span>
+          <span>{relation}</span>
+        </>
+      ) : (
+        <span>
+          {hasEvidence
+            ? "Viewing imported evidence. Collection is separate until you inspect a snapshot or stop collection."
+            : "No snapshot inspected yet. Start collection, then inspect a snapshot."}
+        </span>
+      )}
+    </div>
+  );
+}
 function App() {
   const pending = useRef(false);
   const [working, setWorking] = useState(false);
   const [mappingUndo, setMappingUndo] = useState(null);
   const [capture, setCapture] = useState(null);
   const [captureVisible, setCaptureVisible] = useState(false);
-  const [captureBuild, setCaptureBuild] = useState("v1");
+  const [libraryVisible, setLibraryVisible] = useState(false);
+  const [saveVisible, setSaveVisible] = useState(false);
+  const [savedNotice, setSavedNotice] = useState(null);
+  const [openedCase, setOpenedCase] = useState(null);
   const captureEpoch = useRef(0);
   const [state, setState] = useState(null),
     [busy, setBusy] = useState(false),
@@ -358,7 +470,7 @@ function App() {
           setCapture(v.capture);
           setCaptureVisible(true);
         }
-        setStatus("Import data or open a case.");
+        setStatus("Import evidence or open a case.");
       })
       .catch((e) => setError(e.message));
   }, []);
@@ -390,6 +502,11 @@ function App() {
     };
   }, [capture?.state]);
   async function run(method, args = {}, after, restoring = false) {
+    if (method === "save") {
+      setSaveVisible(true);
+      return;
+    }
+    if (method === "export_case") method = "save";
     if (pending.current) {
       setStatus("An action is still running. Try again when it finishes.");
       return;
@@ -398,16 +515,18 @@ function App() {
     setWorking(true);
     // Reading and exporting do not replace the workspace. Keep investigation
     // controls available, while serializing commands that may change state.
-    const reading = [
-      "copy",
-      "save",
-      "alerts",
-      "policy_save",
-      "labels_template",
-      "evaluation_save",
-      "native_start",
-      "native_export",
-    ].includes(method);
+    const reading =
+      (method.startsWith("library_") && method !== "library_open") ||
+      [
+        "copy",
+        "save",
+        "alerts",
+        "policy_save",
+        "labels_template",
+        "evaluation_save",
+        "native_start",
+        "native_export",
+      ].includes(method);
     setBusy(!reading);
     setStatus(
       {
@@ -433,7 +552,8 @@ function App() {
         method !== "import" &&
         method !== "open" &&
         method !== "state" &&
-        !method.startsWith("native_")
+        !method.startsWith("native_") &&
+        !(method.startsWith("library_") && method !== "library_save")
           ? { revision: state.revision }
           : {}),
         ...args,
@@ -447,6 +567,18 @@ function App() {
         setCapture(v.capture);
       }
       if (v.protocol) {
+        setSavedNotice(null);
+        if (["open", "library_open"].includes(method)) {
+          setOpenedCase(v.library_case || { name: v.case_file.name });
+          setCaptureVisible(false);
+        } else if (
+          (method === "import" && args.role !== "reference") ||
+          ["native_snapshot", "native_stop"].includes(method)
+        ) {
+          setOpenedCase(null);
+        } else if (v.case_file?.modified) {
+          setOpenedCase((old) => old && { ...old, modified: true });
+        }
         if (method === "configure") {
           if (restoring) setMappingUndo(null);
           else if (
@@ -461,6 +593,7 @@ function App() {
           [
             "import",
             "open",
+            "library_open",
             "policy_load",
             "native_snapshot",
             "native_stop",
@@ -471,21 +604,35 @@ function App() {
         setState(v);
         setStatus(
           v.summary
-            ? "Findings linked to original evidence."
+            ? "Results linked to original evidence."
             : "Check the mappings, then Analyze.",
         );
       } else {
         setStatus(v.message || "Complete.");
+        if (method === "library_rename") {
+          const rename = (old) =>
+            old?.id === args.id ? { ...old, name: args.name.trim() } : old;
+          setOpenedCase(rename);
+          setSavedNotice(rename);
+        }
+        if (method === "library_delete") {
+          // Keep the loaded snapshot's provenance, but detach library membership.
+          setOpenedCase((old) =>
+            old?.id === args.id ? { ...old, id: undefined } : old,
+          );
+          setSavedNotice((old) => (old?.id === args.id ? null : old));
+        }
         if (v.case_file)
           setState((old) => ({ ...old, case_file: v.case_file }));
       }
-      if (["open", "analyze"].includes(method)) setPage("Findings");
+      if (["open", "library_open", "analyze"].includes(method))
+        setPage("Results");
+      if (method === "native_start") setSavedNotice(null);
       if (["native_snapshot", "native_stop"].includes(method) && v.summary)
-        setPage("Findings");
+        setPage("Results");
       if (["import", "policy_load", "configure"].includes(method))
         setPage("Data");
-      if (restoring)
-        setStatus("Mapping restored. Analyze to refresh findings.");
+      if (restoring) setStatus("Mapping restored. Analyze to refresh results.");
       after?.(v);
     } catch (e) {
       setError(e.message);
@@ -514,7 +661,7 @@ function App() {
         }
         if (e.key.toLowerCase() === "f" && state?.summary) {
           e.preventDefault();
-          setPage("Findings");
+          setPage("Results");
           requestAnimationFrame(() =>
             document.querySelector('[aria-label="Search records"]')?.focus(),
           );
@@ -538,7 +685,52 @@ function App() {
     return () => document.removeEventListener("keydown", shortcut);
   }, [state, busy]);
   const setupPosition = useRef({ top: 0, focus: null });
+  const inspectedCurrentCapture =
+    !!state?.inspected_capture &&
+    state.inspected_capture.session_id === capture?.session_id;
+  const finalSnapshotOpen =
+    inspectedCurrentCapture &&
+    capture?.state === "stopped" &&
+    state.inspected_capture.capture_state === "stopped" &&
+    state.inspected_capture.final_sequence === capture.final_sequence;
+  const captureReadiness = capture?.error
+    ? "Collection needs attention. Review the reported issue."
+    : capture?.samples > 0 && capture?.records > 0
+      ? "Observations available—you can inspect now."
+      : "Waiting for the first sample. You can stop collection at any time.";
+  const footerText =
+    working ||
+    error ||
+    /^(Canceled|Operation failed|An action is still running)/.test(status)
+      ? status
+      : openedCase
+        ? openedCase.modified
+          ? "Working from a saved case · the saved copy is unchanged."
+          : "Ready."
+        : captureVisible
+          ? savedNotice?.revision === state?.revision
+            ? "Ready."
+            : capture?.state === "failed"
+              ? "Collection failed · review the reported error."
+              : capture?.state === "running"
+                ? capture?.error
+                  ? "Collection needs attention."
+                  : "Collecting."
+                : capture?.has_evidence
+                  ? "Collection stopped."
+                  : "Demo ready."
+          : status;
   const ctx = {
+    saveActionLabel: openedCase
+      ? openedCase.modified
+        ? "Save as new case"
+        : "Save a copy"
+      : savedNotice?.revision === state?.revision
+        ? "Save a copy"
+        : "Save case",
+    savedInLibrary:
+      (!openedCase?.modified && !!openedCase?.id) ||
+      (savedNotice && savedNotice.revision === state?.revision),
     state,
     run,
     busy,
@@ -547,6 +739,11 @@ function App() {
     setupPosition,
     mappingUndo,
     showCapture: () => setCaptureVisible(true),
+    showLibrary: () => setLibraryVisible(true),
+    capture,
+    captureVisible,
+    working,
+    demoReadyToSave: !savedNotice && !!state?.summary && finalSnapshotOpen,
   };
   if (!state)
     return (
@@ -559,66 +756,245 @@ function App() {
       <div className={`app ${busy ? "busy" : ""}`} data-working={working}>
         {state.current && (
           <nav aria-label="Views">
+            <Button disabled={working} onClick={() => setLibraryVisible(true)}>
+              Case library
+            </Button>
             {VIEWS.map((p, index) => (
               <Button
                 key={p}
-                title={`${p} (Alt+${index + 1})`}
+                title={`${VIEW_HELP[p]} (Alt+${index + 1})${p !== "Data" && !state.summary ? " · Analyze evidence first" : ""}`}
                 aria-keyshortcuts={`Alt+${index + 1}`}
                 aria-current={p === page ? "page" : undefined}
                 className={p === page ? "active" : ""}
                 disabled={busy || (p !== "Data" && !state.summary)}
                 onClick={() => setPage(p)}
               >
-                {p}
+                {VIEW_LABELS[p] || p}
               </Button>
             ))}
           </nav>
         )}
-        <main className={captureVisible ? "with-capture" : undefined}>
+        <main
+          className={
+            captureVisible ||
+            openedCase ||
+            savedNotice?.revision === state.revision
+              ? "with-capture"
+              : undefined
+          }
+        >
+          {openedCase && (
+            <section className="saved-case-context" aria-label="Saved case">
+              <strong>
+                {openedCase.modified
+                  ? "Working from saved case"
+                  : "Viewing saved case"}
+                : {openedCase.name}
+              </strong>
+              {(openedCase.modified || state.case_file?.modified) && (
+                <span>
+                  Workspace settings have changed. The saved copy is unchanged.
+                </span>
+              )}
+              {!state.saved_result && !openedCase.modified && (
+                <span>Saved evidence only · no live check.</span>
+              )}
+              {state.saved_result && (
+                <div
+                  className="saved-observations"
+                  role="region"
+                  aria-label="Saved observations"
+                >
+                  <strong>
+                    {state.saved_result.expected
+                      ? `Saved observations: all ${state.saved_result.ranges} configured ranges matched the recorded approved baseline.`
+                      : `Saved observations: expected match not established · ${state.saved_result.review} need review · ${state.saved_result.unknown} unknown.`}
+                  </strong>
+                  <span>
+                    Saved evidence only · recorded build and configured ranges ·
+                    no live check.
+                  </span>
+                </div>
+              )}
+              {capture?.state === "running" && (
+                <div className="actions">
+                  <span>
+                    {capture.state === "running"
+                      ? "Live demo capture is running separately."
+                      : "The previous demo capture is separate from this case."}
+                  </span>
+                  {!captureVisible && (
+                    <Button
+                      disabled={working}
+                      onClick={() => setCaptureVisible(true)}
+                    >
+                      View demo capture
+                    </Button>
+                  )}
+                </div>
+              )}
+              {capture && capture.state !== "running" && !captureVisible && (
+                <details>
+                  <summary>Previous demo capture</summary>
+                  <p>This stopped capture is separate from the saved case.</p>
+                  <Button
+                    disabled={working}
+                    onClick={() => setCaptureVisible(true)}
+                  >
+                    View demo capture
+                  </Button>
+                </details>
+              )}
+            </section>
+          )}
+          {savedNotice?.revision === state.revision && (
+            <div
+              className="saved-confirmation"
+              role="region"
+              aria-label="Case saved"
+            >
+              <span role="status">
+                Saved “{savedNotice.name}” to Case library.
+              </span>
+              <small>
+                Your case is already saved. Reopening it is optional.
+              </small>
+              <Button
+                className="primary"
+                disabled={working}
+                onClick={() => run("library_open", { id: savedNotice.id })}
+              >
+                Open saved case
+              </Button>
+              <Button
+                disabled={working}
+                onClick={() => setLibraryVisible(true)}
+              >
+                Open library
+              </Button>
+            </div>
+          )}
           {captureVisible && (
             <section
               className="capture-controls"
-              aria-label="Our app collection"
+              aria-label="Demo app collection"
             >
               <div className="actions">
-                <Select
-                  label="Build"
-                  value={captureBuild}
-                  onChange={setCaptureBuild}
-                  disabled={working || capture?.state === "running"}
-                  options={[
-                    { value: "v1", label: "v1" },
-                    { value: "v2", label: "v2" },
-                  ]}
-                />
                 <Button
                   disabled={working || capture?.state === "running"}
-                  onClick={() => run("native_start", { build: captureBuild })}
+                  onClick={() => setCaptureVisible(false)}
+                  title={
+                    capture?.state === "running"
+                      ? "Stop collection before leaving the demo"
+                      : state.current
+                        ? "Hide controls and keep the investigation open"
+                        : "Return to the opening screen"
+                  }
                 >
-                  Start
+                  {state.current ? "Hide demo controls" : "Back to start"}
+                </Button>
+                <h2>Try Demo</h2>
+              </div>
+              {!state.inspected_capture && (
+                <p>
+                  The sample app runs separately by design, giving Surge a real
+                  process to observe.
+                </p>
+              )}
+              <p className="demo-next" role="status">
+                {openedCase
+                  ? "Saved case remains open below. Inspect snapshot or Stop collection will replace it with captured evidence; the saved copy stays unchanged."
+                  : savedNotice?.revision === state.revision
+                    ? "You can continue reviewing or start another capture."
+                    : capture?.state === "running"
+                      ? state.inspected_capture?.session_id ===
+                        capture.session_id
+                        ? "Review the snapshot below. Choose Stop collection for the final snapshot, then save the case."
+                        : captureReadiness
+                      : capture?.has_evidence
+                        ? finalSnapshotOpen
+                          ? "Collection stopped. The final snapshot is open and ready to save."
+                          : "Inspect the available evidence before saving a case."
+                        : "Start collection to observe the included sample app."}
+              </p>
+              {capture?.state === "running" &&
+                !inspectedCurrentCapture &&
+                !openedCase && (
+                  <small>
+                    Inspect while collecting, or stop to review the final
+                    snapshot.
+                  </small>
+                )}
+              <div className="actions">
+                <Button
+                  className={
+                    (!state.current || page !== "Data") &&
+                    !(
+                      state.inspected_capture?.session_id ===
+                        capture?.session_id &&
+                      state.summary &&
+                      capture?.state === "stopped"
+                    ) &&
+                    capture?.state !== "running"
+                      ? "primary"
+                      : undefined
+                  }
+                  disabled={working || capture?.state === "running"}
+                  onClick={() => run("native_start", { build: "v2" })}
+                >
+                  {capture ? "Start another capture" : "Start collection"}
                 </Button>
                 <Button
-                  disabled={working || !capture?.has_evidence}
+                  className={
+                    (!state.current || page !== "Data") &&
+                    capture?.has_evidence &&
+                    !finalSnapshotOpen &&
+                    (!inspectedCurrentCapture || capture?.state !== "running")
+                      ? "primary"
+                      : undefined
+                  }
+                  disabled={
+                    working || !capture?.has_evidence || finalSnapshotOpen
+                  }
+                  title={
+                    finalSnapshotOpen
+                      ? "The final captured evidence is already open"
+                      : undefined
+                  }
                   onClick={() => run("native_snapshot")}
                 >
-                  Inspect
+                  {inspectedCurrentCapture && capture?.state === "running"
+                    ? "Inspect newer snapshot"
+                    : "Inspect snapshot"}
                 </Button>
                 <Button
+                  className={
+                    inspectedCurrentCapture && capture?.state === "running"
+                      ? "primary"
+                      : undefined
+                  }
                   disabled={working || capture?.state !== "running"}
                   onClick={() => run("native_stop")}
                 >
-                  Stop
+                  Stop collection
                 </Button>
-                <Button
-                  disabled={working || !capture?.has_evidence}
-                  onClick={() => run("native_export")}
-                >
-                  Export
-                </Button>
+                {!state.summary && (
+                  <ExportOptions
+                    items={[
+                      {
+                        label: "Export captured records",
+                        disabled: working || !capture?.has_evidence,
+                        run: () => run("native_export"),
+                        description:
+                          "Save the retained collection window as JSONL, without an investigation.",
+                      },
+                    ]}
+                  />
+                )}
               </div>
               <div className="capture-status">
                 <span role="status">
-                  Our app ·{" "}
+                  Demo app ·{" "}
                   {capture?.state === "running"
                     ? "Collecting"
                     : capture?.state === "failed"
@@ -629,72 +1005,182 @@ function App() {
                 </span>
                 {capture && (
                   <span>
-                    {capture.build} · {capture.records.toLocaleString()} records
-                    · {(capture.elapsed_ms / 1000).toFixed(1)} s elapsed ·{" "}
-                    {capture.dropped_samples.toLocaleString()} missing samples
-                    {capture.evicted_samples > 0 &&
-                      ` · ${capture.evicted_samples.toLocaleString()} earlier samples removed`}
+                    {capture.samples.toLocaleString()} samples ·{" "}
+                    {capture.records.toLocaleString()} retained records
                   </span>
                 )}
               </div>
-              <small>
-                {capture?.error ||
-                  (capture?.state === "running"
-                    ? "Inspect opens a stable snapshot while collection continues. Only configured code ranges are checked."
-                    : capture?.records
-                      ? "Inspect or export the captured records. Only configured code ranges were checked."
-                      : capture
-                        ? "No observations captured. Existing evidence is unchanged."
-                        : "Start our app to collect evidence. Only configured code ranges are checked.")}
-              </small>
-              <small>
-                Keeps the latest {capture?.limit_samples || 500} samples · Stops
-                after 10 minutes
-              </small>
+              {capture?.error && <p role="alert">{capture.error}</p>}
+              {state.demo_result && (
+                <div
+                  className="snapshot-status"
+                  role="region"
+                  aria-label="Demo snapshot result"
+                >
+                  <strong>
+                    {state.demo_result.expected
+                      ? `Expected demo result: all ${state.demo_result.ranges} configured ranges match the approved baseline.`
+                      : `Expected match not established: ${state.demo_result.review} need review · ${state.demo_result.unknown} unknown. Inspect the observations below.`}
+                  </strong>
+                  <span>
+                    Inspected snapshot only ·{" "}
+                    {state.inspected_capture?.session_id !== capture?.session_id
+                      ? "from an earlier collection"
+                      : "normal observations are included"}
+                  </span>
+                </div>
+              )}
+              <details className="demo-guide">
+                <summary>About this demo and its results</summary>
+                {state.inspected_capture && (
+                  <p>
+                    The sample app runs separately by design, giving Surge a
+                    real process to observe.
+                  </p>
+                )}
+                <p>
+                  Start collection gathers fresh observations. Inspect snapshot
+                  analyzes a fixed set while collection continues. Stop
+                  collection opens the final snapshot, ready to save; no second
+                  inspection is needed.
+                </p>
+                <p>
+                  No finding means no issue was detected in the checked
+                  evidence. Review flags a change or another rule match, such as
+                  an unapproved build. Unknown means evidence is missing or
+                  incomplete.
+                </p>
+                <p>
+                  For the unchanged, approved sample, No finding is the expected
+                  result. Only configured code ranges are checked; this does not
+                  prove the whole app is safe or that a flagged observation is
+                  malicious.
+                </p>
+                <p>
+                  Save case keeps the inspected evidence, settings, and results
+                  in your library. Export captured records saves the collection
+                  window as JSONL.
+                </p>
+              </details>
+              <details className="demo-collection-details">
+                <summary>Collection details</summary>
+                <SnapshotStatus
+                  snapshot={state.inspected_capture}
+                  capture={capture}
+                  hasEvidence={!!state.current}
+                />
+                {capture && (
+                  <p>
+                    {(capture.elapsed_ms / 1000).toFixed(1)} s elapsed ·{" "}
+                    {capture.dropped_samples.toLocaleString()} missing samples ·{" "}
+                    {capture.evicted_samples.toLocaleString()} earlier samples
+                    removed
+                  </p>
+                )}
+                <small>
+                  Retains up to {capture?.limit_samples || 500} samples, subject
+                  to the evidence size limit · Stops after 10 minutes
+                </small>
+              </details>
             </section>
           )}
-          {!state.current ? (
-            <div className="empty">
-              <div className="empty-orbit" aria-hidden="true" />
-              <div className="actions">
+          {!state.current && !captureVisible ? (
+            <section className="surge-opening" aria-label="Welcome to Surge">
+              <div className="opening-identity">
+                <h1>Surge</h1>
+                <p>
+                  A security investigation tool for analyzing telemetry,
+                  reviewing code-integrity observations, and preserving
+                  evidence.
+                </p>
+                <svg
+                  className="signal-art"
+                  viewBox="0 0 460 460"
+                  aria-hidden="true"
+                >
+                  <g fill="none" stroke="currentColor">
+                    <circle cx="230" cy="230" r="176" opacity=".2" />
+                    <circle
+                      cx="230"
+                      cy="230"
+                      r="138"
+                      opacity=".32"
+                      strokeDasharray="2 12"
+                    />
+                    <path
+                      d="M230 30v45m0 310v45M30 230h45m310 0h45"
+                      opacity=".5"
+                    />
+                    <path
+                      d="M54 230h78l28-45 34 86 39-111 30 70h143"
+                      strokeWidth="3"
+                    />
+                    <circle
+                      cx="230"
+                      cy="230"
+                      r="201"
+                      opacity=".18"
+                      strokeDasharray="60 24 4 24"
+                    />
+                  </g>
+                </svg>
+              </div>
+              <div className="opening-actions">
                 <Button
-                  className="primary"
+                  aria-label="Import evidence"
+                  className="opening-action"
                   disabled={busy}
                   onClick={() => run("import", { role: "current" })}
                 >
-                  Import data
+                  <span className="opening-icon" aria-hidden="true">
+                    ↓
+                  </span>
+                  <strong>Import evidence</strong>
+                  <span>Start an investigation from a local data file.</span>
+                  <span>(CSV, JSON, JSONL, NDJSON)</span>
+                  <b aria-hidden="true">→</b>
                 </Button>
-                <Button disabled={busy} onClick={() => run("open")}>
-                  Open case
+                <Button
+                  aria-label="Case library"
+                  className="opening-action"
+                  disabled={busy}
+                  onClick={() => setLibraryVisible(true)}
+                >
+                  <span className="opening-icon" aria-hidden="true">
+                    ▱
+                  </span>
+                  <strong>Case library</strong>
+                  <span>Browse, reopen, and manage saved investigations.</span>
+                  <b aria-hidden="true">→</b>
                 </Button>
-                {!captureVisible && (
-                  <Button
-                    disabled={busy}
-                    onClick={() => setCaptureVisible(true)}
-                  >
-                    Our app
-                  </Button>
-                )}
+                <Button
+                  aria-label="Try Demo"
+                  className="opening-action"
+                  disabled={busy || captureVisible}
+                  onClick={() => setCaptureVisible(true)}
+                >
+                  <span className="opening-icon" aria-hidden="true">
+                    ▷
+                  </span>
+                  <strong>Try Demo</strong>
+                  <span>
+                    See live capture in action: run the included sample app,
+                    collect its code-range observations in Surge, and inspect
+                    the results.
+                  </span>
+                  <b aria-hidden="true">→</b>
+                </Button>
               </div>
-              <p>Choose your data. Follow the evidence.</p>
-              <small>
-                CSV · JSON · JSONL · NDJSON
-                <br />
-                Local analysis · No uploads
-              </small>
-            </div>
-          ) : (
+            </section>
+          ) : state.current ? (
             <fieldset disabled={busy} className="workspace">
               <div className="view" hidden={page !== "Data"}>
                 <DataView key={state.revision} active={page === "Data"} />
               </div>
               {state.summary && (
                 <>
-                  <div className="view" hidden={page !== "Findings"}>
-                    <Findings
-                      key={state.revision}
-                      active={page === "Findings"}
-                    />
+                  <div className="view" hidden={page !== "Results"}>
+                    <Results key={state.revision} active={page === "Results"} />
                   </div>
                   <div className="view" hidden={page !== "Compare"}>
                     <Compare key={state.revision} active={page === "Compare"} />
@@ -711,12 +1197,48 @@ function App() {
                 </>
               )}
             </fieldset>
-          )}
+          ) : null}
         </main>
         <footer role="status">
           <span className="status-light" aria-hidden="true" />
-          {status}
+          {footerText}
         </footer>
+        {libraryVisible && (
+          <CaseLibraryDialog
+            run={run}
+            working={working}
+            close={() => setLibraryVisible(false)}
+          />
+        )}
+        {saveVisible && (
+          <CaseNameDialog
+            label={
+              ctx.saveActionLabel === "Save case"
+                ? "Save case to library"
+                : ctx.saveActionLabel
+            }
+            initialName={
+              openedCase?.name || savedNotice?.revision === state.revision
+                ? suggestedCopyName(openedCase?.name || savedNotice.name)
+                : state.inspected_capture
+                  ? `Demo investigation — ${new Date().toLocaleDateString(undefined, { month: "short", day: "numeric", year: "numeric" })}`
+                  : ""
+            }
+            collecting={capture?.state === "running"}
+            working={working}
+            close={() => setSaveVisible(false)}
+            apply={(name) =>
+              run("library_save", { name }, (value) => {
+                setSaveVisible(false);
+                setSavedNotice({
+                  id: value.entry.id,
+                  name: value.entry.name,
+                  revision: state.revision,
+                });
+              })
+            }
+          />
+        )}
         {error && (
           <Modal close={() => setError("")} label="Check input">
             <pre className="error-message">{error}</pre>
@@ -726,6 +1248,185 @@ function App() {
     </Context.Provider>
   );
 }
+function CaseNameDialog({
+  label,
+  close,
+  apply,
+  working,
+  initialName = "",
+  collecting = false,
+}) {
+  const [name, setName] = useState(initialName);
+  return (
+    <Modal label={label} close={close}>
+      <h2>{label}</h2>
+      <p>
+        Save a new snapshot of the inspected evidence, settings, and results.
+        Existing cases stay unchanged.
+      </p>
+      {collecting && (
+        <p>
+          Collection is still running. This saves only the snapshot you are
+          viewing, not newer observations.
+        </p>
+      )}
+      <form
+        onSubmit={(e) => {
+          e.preventDefault();
+          if (name.trim() && !working) apply(name);
+        }}
+      >
+        <label className="control">
+          Case name
+          <input
+            autoFocus
+            maxLength={100}
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            required
+          />
+        </label>
+        <div className="actions">
+          <Button
+            className="primary"
+            disabled={working || !name.trim()}
+            onClick={() => apply(name)}
+          >
+            Save to library
+          </Button>
+        </div>
+      </form>
+    </Modal>
+  );
+}
+function CaseLibraryDialog({ run, working, close }) {
+  const [refresh, setRefresh] = useState(0),
+    [editing, setEditing] = useState(null),
+    [name, setName] = useState("");
+  const [data, error] = useData("library_list", {}, true, refresh);
+  const reload = () => setRefresh((n) => n + 1);
+  return (
+    <Modal label="Case library" close={close}>
+      <h2>Case library</h2>
+      <p>
+        Saved locally on this computer. Each case contains its evidence,
+        settings, and results.
+      </p>
+      <div className="actions">
+        <Button
+          disabled={working}
+          onClick={() => run("library_import", {}, reload)}
+        >
+          Import case
+        </Button>
+        <Button disabled={working} onClick={() => run("open", {}, close)}>
+          Open case file
+        </Button>
+      </div>
+      <small>
+        Import keeps a library copy. Open case file inspects an external case
+        without adding it.
+      </small>
+      {error && <p role="alert">{error}</p>}
+      {!data && !error && <p>Loading cases…</p>}
+      {data?.unavailable > 0 && (
+        <p role="alert">
+          {data.unavailable} unavailable entries could not be read. Their files
+          were left unchanged.
+        </p>
+      )}
+      {data && !data.entries.length && (
+        <p>
+          No saved cases yet. Analyze evidence and choose Save case, or import a
+          portable case.
+        </p>
+      )}
+      <ul className="case-list">
+        {data?.entries.map((entry) => (
+          <li key={entry.id}>
+            <strong>{entry.name}</strong>
+            <small>Saved {new Date(entry.created).toLocaleString()}</small>
+            {editing === entry.id ? (
+              <form
+                onSubmit={(e) => {
+                  e.preventDefault();
+                  if (name.trim() && !working)
+                    run("library_rename", { id: entry.id, name }, () => {
+                      setEditing(null);
+                      reload();
+                    });
+                }}
+              >
+                <label className="control">
+                  New case name
+                  <input
+                    autoFocus
+                    maxLength={100}
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
+                    required
+                  />
+                </label>
+                <div className="actions">
+                  <Button
+                    disabled={working || !name.trim()}
+                    onClick={() =>
+                      run("library_rename", { id: entry.id, name }, () => {
+                        setEditing(null);
+                        reload();
+                      })
+                    }
+                  >
+                    Save name
+                  </Button>
+                  <Button disabled={working} onClick={() => setEditing(null)}>
+                    Cancel rename
+                  </Button>
+                </div>
+              </form>
+            ) : (
+              <div className="actions">
+                <Button
+                  disabled={working}
+                  onClick={() => run("library_open", { id: entry.id }, close)}
+                >
+                  Open case
+                </Button>
+                <Button
+                  disabled={working}
+                  onClick={() => {
+                    setEditing(entry.id);
+                    setName(entry.name);
+                  }}
+                >
+                  Rename
+                </Button>
+                <Button
+                  disabled={working}
+                  onClick={() => run("library_export", { id: entry.id })}
+                >
+                  Export case
+                </Button>
+                <Button
+                  disabled={working}
+                  onClick={() =>
+                    run("library_delete", { id: entry.id }, reload)
+                  }
+                >
+                  Delete case
+                </Button>
+              </div>
+            )}
+          </li>
+        ))}
+      </ul>
+      <small>
+        Deleting a saved case preserves original evidence, exported files, and
+        your open investigation.
+      </small>
+    </Modal>
+  );
+}
 function DataView({ active }) {
   const {
     state: s,
@@ -733,6 +1434,7 @@ function DataView({ active }) {
     setupPosition,
     mappingUndo,
     showCapture,
+    showLibrary,
   } = useContext(Context);
   const [optionsOpen, setOptionsOpen] = useState(
     () =>
@@ -812,10 +1514,9 @@ function DataView({ active }) {
       >
         <div className="actions">
           <Button onClick={() => run("import", { role: "current" })}>
-            Import data
+            Import evidence
           </Button>
-          <Button onClick={() => run("open")}>Open case</Button>
-          <Button onClick={showCapture}>Our app</Button>
+          <Button onClick={showCapture}>Try Demo</Button>
         </div>
         {mappingUndo && (
           <Button
@@ -1439,11 +2140,25 @@ function RecordInspector({ source, row, note, warning, step, visible }) {
     </section>
   );
 }
-function Findings({ active }) {
-  const { state: s, run, setError } = useContext(Context);
+function Results({ active }) {
+  const {
+    state: s,
+    run,
+    setError,
+    capture,
+    captureVisible,
+    working,
+    demoReadyToSave,
+    saveActionLabel,
+    savedInLibrary,
+  } = useContext(Context);
   const [query, setQuery] = useState(""),
     [minimum, setMinimum] = useState("All"),
-    [hide, setHide] = useState(true);
+    [hide, setHide] = useState(
+      () =>
+        !s.inspected_capture &&
+        !(s.case_file && s.summary.Review === 0 && s.summary.Unknown === 0),
+    );
   const [page, setPage] = useState(0),
     [row, setRow] = useState(null),
     [reveal, setReveal] = useState(null);
@@ -1494,11 +2209,59 @@ function Findings({ active }) {
   }
   const left = (
     <div className="column full">
+      {savedInLibrary && <small>Saved in library</small>}
+      {s.observation_counts && (
+        <div role="region" aria-label="Observation counts">
+          <small>
+            Viewed evidence: {s.observation_counts.samples} retained samples ·{" "}
+            {s.observation_counts.observations} range observations
+            {s.observation_counts.notices > 0
+              ? ` · ${s.observation_counts.notices} collection notices`
+              : ""}
+            .
+            {s.observation_counts.ranges_per_sample !== null
+              ? ` Each retained sample contains ${s.observation_counts.ranges_per_sample} range observations.`
+              : " The number of range observations varies by sample."}
+          </small>
+        </div>
+      )}
       <div className="actions">
-        <Button onClick={() => run("save")}>Save case</Button>
-        <Button onClick={() => run("alerts", { minimum })}>
-          Export alerts
+        <Button
+          title="Save the inspected evidence, settings and results"
+          className={demoReadyToSave ? "primary" : undefined}
+          onClick={() => run("save")}
+        >
+          {saveActionLabel}
         </Button>
+        <ExportOptions
+          items={[
+            {
+              label: "Export case file",
+              disabled: working,
+              run: () => run("export_case"),
+              description:
+                "Save a portable copy of the inspected evidence, settings, and results.",
+            },
+            {
+              label: "Export alerts",
+              disabled: working,
+              run: () => run("alerts", { minimum }),
+              description:
+                "Export findings using the selected priority; normal observations are excluded.",
+            },
+            ...(captureVisible
+              ? [
+                  {
+                    label: "Export captured records",
+                    disabled: working || !capture?.has_evidence,
+                    run: () => run("native_export"),
+                    description:
+                      "Export the retained collection window as JSONL. It may be newer than the inspected snapshot.",
+                  },
+                ]
+              : []),
+          ]}
+        />
       </div>
       <div className="actions">
         <input
@@ -1535,24 +2298,42 @@ function Findings({ active }) {
         {data?.total ?? "…"} shown / {s.summary.total} · {s.summary.Review} need
         review · {s.summary.Unknown} unknown
       </small>
-      <small aria-label="Active filters">
-        {[
-          query ? `Search: ${query}` : null,
-          minimum !== "All" ? `Priority: ${minimum}+` : null,
-          hide ? "Findings only" : null,
-        ]
-          .filter(Boolean)
-          .join(" · ") || "All records · no filters"}
-      </small>
-      <small className={data?.hidden_gaps ? "warning" : ""}>
-        {data?.hidden_gaps
-          ? `${data.hidden_gaps} records with gaps hidden by search. Clear to see them.`
-          : "Priority keeps gaps visible."}{" "}
-        Exports use priority.
-      </small>
+      <details className="result-guide">
+        <summary>What the results mean</summary>
+        <p>
+          No finding: no issue detected in checked evidence; this does not prove
+          whole-process integrity. Review: evidence needs investigation.
+          Unknown: evidence is missing or inconclusive.
+        </p>
+        <p>Priority keeps gaps visible. Exports use priority.</p>
+        <p>
+          Search and Findings only filter the displayed records. Clear the
+          filters to show all observations.
+        </p>
+      </details>
+      {(query || minimum !== "All" || hide) && (
+        <small aria-label="Active filters">
+          {[
+            query ? `Search: ${query}` : null,
+            minimum !== "All" ? `Priority: ${minimum}+` : null,
+            hide ? "Findings only" : null,
+          ]
+            .filter(Boolean)
+            .join(" · ") || "All records · no filters"}
+        </small>
+      )}
+      {data?.hidden_gaps > 0 && (
+        <small className="warning">
+          {data.hidden_gaps} records with gaps hidden by search. Clear to see
+          them.
+        </small>
+      )}
       {error && <p role="alert">{error}</p>}
       <div className="scroll grow">
-        <table aria-label="Findings">
+        <table className="results-table" aria-label="Results">
+          {(s.inspected_capture || s.saved_result) && (
+            <caption>Observations</caption>
+          )}
           <thead>
             <tr>
               <th>Record</th>
@@ -1595,10 +2376,25 @@ function Findings({ active }) {
         </table>
       </div>
       {data && !data.total && (
-        <p>
-          No records match these filters. This does not establish that the data
-          is safe.
-        </p>
+        <div>
+          <p>
+            No records match these filters. This does not establish that the
+            data is safe.
+          </p>
+          {(query || minimum !== "All" || hide) && (
+            <Button
+              onClick={() => {
+                setQuery("");
+                setMinimum("All");
+                setHide(false);
+                setPage(0);
+                setReveal(null);
+              }}
+            >
+              Show all observations
+            </Button>
+          )}
+        </div>
       )}
       {data && (
         <Pager
@@ -1656,6 +2452,9 @@ function Evidence({ row, active }) {
       {error && <p role="alert">{error}</p>}
       {data && (
         <>
+          {data.explanation && (
+            <p className="record-explanation">{data.explanation}</p>
+          )}
           {!data.groups.length && (
             <p>
               {data.gaps.length
@@ -1776,6 +2575,36 @@ function Chart({ row, select, outside, active }) {
   if (data) lastPlot.current = { width, data };
   const plot = data || lastPlot.current?.data;
   const plotWidth = data ? width : lastPlot.current?.width || width || 600;
+  function selectNearest(event) {
+    // Expanded SVG hit areas can overlap. Resolve the displayed geometry at
+    // the pointer, rather than trusting whichever neighboring group is on top.
+    if (!event.target.closest("g")) return;
+    const matrix = event.currentTarget.getScreenCTM();
+    if (!matrix) return;
+    const point = new DOMPoint(event.clientX, event.clientY).matrixTransform(
+      matrix.inverse(),
+    );
+    const candidates = (plot?.points || []).map((p) => ({ ...p, stem: true }));
+    if (data?.selected && !candidates.some((p) => p.row === data.selected.row))
+      candidates.push({ ...data.selected, stem: false });
+    let nearest;
+    for (const p of candidates) {
+      const low = p.stem ? Math.min(p.y, 82) : p.y;
+      const high = p.stem ? Math.max(p.y, 82) : p.y;
+      const distance = Math.hypot(
+        point.x - p.x,
+        point.y - Math.max(low, Math.min(high, point.y)),
+      );
+      const endpoint = Math.hypot(point.x - p.x, point.y - p.y);
+      if (
+        !nearest ||
+        distance < nearest.distance ||
+        (distance === nearest.distance && endpoint < nearest.endpoint)
+      )
+        nearest = { row: p.row, distance, endpoint };
+    }
+    if (nearest) select(nearest.row);
+  }
   async function step(direction) {
     try {
       const v = await request("chart_step", {
@@ -1808,6 +2637,7 @@ function Chart({ row, select, outside, active }) {
         height="104"
         viewBox={`0 0 ${plotWidth} 104`}
         aria-label="All records in source order"
+        onClick={selectNearest}
       >
         <line
           x1="58"
@@ -1829,7 +2659,6 @@ function Chart({ row, select, outside, active }) {
           <g
             key={p.row}
             className={p.score >= plot.threshold ? "peak" : ""}
-            onClick={() => select(p.row)}
             data-row={p.row}
           >
             <title>
@@ -1842,7 +2671,7 @@ function Chart({ row, select, outside, active }) {
           </g>
         ))}
         {data?.selected && (
-          <g onClick={() => select(data.selected.row)}>
+          <g className="selected-marker">
             <circle
               cx={data.selected.x}
               cy={data.selected.y}
@@ -1904,6 +2733,11 @@ function Compare({ active }) {
   }
   return (
     <div className="column full">
+      <p className="view-help">
+        Compare this investigation with a saved case. Choose a case to review
+        differences in settings and conclusions; matching sources are needed for
+        record comparisons.
+      </p>
       <div className="actions">
         <Button
           onClick={() =>
@@ -2168,6 +3002,10 @@ function Evaluate({ active }) {
   const selected = data?.rows?.find((r) => r.row === row);
   const left = (
     <div className="column full evaluation">
+      <p className="view-help">
+        Measure detection performance using independently assigned labels.
+        Analyze the evidence first, then import labels for this source.
+      </p>
       <div className="actions">
         <Button onClick={() => run("labels_load")}>Import labels</Button>
         <Button onClick={() => run("labels_template")}>
@@ -2408,6 +3246,10 @@ function Details({ active }) {
     [data, error] = useData("details", { revision: s.revision }, active);
   return (
     <div className="details scroll">
+      <p className="view-help">
+        Source fingerprints, analysis settings and evidence provenance. Select a
+        record in Results to inspect its individual evidence.
+      </p>
       {error && <p role="alert">{error}</p>}
       {data && (
         <>

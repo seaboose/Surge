@@ -1,0 +1,3 @@
+# Optional qualification-only dependencies; application runtime stays standard-library only.
+hypothesis==6.170.8
+sortedcontainers==2.4.0

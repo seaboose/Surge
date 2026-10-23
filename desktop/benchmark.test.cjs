@@ -31,6 +31,7 @@ async function file(name, save = false) {
   );
 }
 async function click(name) {
+  await require("./test-export-menu.cjs").revealExport(page, name);
   if (
     ["Load policy", "Save policy", "Edit rules", "Map context"].includes(name)
   ) {
@@ -65,11 +66,11 @@ async function rpc(method, args = {}) {
   page.setDefaultTimeout(30000);
   page.on("pageerror", (e) => errors.push(e.message));
   await page
-    .getByRole("button", { name: "Import data", exact: true })
+    .getByRole("button", { name: "Import evidence", exact: true })
     .waitFor();
   const begin = Date.now();
   await file(path.join(root, "test.json"));
-  await click("Import data");
+  await click("Import evidence");
   await file(path.join(root, "reference.json"));
   await click("Import reference");
   await file(path.join(root, "policy.json"));
@@ -77,7 +78,7 @@ async function rpc(method, args = {}) {
   await click("Analyze");
   const analysisMs = Date.now() - begin;
   await file(path.join(run, "rt-iot2022.case.json"), true);
-  await click("Save case");
+  await click("Export case file");
   await click("Evaluate");
   await file(path.join(root, "labels.json"));
   const start = Date.now();

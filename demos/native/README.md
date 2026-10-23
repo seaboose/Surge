@@ -6,7 +6,7 @@ These five cases replay controlled observations from Surge's own Windows app. No
 python -B scripts/verify_native_demo.py
 ```
 
-Python 3.11 or newer is sufficient. After desktop setup, choose **Open case** and select a file here. Each case contains two samples of two ranges, so four records. Uncheck **Findings only** to see clean observations. Select record 3 to inspect the controlled observation and its coverage.
+Python 3.11 or newer is sufficient. After desktop setup, choose **Case library**, then **Open case file** and select a file here. This inspects the external case without adding it to the library; choose **Import case** instead to keep a library copy. Each case contains two samples of two ranges, so four records. If **Findings only** is checked, uncheck it to see clean observations. Select record 3 to inspect the controlled observation and its coverage.
 
 - **approved-update.case.json:** four No finding records. The reviewed v2 build matches its explicit approval.
 - **unapproved-update.case.json:** four Review records. The same legitimate v2 build has no approval in this case; review is not a claim of malicious behavior.
@@ -31,4 +31,4 @@ python -B scripts/verify_native_demo.py
 
 Regeneration replaces these five demo cases and their expected-outcome manifest only. It uses an isolated in-memory approval registry. Compiler output can change DLL fingerprints, so regenerated files need not be byte-identical; the declared outcomes must still pass. The generator uses gated test controls to change only our own DLL and never executes altered probe bytes.
 
-For live collection in the interface, choose **Our app → Start → Inspect**. Replay and live collection use the same Python decision logic, but opening a case does not start a collector. Coverage remains two ranges totaling 15 bytes; changes wholly between samples can also be missed.
+For live collection, build the native targets and [review and approve the exact v2 sample](../../native/README.md#approve-and-collect), then choose **Try Demo → Start collection → Inspect snapshot**. **Stop collection** opens the final snapshot without another inspection step. Replay and live collection use the same Python decision logic, but opening a case does not start a collector or require a local approval. Coverage remains two ranges totaling 15 bytes; changes wholly between samples can also be missed.

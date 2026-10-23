@@ -1,0 +1,337 @@
+{
+  "schema": "surge-adversarial-correctness-validation-v1",
+  "recorded_at_utc": "2026-10-23T08:26:30.104159+00:00",
+  "reviewed_base_commit": "2b9e3c8bbfc22c7a82827f39e404fa87e7eb8fb5",
+  "working_tree": "uncommitted; prior performance/reliability work preserved",
+  "overall_status": "incomplete",
+  "fix_status": "C1 and C2 fixed and regression-tested",
+  "environment": {
+    "os": "Windows",
+    "os_release": "11",
+    "os_version": "10.0.26200",
+    "architecture": "AMD64",
+    "python": "3.12.14",
+    "hosts_tested": 1,
+    "native_binaries_rebuilt": false
+  },
+  "production_changes": [
+    "native_stream.py"
+  ],
+  "known_findings": {
+    "C1": "Replay explicitly rejects nonincreasing sequence and decreasing cumulative loss counters.",
+    "C2": "Shared live/replay identity validation includes valid PID, decimal creation identity, supported build and consistent identity across observations.",
+    "C3": "Finding-over-gaps precedence retained; unreadable approved=Unknown, unreadable unapproved=Review with gaps.",
+    "A1": "Current staleness only; no new durable historical-stall health guarantee."
+  },
+  "regressions": {
+    "test_file": "test_native_replay_contract.py",
+    "before_fix": {
+      "tests": 15,
+      "failing_import_subcases": 46,
+      "unexpected_errors": 0,
+      "elapsed_seconds": 0.131,
+      "native_stream_sha256": "3135961d44abaa2ff3b304184a46e97ea4a370849ce9327f70108ab399b1f7e0",
+      "test_file_sha256": "99575ac92feeb234b1347c8c49e4b2c4b4c6cabc3cd34e798f427fb11f570053"
+    },
+    "after_fix": {
+      "tests": 15,
+      "failures": 0,
+      "errors": 0,
+      "elapsed_seconds": 0.104
+    },
+    "note": "Test formatting changed between pre/post runs; expected behaviors were unchanged."
+  },
+  "post_validation_formatting": [
+    {
+      "path": "native_stream.py",
+      "tested_sha256": "8b8e585c00cc48091018cdc3a026d03ac2c432a7a3d6afa41b410388d0d9ef8c",
+      "formatted_sha256": "500b8bfc3e5350077e80dea31e466334bdfc5a8699612749f297c693bc15cc50",
+      "ast_identical": true
+    },
+    {
+      "path": "test_native_replay_contract.py",
+      "tested_sha256": "feb7aa005dd0ab726bff82d1728dcf218574c147529c8e6f218c3173b8f35b69",
+      "formatted_sha256": "f977b8fd59b12ae98bd44db1489c6e0b5ea5321deb52a941e831082aa3fad1ba",
+      "ast_identical": true
+    }
+  ],
+  "checks": [
+    {
+      "command": ".venv/Scripts/python.exe -B -m unittest -v test_native_replay_contract",
+      "result": "pass",
+      "tests": 15
+    },
+    {
+      "command": ".venv/Scripts/python.exe -B -m unittest -v test_native_integrity test_native_manifest_security test_native_stream test_native_window test_native_session test_native_replay_contract",
+      "result": "pass",
+      "tests": 62,
+      "elapsed_seconds": 12.654
+    },
+    {
+      "command": ".venv/Scripts/python.exe -B scripts/test.py",
+      "result": "pass",
+      "tests": 285,
+      "elapsed_seconds": 67.743
+    },
+    {
+      "command": "ctest --test-dir native/build -C Release --output-on-failure",
+      "result": "pass",
+      "tests": 3,
+      "names": [
+        "bounded_pe_parser",
+        "versioned_manifest_parser",
+        "collector_without_scenarios"
+      ]
+    },
+    {
+      "command": ".venv/Scripts/python.exe -B scripts/verify_native_demo.py",
+      "result": "pass",
+      "cases": 5
+    },
+    {
+      "command": "node native.test.cjs",
+      "working_directory": "desktop",
+      "result": "pass"
+    },
+    {
+      "command": "node stream.test.cjs",
+      "working_directory": "desktop",
+      "result": "pass",
+      "includes": [
+        "start",
+        "stable inspect",
+        "stop",
+        "export",
+        "case replay",
+        "restart",
+        "keyboard",
+        "text scaling",
+        "graceful shutdown",
+        "forced shutdown"
+      ]
+    },
+    {
+      "command": ".venv/Scripts/python.exe -B -m black --check --line-length 96 --workers 1 <file>",
+      "files": [
+        "native_stream.py",
+        "test_native_replay_contract.py"
+      ],
+      "result": "pass"
+    }
+  ],
+  "initial_environment_failures": [
+    "Focused suite: default temporary-directory write restrictions; passed with workspace TEMP/TMP.",
+    "Native desktop: default sandbox launch failed; passed after ordinary reviewed execution request.",
+    "Multi-file formatter stalled; canceled and used single-file invocations."
+  ],
+  "campaign": {
+    "status": "blocked_before_execution",
+    "started": false,
+    "development_inputs_executed": 0,
+    "final_inputs_executed": 0,
+    "campaign_seconds_consumed": 0,
+    "targets": {
+      "T1": "incomplete",
+      "T2": "incomplete",
+      "T3": "incomplete"
+    },
+    "instrumentation_self_check_completed": false,
+    "final_freeze_completed": false,
+    "held_back_variants_executed": false,
+    "budget": "Original 90-minute total and per-target caps unchanged; not started.",
+    "reason": "Both delegated harness implementation tasks were stopped by an automated cybersecurity safeguard reporting possible cybersecurity risk and directing the user to Daybreak access.",
+    "response": "Stopped blocked harness work; no rewording, model/agent rerouting, access changes or safeguard bypass. Unexecuted partial native sources retained in private workspace scratch, excluded from repository.",
+    "daybreak_enrollment_verified": false
+  },
+  "acceptance_gates": [
+    {
+      "number": 1,
+      "name": "C1/C2 closed",
+      "status": "pass",
+      "evidence": "Before/after regressions, valid controls, older formats, C3/A1 semantics."
+    },
+    {
+      "number": 2,
+      "name": "Native safety",
+      "status": "incomplete",
+      "evidence": "No completed instrumented harness build, self-check or T1 campaign."
+    },
+    {
+      "number": 3,
+      "name": "Semantic correctness",
+      "status": "incomplete",
+      "evidence": "Known regressions pass; generated independent oracles not completed/run."
+    },
+    {
+      "number": 4,
+      "name": "Reachability",
+      "status": "incomplete",
+      "evidence": "No campaign category, rejection-distribution or instrumented reachability evidence."
+    },
+    {
+      "number": 5,
+      "name": "Retention and replay",
+      "status": "incomplete",
+      "evidence": "Existing tests/journeys pass; new production-limit/model pack not run."
+    },
+    {
+      "number": 6,
+      "name": "Determinism and final separation",
+      "status": "incomplete",
+      "evidence": "Named regressions exist; no fuzz corpus, final freeze/run or twice-replayed final corpus."
+    },
+    {
+      "number": 7,
+      "name": "Existing compatibility preserved",
+      "status": "pass",
+      "evidence": "62 focused/285 full Python tests, three native CTests, native and continuous desktop journeys."
+    }
+  ],
+  "sources": [
+    {
+      "path": "native_stream.py",
+      "sha256": "500b8bfc3e5350077e80dea31e466334bdfc5a8699612749f297c693bc15cc50",
+      "lf_normalized_sha256": "500b8bfc3e5350077e80dea31e466334bdfc5a8699612749f297c693bc15cc50"
+    },
+    {
+      "path": "native_integrity.py",
+      "sha256": "e6853e026099b3e70bd368383bbd6a2f8b7702beafdd8c84ae9f9f0647a126e8",
+      "lf_normalized_sha256": "4301a3024a2e5200d96f4d5a39350822858fcb2435c68cadf3c03d73b1cdb060"
+    },
+    {
+      "path": "integrity_manifest.py",
+      "sha256": "753e0ddaa6d65e5af0c57f1b124f52b200a5fc9d88b7188e15101f3052d1e8a6",
+      "lf_normalized_sha256": "753e0ddaa6d65e5af0c57f1b124f52b200a5fc9d88b7188e15101f3052d1e8a6"
+    },
+    {
+      "path": "engine.py",
+      "sha256": "6355ce177ce225b25bf276c8f9a4329b31bda47f37792cce7e0e39a17a81e850",
+      "lf_normalized_sha256": "6355ce177ce225b25bf276c8f9a4329b31bda47f37792cce7e0e39a17a81e850"
+    },
+    {
+      "path": "native/code_range_pe.hpp",
+      "sha256": "c895baf4bd574b5e7f5c561e7353842981828e9e77345ac6f95f30871a5ba8f2",
+      "lf_normalized_sha256": "a22fefb62d30f0fc43b189653e72fe5d5a30a583f7fa541a900e3df0b8918fea"
+    },
+    {
+      "path": "native/code_range_collector.cpp",
+      "sha256": "463718d40e7adf04d91cc0dceeffa581318ec306421277e372a3e60d3b1fbe29",
+      "lf_normalized_sha256": "9b84cfd74352ce38b15e4410b91bffb59cde18e3b689fe4f8e2e7285702f5880"
+    },
+    {
+      "path": "native/owned_app.cpp",
+      "sha256": "53c65caa9d7b8e79d08ca8c8d40dc95e608d570e5edab1ef560cba08b96d4d47",
+      "lf_normalized_sha256": "53c65caa9d7b8e79d08ca8c8d40dc95e608d570e5edab1ef560cba08b96d4d47"
+    },
+    {
+      "path": "test_native_replay_contract.py",
+      "sha256": "f977b8fd59b12ae98bd44db1489c6e0b5ea5321deb52a941e831082aa3fad1ba",
+      "lf_normalized_sha256": "f977b8fd59b12ae98bd44db1489c6e0b5ea5321deb52a941e831082aa3fad1ba"
+    },
+    {
+      "path": "test_native_integrity.py",
+      "sha256": "35e988e68af5ef5e1e833ba85af0f1ffc9b882a5c00eb7ebd0623d442e3244fd",
+      "lf_normalized_sha256": "f549eceab8e6e9dffd05e09a8487deca63bf23d28ee724dd3b0876cd360f481a"
+    },
+    {
+      "path": "test_native_manifest_security.py",
+      "sha256": "e4572a3a284bddc37c197dfca90b1806ad9a711ad523c6f485947a731fb3e4a0",
+      "lf_normalized_sha256": "e4572a3a284bddc37c197dfca90b1806ad9a711ad523c6f485947a731fb3e4a0"
+    },
+    {
+      "path": "test_native_stream.py",
+      "sha256": "c39654704a1d177b272c21c82017c4588e3ea6ddef89a4ee370374c0ff32b1c4",
+      "lf_normalized_sha256": "c39654704a1d177b272c21c82017c4588e3ea6ddef89a4ee370374c0ff32b1c4"
+    },
+    {
+      "path": "test_native_window.py",
+      "sha256": "b4ecaaff3333a446e96114a12bf20ee9b19b5ef621fb912c61caffecf82d588b",
+      "lf_normalized_sha256": "b4ecaaff3333a446e96114a12bf20ee9b19b5ef621fb912c61caffecf82d588b"
+    },
+    {
+      "path": "test_native_session.py",
+      "sha256": "c23601ff7803fd5e552bb0a56c930c555cfa6287a41b2e4ae8cfb028b065e96b",
+      "lf_normalized_sha256": "c23601ff7803fd5e552bb0a56c930c555cfa6287a41b2e4ae8cfb028b065e96b"
+    },
+    {
+      "path": "desktop/native.test.cjs",
+      "sha256": "5da5420eb71d068945e2053e8529c308bc65280a5d9f3161df8d50477c144415",
+      "lf_normalized_sha256": "5da5420eb71d068945e2053e8529c308bc65280a5d9f3161df8d50477c144415"
+    },
+    {
+      "path": "desktop/stream.test.cjs",
+      "sha256": "93b84c50ed5c004769843a819325ef2f082328fc9131705774baf3402c236eeb",
+      "lf_normalized_sha256": "93b84c50ed5c004769843a819325ef2f082328fc9131705774baf3402c236eeb"
+    },
+    {
+      "path": "scripts/test.py",
+      "sha256": "eca00660a78ac10a77df161c9c5145ff39544c22b53f75f403df2d64ff74e836",
+      "lf_normalized_sha256": "eca00660a78ac10a77df161c9c5145ff39544c22b53f75f403df2d64ff74e836"
+    },
+    {
+      "path": "scripts/verify_native_demo.py",
+      "sha256": "641cdb30a7e8b1c7c7be6088feb4a2c28508acae3137e09276094a491fa6ff3f",
+      "lf_normalized_sha256": "641cdb30a7e8b1c7c7be6088feb4a2c28508acae3137e09276094a491fa6ff3f"
+    },
+    {
+      "path": "docs/adversarial-correctness-review.md",
+      "sha256": "0a90db4466c4e807bca6b7cd25bdb8fb262b3870a48b69d459f180aef104199c",
+      "lf_normalized_sha256": "0a90db4466c4e807bca6b7cd25bdb8fb262b3870a48b69d459f180aef104199c"
+    }
+  ],
+  "local_log_fingerprints": [
+    {
+      "name": "pre-fix.log",
+      "sha256": "ea3e44cdbe9b3b59370d51b92beca4eff0d1632582a58e7e89ab9ed94a38a070",
+      "published": false
+    },
+    {
+      "name": "post-fix.log",
+      "sha256": "3b3af56f4ea6d2c82c06a678e319ce42165207e0a0a53c2ca0d02d1dffd0f0a0",
+      "published": false
+    },
+    {
+      "name": "focused-compatibility.log",
+      "sha256": "00e270477c4e7fd546d1470f5f4a60ecc9b1a9c4c3c5e8657732c42efa70b918",
+      "published": false
+    },
+    {
+      "name": "focused-workspace-temp.log",
+      "sha256": "3482d5afda2c5e69c4be607d5e592b0fb22141a43fd865304d033f28eb715e3a",
+      "published": false
+    },
+    {
+      "name": "full-suite.log",
+      "sha256": "a3d85da03030ae1ae7e5824ca59d30f7bb0355217b4a578a8ca24a0377f663d1",
+      "published": false
+    },
+    {
+      "name": "desktop-native.log",
+      "sha256": "1bda7d15200330e8e4616d8ba431454418811b13db5404a66b3beccc9035bf9b",
+      "published": false
+    },
+    {
+      "name": "desktop-native-reviewed.log",
+      "sha256": "85b20d1f5a97e8bbc72f9fbf71855cb382ec2efdd7552fe299b6dcd0328196f1",
+      "published": false
+    },
+    {
+      "name": "desktop-stream.log",
+      "sha256": "3c47543ec21d9ac882d7bb4dfc9c5ffcaf3dc8d8746e51aa6b753524a2b39322",
+      "published": false
+    }
+  ],
+  "archived_evaluation_sha256": "936a7a7708d896c8c764a5d9dc60027d81bf3f6cfb936578f4bb12a267d3ec5d",
+  "limits": [
+    "No fuzzing, sanitizer validation, generated independent-oracle coverage or final corpus result.",
+    "Existing deterministic tests do not satisfy missing campaign gates.",
+    "Unsigned local evidence consistency is not authentication or client attestation.",
+    "Outside-coverage and between-sample changes may be missed.",
+    "Collector 64 MiB file-envelope runtime boundary remains excluded.",
+    "One Windows host; no new ten-minute performance, endurance, source release or hosted CI run."
+  ],
+  "daybreak_references": [
+    "https://learn.chatgpt.com/docs/cyber-safety",
+    "https://developers.openai.com/api/docs/guides/safety-checks/cybersecurity"
+  ]
+}

@@ -8,6 +8,13 @@ const operations = Object.freeze({
   native_export: [],
   import: ["role"],
   open: [],
+  library_list: [],
+  library_save: ["revision", "name"],
+  library_open: ["id"],
+  library_rename: ["id", "name"],
+  library_delete: ["id"],
+  library_import: [],
+  library_export: ["id"],
   configure: ["revision", "config", "rules_text"],
   analyze: ["revision"],
   policy_load: ["revision"],
@@ -62,10 +69,24 @@ function validate(method, args) {
   if (method === "native_start" && !["v1", "v2"].includes(args.build))
     throw new Error("Choose an available app build.");
   if (
+    [
+      "library_open",
+      "library_rename",
+      "library_delete",
+      "library_export",
+    ].includes(method) &&
+    (typeof args.id !== "string" ||
+      !/^[a-f0-9]{8}-(?:[a-f0-9]{4}-){3}[a-f0-9]{12}$/.test(args.id))
+  )
+    throw new Error("Invalid case identifier.");
+  if (["library_save", "library_rename"].includes(method))
+    require("./case-library.cjs").caseName(args.name);
+  if (
     method !== "state" &&
     method !== "import" &&
     method !== "open" &&
     !method.startsWith("native_") &&
+    !(method.startsWith("library_") && method !== "library_save") &&
     !Number.isSafeInteger(args.revision)
   )
     throw new Error("Missing workspace revision.");

@@ -73,6 +73,7 @@ class DesktopTests(unittest.TestCase):
         policy = self.root / "new.policy.json"
         self.call("policy_save", path=str(policy))
         self.assertEqual(workflow.load_policy(policy, *opened[:2]), self.config)
+
         alerts = self.root / "alerts.jsonl"
         self.call("alerts", path=str(alerts), minimum="Critical")
         records = [json.loads(x) for x in alerts.read_text(encoding="utf-8").splitlines()][1:]
@@ -85,6 +86,28 @@ class DesktopTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "integrity"):
             second.dispatch("open", {"path": str(case)})
         self.assertEqual(second.result, expected)
+
+    def test_library_snapshot_and_verification_leave_workspace_unchanged(self):
+        self.call("analyze")
+        before = copy.deepcopy(self.ws.snapshot())
+        target = self.root / "library.case.json"
+        self.call("library_snapshot", path=str(target))
+        self.assertEqual(self.ws.snapshot(), before)
+        self.assertEqual(engine.open_case(target)[3], self.ws.result)
+        self.assertEqual(
+            self.ws.dispatch("library_verify", {"path": str(target)}), {"verified": True}
+        )
+        self.assertEqual(self.ws.snapshot(), before)
+        with self.assertRaises(ValueError):
+            self.ws.dispatch(
+                "library_snapshot",
+                {"path": str(self.root / "stale.json"), "revision": self.ws.revision - 1},
+            )
+        self.assertFalse((self.root / "stale.json").exists())
+        target.write_text("{}", encoding="utf-8")
+        with self.assertRaises(ValueError):
+            self.ws.dispatch("library_verify", {"path": str(target)})
+        self.assertEqual(self.ws.snapshot(), before)
 
     def test_warnings_pages_related_sources_and_navigation(self):
         note = next(

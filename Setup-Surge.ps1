@@ -8,8 +8,8 @@ function Invoke-Checked {
 }
 
 $pythonPath = (Get-Command $Python -ErrorAction Stop).Source
-Invoke-Checked $pythonPath @('-I', '-c', 'import sys, tkinter; assert sys.version_info >= (3, 11), "Python 3.11 or newer is required"')
-Invoke-Checked 'node' @('-e', 'const [a,b]=process.versions.node.split(".").map(Number); if(a<22 || (a===22 && b<12)) throw Error("Node 22.12 or newer is required");')
+Invoke-Checked $pythonPath @('-I', '-c', "import sys, tkinter; assert sys.version_info >= (3, 11), 'Python 3.11 or newer is required'")
+Invoke-Checked 'node' @('-e', "const [a,b]=process.versions.node.split('.').map(Number); if(a<22 || (a===22 && b<12)) throw Error('Node 22.12 or newer is required');")
 Invoke-Checked 'pnpm' @('--version')
 $environmentPath = Join-Path $PSScriptRoot '.venv'
 if (!(Test-Path -LiteralPath (Join-Path $environmentPath 'Scripts/python.exe'))) {

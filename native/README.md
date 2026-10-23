@@ -1,6 +1,6 @@
 # Native evidence
 
-Surge recognizes `surge-native-integrity-v1` JSONL automatically. Use **Import data**, select a capture, then **Analyze**. No additional screen, plugin, or mapping is required. Select a finding to see its observed and expected code hashes. **Details** shows the range and baseline fingerprint; **Source values** retains the complete observation.
+Surge recognizes `surge-native-integrity-v1` JSONL automatically. Use **Import evidence**, select a capture, then **Analyze**. No additional screen, plugin, or mapping is required. Select a finding to see its observed and expected code hashes. The record inspector's **Details** disclosure shows the range and baseline fingerprint; **Source values** retains the complete observation.
 
 The reusable `surge_collector` C++ library measures memory. The separate `fixture_runner.cpp` executable loads our owned DLL and creates test scenarios. The collector has no mutation or scenario API. `collector_smoke` verifies collection without linking the scenario runner. This is separation of responsibilities within an owned process, not a new security boundary. It loads only the two fixed fixture DLLs beside itself, reads its own process, and accepts no arbitrary PID, address, or DLL path. It does not attach to games or Vanguard. The controlled memory-change scenario changes one byte in the fixture's code range, never executes that altered code, and restores it before exit.
 
@@ -16,23 +16,34 @@ ctest --test-dir native/build -C Release --output-on-failure
 
 ## Approve and collect
 
-Approval is an explicit decision after reviewing your own fixture build. Collection never creates or updates a baseline.
+Approval is an explicit decision after reviewing your own fixture build. Collection never creates or updates a baseline. **Try Demo always uses v2**; v1 remains available for internal checks and command-line scenarios.
 
-For continuous collection after building, choose **Our app** in Surge, select v1 or v2, and **Start**. **Inspect** opens an analyzed snapshot without stopping collection or moving the records you are reading. **Stop** ends collection and opens its final retained snapshot. **Export** saves the current window as JSONL; use **Save case** for the inspected investigation. Starting another session replaces the capture window, so export evidence you want to retain first. Existing imported evidence stays in place until Inspect or Stop supplies a new snapshot.
-
-The app samples every 500 ms, holds up to 500 full samples, and stops after ten minutes. An 8 MiB encoded-byte budget, including space reserved for snapshot metadata, keeps larger manifests within Surge's import limit. This is a bounded recent window, not an archive of the entire session. Removed older samples and transport drops produce an Unknown collection-health record. Failed or stale collection remains visible; readable ranges retain their own measured verdicts. No baseline file means the build requires review. Approval still uses the explicit command below.
+After building and reviewing the included v2 fixture, approve that exact build from the repository root:
 
 ```powershell
-.\.venv\Scripts\python.exe scripts/native_capture.py approve --build v1 --reason "Reviewed fixture build v1"
-.\.venv\Scripts\python.exe scripts/native_capture.py capture --build v1 --scenario clean --output native/captures/clean.jsonl
-.\.venv\Scripts\python.exe scripts/native_capture.py capture --build v1 --scenario memory-change --output native/captures/changed.jsonl
+.\.venv\Scripts\python.exe scripts/native_capture.py approve --build v2 --reason "Reviewed the included v2 fixture build for the local demo"
+```
+
+This writes the local `native/baselines.json` registry. Approval binds this DLL's fingerprint, selected code bytes and complete coverage declaration; it does not approve every v2 build or the whole process. A different DLL fingerprint or coverage declaration requires a separate review and approval.
+
+Choose **Try Demo** in Surge, then **Start collection**. **Inspect snapshot** opens an analyzed snapshot without stopping collection or moving the records you are reading. **Stop collection** ends collection and opens its final retained snapshot. Complete observations of the unchanged approved ranges should show **No finding**. **Export captured records** saves the current window as JSONL; use **Save case** for the inspected investigation. Starting another session replaces the capture window, so export evidence you want to retain first. Existing imported evidence stays in place until **Inspect snapshot** or **Stop collection** supplies a new snapshot.
+
+The app samples every 500 ms, holds up to 500 full samples, and stops after ten minutes. An 8 MiB encoded-byte budget, including space reserved for snapshot metadata, keeps larger manifests within Surge's import limit. This is a bounded recent window, not an archive of the entire session. Removed older samples and transport drops produce an Unknown collection-health record. Failed collection and current staleness produce health evidence; readable ranges retain their own measured verdicts. After collection recovers, a pause remains visible in retained elapsed timestamps but is not guaranteed a health record in the final export. No baseline file means the build requires review. If approval changes while collection is running, stop and start another capture: each session freezes its baseline registry at startup.
+
+## Optional command-line scenarios
+
+After the v2 approval above, these commands capture the owned fixture's normal and controlled-change scenarios:
+
+```powershell
+.\.venv\Scripts\python.exe scripts/native_capture.py capture --build v2 --scenario clean --output native/captures/clean.jsonl
+.\.venv\Scripts\python.exe scripts/native_capture.py capture --build v2 --scenario memory-change --output native/captures/changed.jsonl
 ```
 
 Open either JSONL in Surge. Each capture has two range observations at each of the initial, sample, and restored snapshots (six records), with UTC timestamps and a session combining PID and process creation time. Outputs never overwrite an existing capture.
 
-To test an update, collect `--build v2` before approval: it requires review. Then approve v2 with a reason and collect again into a new file: an unchanged approved v2 should have no finding. Earlier approvals remain available for v1. A rebuilt DLL has a different file fingerprint and needs a new approval.
+To test approval behavior separately, use a new `--baselines` path for every command in that experiment. Capture v2 before approving it in that isolated registry: it requires review. Then approve v2 with a reason and collect again into a new file: unchanged approved ranges should have no finding. This leaves the demo registry untouched. Internal update checks may also use v1; changing the build selector on the command line does not change the interface's v2 default. The command-line tool defaults to v1, so retain the explicit `--build v2` in the demo commands above.
 
-`--scenario secondary-change` changes only the second range. `--scenario unreadable` makes the first range unavailable while the second remains readable; `--scenario unloaded` makes both unavailable. These test collection gaps. Those observations are **Unknown**, not clean. Startup or collection failure produces an explicit failed observation; failed approval leaves the registry unchanged. Malformed baseline registries stop collection instead of silently resetting approvals.
+`--scenario secondary-change` changes only the second range. `--scenario unreadable` makes the first range unavailable while the second remains readable; `--scenario unloaded` makes both unavailable. These test collection gaps. An unreadable approved observation is **Unknown**. An unreadable unapproved observation is **Review with gaps**: the missing approval takes precedence while the unavailable byte comparison remains explicit. Startup or collection failure produces an explicit failed observation; failed approval leaves the registry unchanged. Malformed baseline registries stop collection instead of silently resetting approvals.
 
 ## What is checked
 
@@ -58,7 +69,7 @@ node native.test.cjs
 pnpm run test:stream
 ```
 
-Coverage in the existing inspector reports ranges read, compared with approval, unavailable, unapproved, and changed. Versioned observations also show executable bytes in scope; Details explains exclusions and includes both manifest fingerprints. Declared scope is separate from successfully read bytes. The default manifest covers two routines totaling 15 bytes. A clean sibling range can have No finding while the snapshot has incomplete coverage; the unavailable range remains Unknown.
+Coverage in the existing inspector reports ranges read, compared with approval, unavailable, unapproved, and changed. Versioned observations also show executable bytes in scope; Details explains exclusions and includes both manifest fingerprints. Declared scope is separate from successfully read bytes. The default manifest covers two routines totaling 15 bytes. A clean sibling range can have No finding while the snapshot has incomplete coverage; the unavailable range is Unknown when approved, or Review with gaps when unapproved.
 
 Imports verify coverage against every exported range and reject missing, duplicate, inconsistent, or overlapping declarations. Failed preparation of an unsupported image produces a failed capture rather than skipping a range. The manifest and records are unsigned; consistent fabrication is still outside this trust boundary.
 

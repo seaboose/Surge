@@ -112,6 +112,16 @@ async function fileDialog(file, save = false) {
   );
 }
 async function click(text) {
+  await require("./test-export-menu.cjs").revealExport(page, text);
+  if (text === "Open saved case") {
+    await page
+      .getByRole("button", { name: "Case library", exact: true })
+      .click();
+    await page
+      .getByRole("dialog", { name: "Case library", exact: true })
+      .waitFor();
+    text = "Open case file";
+  }
   if (
     ["Load policy", "Save policy", "Edit rules", "Map context"].includes(text)
   ) {
@@ -151,7 +161,9 @@ async function screenshot(name) {
   page = await app.firstWindow();
   page.setDefaultTimeout(15000);
   page.on("pageerror", (e) => errors.push(e.message));
-  await visible(page.getByRole("button", { name: "Import data", exact: true }));
+  await visible(
+    page.getByRole("button", { name: "Import evidence", exact: true }),
+  );
   const startupMs = Date.now() - started;
   // Never write to the user's clipboard during a test.
   await app.evaluate(({ clipboard }) => {
@@ -159,7 +171,15 @@ async function screenshot(name) {
     clipboard.writeText = (text) => global.__copied.push(text);
   });
   await check("empty screen and hardened renderer", async () => {
-    assert.equal(await page.locator("h1,h2,h3,header").count(), 0);
+    assert.equal(
+      await page
+        .getByRole("heading", {
+          name: "Surge",
+          exact: true,
+        })
+        .count(),
+      1,
+    );
     assert.equal(
       await page.getByRole("button", { name: "Analyze", exact: true }).count(),
       0,
@@ -179,18 +199,18 @@ async function screenshot(name) {
     await app.evaluate(({ dialog }) => {
       dialog.showOpenDialog = async () => ({ canceled: true, filePaths: [] });
     });
-    await click("Import data");
+    await click("Import evidence");
     assert.equal((await rpc("state")).current, null);
   });
   await check(
     "import preserves malformed-source diagnostics and previous data",
     async () => {
       await fileDialog(incoming);
-      await click("Import data");
+      await click("Import evidence");
       await visible(page.getByRole("table", { name: "Preview" }));
       const before = await rpc("state");
       await fileDialog(malformed);
-      await click("Import data");
+      await click("Import evidence");
       await visible(page.getByRole("dialog"));
       assert.match(
         await page.getByRole("dialog").innerText(),
@@ -373,7 +393,7 @@ async function screenshot(name) {
         global.__requests = [];
       });
       await click("Analyze");
-      await visible(page.getByRole("table", { name: "Findings" }));
+      await visible(page.getByRole("table", { name: "Results" }));
       await visible(page.locator(".evidence .observed"));
       assert.equal(
         await app.evaluate(() =>
@@ -434,7 +454,7 @@ async function screenshot(name) {
       await click("Return to filters");
       await click("Clear");
       await fileDialog(saved, true);
-      await click("Save case");
+      await click("Export case file");
       assert.ok(fs.existsSync(saved));
       await fileDialog(path.join(files, "alerts.jsonl"), true);
       await click("Export alerts");
@@ -480,7 +500,7 @@ async function screenshot(name) {
       await ready();
       await click("Analyze");
       await fileDialog(changed, true);
-      await click("Save case");
+      await click("Export case file");
       await click("Compare");
       await fileDialog(saved);
       await click("Choose case");
@@ -546,15 +566,15 @@ async function screenshot(name) {
     async () => {
       await click("Data");
       await fileDialog(saved);
-      await click("Open case");
-      await visible(page.getByRole("table", { name: "Findings" }));
+      await click("Open saved case");
+      await visible(page.getByRole("table", { name: "Results" }));
       await app.evaluate(({ BrowserWindow }) =>
         BrowserWindow.getAllWindows()[0].setSize(1100, 760),
       );
       await page.waitForTimeout(150);
       assert.ok(
         (await page
-          .getByRole("table", { name: "Findings" })
+          .getByRole("table", { name: "Results" })
           .locator("tbody tr")
           .count()) <= 100,
       );
@@ -565,7 +585,7 @@ async function screenshot(name) {
         false,
       );
       await screenshot("findings-minimum");
-      await click("Details");
+      await click("Case details");
       await visible(
         page.getByText("Constant references use", { exact: false }),
       );
@@ -606,7 +626,7 @@ async function screenshot(name) {
   await check(
     "navigation retains search, selection and split preferences",
     async () => {
-      await click("Findings");
+      await click("Results");
       await page.getByLabel("Search records").fill("STRASSE");
       await page.waitForFunction(
         () =>
@@ -620,7 +640,7 @@ async function screenshot(name) {
         .getByRole("separator", { name: "Resize evidence" })
         .getAttribute("aria-valuenow");
       await click("Data");
-      await click("Findings");
+      await click("Results");
       assert.equal(
         await page.getByLabel("Search records").inputValue(),
         "STRASSE",
@@ -633,7 +653,7 @@ async function screenshot(name) {
       );
       await page.keyboard.press("Alt+1");
       await visible(
-        page.getByRole("button", { name: "Import data", exact: true }),
+        page.getByRole("button", { name: "Import evidence", exact: true }),
       );
       await page.keyboard.press("Control+f");
       await visible(page.getByLabel("Search records"));
@@ -649,9 +669,13 @@ async function screenshot(name) {
       );
       await page.keyboard.press("Alt+2");
       await page.emulateMedia({ reducedMotion: "reduce" });
+      await require("./test-export-menu.cjs").revealExport(
+        page,
+        "Export case file",
+      );
       assert.equal(
         await page
-          .getByRole("button", { name: "Save case", exact: true })
+          .getByRole("button", { name: "Export case file", exact: true })
           .evaluate((el) => getComputedStyle(el).transitionDuration),
         "0s",
       );
@@ -661,16 +685,16 @@ async function screenshot(name) {
     "hidden panes stay idle and unchanged views reuse data",
     async () => {
       await page.waitForTimeout(350);
-      await click("Details");
+      await click("Case details");
       await visible(
         page.getByText("Constant references use", { exact: false }),
       );
       await app.evaluate(() => {
         global.__requests = [];
       });
-      await click("Findings");
+      await click("Results");
       await visible(page.locator(".evidence .observed"));
-      await click("Details");
+      await click("Case details");
       await page.waitForTimeout(300);
       assert.deepEqual(await app.evaluate(() => global.__requests), []);
     },
@@ -714,7 +738,7 @@ async function screenshot(name) {
         ]),
       );
       await fileDialog(dense);
-      await click("Import data");
+      await click("Import evidence");
       await page
         .getByRole("table", { name: "Preview" })
         .locator("tbody tr")
@@ -775,7 +799,7 @@ async function screenshot(name) {
       await click("Data");
       await fileDialog(file);
       const begin = Date.now();
-      await click("Import data");
+      await click("Import evidence");
       await visible(page.getByRole("table", { name: "Preview" }));
       await page.waitForFunction(
         () =>
@@ -803,10 +827,10 @@ async function screenshot(name) {
       });
       const analysisBegin = Date.now();
       await click("Analyze");
-      await visible(page.getByRole("table", { name: "Findings" }));
+      await visible(page.getByRole("table", { name: "Results" }));
       await page.waitForFunction(
         () =>
-          document.querySelector('table[aria-label="Findings"] tbody')?.children
+          document.querySelector('table[aria-label="Results"] tbody')?.children
             .length === 100,
       );
       await visible(page.locator("svg g[data-row]").first());
@@ -926,7 +950,7 @@ async function screenshot(name) {
         ),
         false,
       );
-      await click("Findings");
+      await click("Results");
       await click("Data");
       await visible(
         preview.getByRole("columnheader", { name: "field57", exact: true }),
@@ -935,7 +959,6 @@ async function screenshot(name) {
         await page.getByLabel("Field", { exact: true }).inputValue(),
         "field57",
       );
-      assert.equal(await page.locator("h1,h2,h3,header").count(), 0);
       const longField = "Very long evidence field ".repeat(4),
         longFile = path.join(files, "long-fields.json");
       fs.writeFileSync(
@@ -945,7 +968,7 @@ async function screenshot(name) {
         ]),
       );
       await fileDialog(longFile);
-      await click("Import data");
+      await click("Import evidence");
       const heading = preview.getByRole("columnheader", {
         name: longField.trim(),
         exact: true,
@@ -1013,7 +1036,7 @@ async function screenshot(name) {
         }),
       );
       await fileDialog(source);
-      await click("Import data");
+      await click("Import evidence");
       await fileDialog(rules);
       await click("Load policy");
       assert.equal(
@@ -1037,7 +1060,7 @@ async function screenshot(name) {
       await ready();
       await click("Analyze");
       await fileDialog(previousCase, true);
-      await click("Save case");
+      await click("Export case file");
       await click("Data");
       await page.getByLabel("Threshold", { exact: true }).fill("6");
       await page.getByLabel("Threshold", { exact: true }).press("Enter");
@@ -1049,8 +1072,8 @@ async function screenshot(name) {
           ?.textContent.includes("Elapsed time · 800 ms"),
       );
       await fileDialog(currentCase, true);
-      await click("Save case");
-      const findings = page.getByRole("table", { name: "Findings" });
+      await click("Export case file");
+      const findings = page.getByRole("table", { name: "Results" });
       await findings
         .locator("tbody tr")
         .filter({ has: page.locator("td:first-child", { hasText: "2" }) })
@@ -1078,7 +1101,7 @@ async function screenshot(name) {
         await page.getByLabel("Search records").fill(query);
         await page.waitForFunction(
           () =>
-            document.querySelector('table[aria-label="Findings"] tbody')
+            document.querySelector('table[aria-label="Results"] tbody')
               ?.children.length === 1,
         );
         assert.match(
@@ -1093,7 +1116,7 @@ async function screenshot(name) {
       await page.getByLabel("Search records").fill("one");
       await page.waitForFunction(
         () =>
-          document.querySelector('table[aria-label="Findings"] tbody')?.children
+          document.querySelector('table[aria-label="Results"] tbody')?.children
             .length === 2,
       );
       await click("Clear");
@@ -1163,7 +1186,7 @@ async function screenshot(name) {
       );
       await click("Data");
       await fileDialog(currentCase);
-      await click("Open case");
+      await click("Open saved case");
       await page.waitForFunction(() =>
         document
           .querySelector(".evidence")
@@ -1176,13 +1199,12 @@ async function screenshot(name) {
           ?.textContent.includes("reading: 20"),
       );
       await screenshot("completed-findings");
-      assert.equal(await page.locator("h1,h2,h3,header").count(), 0);
     },
   );
   await check(
     "ordered shortcuts, compact options and bounded mapping undo",
     async () => {
-      const views = ["Data", "Findings", "Compare", "Evaluate", "Details"];
+      const views = ["Data", "Results", "Compare", "Evaluate", "Case details"];
       for (let i = 0; i < views.length; i++) {
         await page.keyboard.press(`Alt+${i + 1}`);
         await page.waitForFunction(
@@ -1199,7 +1221,7 @@ async function screenshot(name) {
       }
       await click("Data");
       await fileDialog(incoming);
-      await click("Import data");
+      await click("Import evidence");
       const options = page
         .locator(".setup details")
         .filter({ has: page.locator("summary", { hasText: /^Options$/ }) });
@@ -1228,7 +1250,7 @@ async function screenshot(name) {
       await ready();
       assert.notEqual(await options.getAttribute("open"), null);
       await fileDialog(malformed);
-      await click("Import data");
+      await click("Import evidence");
       await click("Close");
       assert.equal(
         await page
@@ -1251,14 +1273,13 @@ async function screenshot(name) {
       await page.getByLabel("Session", { exact: true }).selectOption("");
       await ready();
       await fileDialog(incoming);
-      await click("Import data");
+      await click("Import evidence");
       assert.equal(
         await page
           .getByRole("button", { name: "Undo mapping", exact: true })
           .count(),
         0,
       );
-      assert.equal(await page.locator("h1,h2,h3,header").count(), 0);
       await screenshot("configuration");
     },
   );
