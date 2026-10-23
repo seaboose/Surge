@@ -106,3 +106,7 @@ class FirstUseRunnerTests(unittest.TestCase):
 
 if __name__ == '__main__':
     unittest.main()
+
+class HostedFailureProbe(unittest.TestCase):
+    def test_intentional_hosted_failure(self):
+        self.fail('SURGE_HOSTED_FAILURE_PROBE_20261023: intentional disposable-branch failure')
