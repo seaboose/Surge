@@ -36,3 +36,6 @@ Unfamiliar-user tasks H1-H4 remain pending: prerequisite installation, normal la
 CI is configured in the working tree but has not been pushed or executed on GitHub in this milestone. Repository branch protection was not changed; an administrator must separately require the new check if merge blocking is desired. Runner loss, cancellation or upload failure can prevent artifact transfer despite `always()`; local incremental reports reduce but cannot eliminate this risk.
 
 Original T1/T2/T3 fuzzing remains unfinished. This milestone did not rerun the full 21-step qualification, ASan, Hypothesis/libFuzzer or endurance benchmarks. Those historical results retain their original scope. This result document and structured summary were added after the passing run and are outside its immutable source archive; no runner, workflow or application code changed after that run.
+
+
+Hosted follow-up: [committed candidate verification](hosted-ci-results.md) passed both Windows CI jobs, artifact retrieval/source identity checks, and a separate intentional failure probe. Unfamiliar-tester acceptance remains pending; the broader fuzzing campaign remains unfinished.

@@ -18,4 +18,6 @@ The extraction and caches use a fresh short system-temporary path to avoid MSVC 
 
 CI runs a separate `First-use release check` job on push, pull request and manual dispatch. Artifact retention is 30 days; download evidence for longer retention. `always()` requests upload on failures, but cancellation, runner loss or upload-service failure can prevent upload. Branch protection must separately require this check if merge blocking is desired; editing the workflow does not change repository policy. A local pass is not evidence of a hosted CI pass.
 
-[Local validation results](first-use-release-results.md) record completed checks, preserved failures and hosted/human acceptance still pending.
+[Local validation results](first-use-release-results.md) and [hosted candidate results](hosted-ci-results.md) record completed checks and preserved failures. Unfamiliar-tester acceptance remains pending.
+
+The hosted job also runs the [real launcher smoke check](launcher-acceptance.md) against the freshly extracted application after the 16-step release runner succeeds. This is a separate startup/shutdown check on a fresh hosted profile; it does not turn native-dialog interaction or unfamiliar-user comprehension into automated passes. Its artifacts are uploaded with the first-use evidence. The [partial-report failure probe](first-use-failure-probe.md) is run only on a disposable branch to verify failure handling.

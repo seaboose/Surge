@@ -113,11 +113,22 @@ jobs:
         shell: pwsh
         run: |
           New-Item -ItemType Directory -Force verification/qualification | Out-Null
-          python -B -m unittest -v test_first_use_runner *> verification/qualification/first-use-unit.log
+          python -B -m unittest -v test_first_use_runner test_first_use_failure_probe test_launcher_runner *> verification/qualification/first-use-unit.log
           Get-Content verification/qualification/first-use-unit.log
           exit $LASTEXITCODE
       - name: Package and test first use (human acceptance remains pending)
         run: python -B scripts/check_first_use.py
+      - name: Verify the real launcher on the fresh hosted profile
+        timeout-minutes: 3
+        shell: pwsh
+        run: |
+          $reports = @(Get-ChildItem verification/qualification/first-use-*/artifacts/report.json)
+          if ($reports.Count -ne 1) { throw 'Expected exactly one first-use report.' }
+          $report = Get-Content $reports[0].FullName -Raw | ConvertFrom-Json
+          if ($report.status -ne 'passed') { throw 'First-use report did not pass.' }
+          $applicationRoot = Join-Path $report.workspace 'fresh extraction/Surge'
+          python -B scripts/check_launcher.py --application-root $applicationRoot
+          exit $LASTEXITCODE
       - name: Preserve first-use evidence, including failures
         if: always()
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
@@ -125,6 +136,7 @@ jobs:
           name: first-use-${{ github.sha }}-${{ github.run_attempt }}
           path: |
             verification/qualification/first-use-*/artifacts/**
+            verification/qualification/launcher-*/artifacts/**
             verification/qualification/first-use-unit.log
           if-no-files-found: error
           retention-days: 30

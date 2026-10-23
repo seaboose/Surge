@@ -1,0 +1,145 @@
+{
+  "schema": "surge-hosted-ci-validation-v1",
+  "status": "passed",
+  "candidate": "0200edcd34c6be047ff3aecd0fe23fdb08ec7e90",
+  "pr": "https://github.com/seaboose/Surge/pull/1",
+  "human_acceptance": "pending",
+  "fuzzing": "incomplete_not_run",
+  "source_identity": {
+    "status": "passed",
+    "commit": "0200edcd34c6be047ff3aecd0fe23fdb08ec7e90",
+    "files": 248,
+    "logs_verified": 16,
+    "git_checkout_line_endings": [
+      ".gitattributes",
+      ".gitignore",
+      "LICENSE",
+      "Setup-Surge.ps1",
+      "Start-Surge-Legacy.cmd",
+      "Start-Surge-Legacy.ps1",
+      "Start-Surge.cmd",
+      "Start-Surge.ps1",
+      "Start-Workbench.cmd",
+      "Start-Workbench.ps1",
+      "pyproject.toml",
+      "requirements-dev.txt",
+      "requirements-properties.txt",
+      "native/CMakeLists.txt",
+      "native/asan_probe.cpp",
+      "native/asan_required.hpp",
+      "native/code_pe_tests.cpp",
+      "native/code_range_collector.cpp",
+      "native/code_range_collector.hpp",
+      "native/code_range_pe.hpp",
+      "native/collector_smoke.cpp",
+      "native/fixture_runner.cpp",
+      "native/lab_code.asm",
+      "native/lab_code.def",
+      "native/lab_code_v2.asm",
+      "native/lab_manifest.hpp",
+      "native/lab_module.cpp",
+      "native/manifest_pe_tests.cpp",
+      "native/owned_app.cpp",
+      "native/pilot/boundaries.cpp",
+      "native/pilot/parser.cpp",
+      "native/pilot/runtime_control.cpp",
+      "native/pilot/seed.hpp"
+    ],
+    "source_archive_sha256": "d5a990e67f8e9f0f1972e23ff86a87fa1f18f62605a9d9a1de18d0eb0d25e0ee",
+    "human_acceptance": "pending"
+  },
+  "ui_validation": {
+    "status": "passed",
+    "candidate_head": "0200edcd34c6be047ff3aecd0fe23fdb08ec7e90",
+    "tested_pr_merge": "a950e38fba3c8caba25b154ca8b85f664e096308",
+    "trees_identical": true,
+    "manifests_identical": true,
+    "ui": {
+      "push": {
+        "deletion": 3,
+        "library": 9,
+        "approved": 6,
+        "unapproved": 5,
+        "replay": 8,
+        "saved": 10
+      },
+      "pull_request": {
+        "library": 9,
+        "deletion": 3,
+        "unapproved": 5,
+        "approved": 6,
+        "replay": 8,
+        "saved": 10
+      }
+    },
+    "human_acceptance": "pending"
+  },
+  "runs": [
+    {
+      "id": 40012255206,
+      "html_url": "https://github.com/seaboose/Surge/actions/runs/40012255206",
+      "event": "push",
+      "head_sha": "0200edcd34c6be047ff3aecd0fe23fdb08ec7e90",
+      "run_attempt": 1,
+      "status": "completed",
+      "conclusion": "success",
+      "created_at": "2026-10-23T19:32:49Z",
+      "updated_at": "2026-10-23T19:36:22Z"
+    },
+    {
+      "id": 40012280629,
+      "html_url": "https://github.com/seaboose/Surge/actions/runs/40012280629",
+      "event": "pull_request",
+      "head_sha": "0200edcd34c6be047ff3aecd0fe23fdb08ec7e90",
+      "run_attempt": 1,
+      "status": "completed",
+      "conclusion": "success",
+      "created_at": "2026-10-23T19:33:01Z",
+      "updated_at": "2026-10-23T19:37:42Z"
+    },
+    {
+      "id": 40012311078,
+      "html_url": "https://github.com/seaboose/Surge/actions/runs/40012311078",
+      "event": "push",
+      "head_sha": "85050823440a3ccc51844c24e45c56105878dc93",
+      "run_attempt": 1,
+      "status": "completed",
+      "conclusion": "failure",
+      "created_at": "2026-10-23T19:33:15Z",
+      "updated_at": "2026-10-23T19:34:23Z"
+    }
+  ],
+  "artifact_downloads": [
+    {
+      "file": "candidate-initial.zip",
+      "sha256": "335d0e6148434b54283b5763e33c1db983c29662f95aacedf55fbd7b3a7b1684",
+      "bytes": 4882291
+    },
+    {
+      "file": "candidate-pr.zip",
+      "sha256": "668478eabd0dc28cb678a8f78c582ed882ccfd76eaa6a8fd30ffa81ed4b12f10",
+      "bytes": 4881470
+    },
+    {
+      "file": "failure-probe.zip",
+      "sha256": "70aa889a9faaae569d0b78b05149d053f1b36c7502df87f07ebd785bfa9ec0af",
+      "bytes": 766
+    }
+  ],
+  "limits": [
+    "Unfamiliar tester pending",
+    "Original broader fuzzing unfinished",
+    "No ASan/Hypothesis/libFuzzer/retention rerun in this milestone",
+    "No launcher/native-dialog acceptance",
+    "Failure probe stops before release execution",
+    "Branch protection unchanged and not audited",
+    "Supplemental results generated after tested commit"
+  ],
+  "failed_attempts": [
+    "Sandboxed clone network initialization failure; transcript only",
+    "Local unit attempt: 14 temp permission errors out of 33; transcript only; retry 33 passed",
+    "GH007 private email push rejection; transcript and rejected commit ID retained",
+    "Supplemental UI inspection KeyError mode; transcript only; corrected helper passed",
+    "Intentional hosted failure preserved with full downloaded log"
+  ]
+}
