@@ -46,9 +46,9 @@ int wmain(int argc, wchar_t **argv) {
     require(argc == 5 && std::wstring(argv[1]) == L"--build" &&
                 std::wstring(argv[3]) == L"--scenario",
             "Use --build v1|v2 --scenario "
-            "clean|memory-change|secondary-change|unreadable|unloaded");
+            "clean|memory-change|boundary-change|secondary-change|unreadable|unloaded");
     const std::wstring build = argv[2], scenario = argv[4];
-    require(scenario == L"clean" || scenario == L"memory-change" ||
+    require(scenario == L"clean" || scenario == L"memory-change" || scenario == L"boundary-change" ||
                 scenario == L"secondary-change" || scenario == L"unreadable" ||
                 scenario == L"unloaded",
             "Unsupported scenario");
@@ -61,6 +61,8 @@ int wmain(int argc, wchar_t **argv) {
     auto address =
         reinterpret_cast<unsigned char *>(module.value) +
         collector.ranges()[scenario == L"secondary-change" ? 1 : 0].rva;
+    if (scenario == L"boundary-change")
+      address += collector.ranges()[0].expected.size() - 1;
     std::vector<std::string> observations;
     auto observe = [&](const char *phase) {
       for (auto row : collector.snapshot(module.value)) {
@@ -74,7 +76,7 @@ int wmain(int argc, wchar_t **argv) {
     observe("initial");
     ScenarioChange change;
     change.address = address;
-    if (scenario == L"memory-change" || scenario == L"secondary-change") {
+    if (scenario == L"memory-change" || scenario == L"boundary-change" || scenario == L"secondary-change") {
       require(VirtualProtect(address, 1, PAGE_EXECUTE_READWRITE,
                              &change.protection) != 0,
               "Cannot prepare owned lab mutation");
@@ -107,7 +109,8 @@ int wmain(int argc, wchar_t **argv) {
 
     std::ostringstream output;
     output << "{\"schema\":\"native-code-capture-v2\",\"ranges\":"
-           << collector.manifest() << ",\"observations\":[";
+           << collector.manifest() << ",\"integrity_manifest\":"
+           << collector.integrity_manifest() << ",\"observations\":[";
     for (std::size_t i = 0; i < observations.size(); ++i)
       output << (i ? "," : "") << observations[i];
     output << "]}\n";

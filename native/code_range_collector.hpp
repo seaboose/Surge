@@ -1,5 +1,6 @@
 #pragma once
 #define NOMINMAX
+#include <cstdint>
 #include <string>
 #include <vector>
 #include <windows.h>
@@ -19,6 +20,10 @@ class OwnedCollector {
   std::wstring path_;
   std::string file_hash_, session_, started_;
   std::size_t file_size_ = 0;
+  DWORD image_size_ = 0;
+  std::uint64_t preferred_base_ = 0;
+  struct Span { DWORD rva; DWORD size; };
+  std::vector<Span> executable_ranges_, exclusions_;
   std::vector<CodeRange> ranges_;
 
 public:
@@ -28,6 +33,9 @@ public:
   OwnedCollector &operator=(const OwnedCollector &) = delete;
   const std::wstring &path() const { return path_; }
   const std::vector<CodeRange> &ranges() const { return ranges_; }
+  DWORD image_size() const { return image_size_; }
+  std::uint64_t preferred_base() const { return preferred_base_; }
   std::string manifest() const;
+  std::string integrity_manifest() const;
   std::vector<std::string> snapshot(HMODULE module) const;
 };

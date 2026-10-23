@@ -107,15 +107,31 @@ OwnedCollector::OwnedCollector(const std::wstring &build) {
     file_hash_ = sha256(disk);
     file_size_ = disk.size();
     LabImage image(disk);
-    for (const auto *name : {"LabCodeProbe", "LabCodeSecondary"}) {
-      DWORD rva = 0;
-      auto expected = image.probe(rva, name, std::string(name) + "End");
-      for (const auto &previous : ranges_)
-        require(!LabImage::overlaps(rva, expected.size(), previous.rva,
-                                    previous.expected.size()),
-                "Configured ranges overlap");
-      ranges_.push_back({name, rva, std::move(expected)});
+    image_size_ = image.image_size();
+    preferred_base_ = image.preferred_base();
+    for (const auto &span : image.executable_ranges())
+      executable_ranges_.push_back({span.rva, span.size});
+    for (auto &range : image.declared_ranges())
+      ranges_.push_back({range.name, range.rva, std::move(range.expected)});
+    auto ordered = ranges_;
+    std::sort(ordered.begin(), ordered.end(),
+              [](const CodeRange &a, const CodeRange &b) { return a.rva < b.rva; });
+    for (const auto &span : executable_ranges_) {
+      DWORD cursor = span.rva;
+      const DWORD end = span.rva + span.size; // PE parser proved image bound.
+      for (const auto &range : ordered) {
+        if (range.rva < span.rva || range.rva >= end)
+          continue;
+        require(range.expected.size() <= end - range.rva,
+                "Declared range crosses executable span");
+        if (range.rva > cursor)
+          exclusions_.push_back({cursor, range.rva - cursor});
+        cursor = range.rva + static_cast<DWORD>(range.expected.size());
+      }
+      if (cursor < end)
+        exclusions_.push_back({cursor, end - cursor});
     }
+    require(exclusions_.size() <= 128, "Too many excluded code intervals");
     FILETIME creation{}, exit{}, kernel{}, user{};
     require(GetProcessTimes(GetCurrentProcess(), &creation, &exit, &kernel,
                             &user) != 0,
@@ -150,6 +166,33 @@ std::string OwnedCollector::manifest() const {
         << ",\"reference_sha256\":" << quote(sha256(range.expected)) << '}';
   }
   out << ']';
+  return out.str();
+}
+std::string OwnedCollector::integrity_manifest() const {
+  std::size_t executable = 0, checked = 0, excluded = 0;
+  for (const auto &span : executable_ranges_) executable += span.size;
+  for (const auto &range : ranges_) checked += range.expected.size();
+  for (const auto &span : exclusions_) excluded += span.size;
+  require(checked + excluded == executable, "Incomplete executable coverage partition");
+  std::ostringstream out;
+  out << "{\"schema\":\"surge-integrity-manifest-v1\",\"descriptor_version\":1"
+      << ",\"architecture\":\"x64\",\"module_sha256\":" << quote(file_hash_)
+      << ",\"module_size\":" << file_size_ << ",\"image_size\":" << image_size_
+      << ",\"relocation_policy\":\"reject\",\"executable_bytes\":" << executable
+      << ",\"checked_bytes\":" << checked << ",\"excluded_bytes\":" << excluded
+      << ",\"ranges\":" << manifest() << ",\"executable_ranges\":[";
+  for (std::size_t i = 0; i < executable_ranges_.size(); ++i) {
+    const auto &span = executable_ranges_[i];
+    out << (i ? "," : "") << "{\"range_rva\":" << span.rva
+        << ",\"range_size\":" << span.size << '}';
+  }
+  out << "],\"exclusions\":[";
+  for (std::size_t i = 0; i < exclusions_.size(); ++i) {
+    const auto &span = exclusions_[i];
+    out << (i ? "," : "") << "{\"range_rva\":" << span.rva
+        << ",\"range_size\":" << span.size << ",\"reason\":\"not_declared\"}";
+  }
+  out << "]}";
   return out.str();
 }
 std::vector<std::string> OwnedCollector::snapshot(HMODULE module) const {

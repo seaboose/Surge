@@ -4,14 +4,18 @@
 int main() {
   try {
     OwnedCollector collector(L"v1");
-    require(collector.ranges().size() == 2, "Expected two configured ranges");
+    require(collector.ranges().size() >= 2 && collector.ranges().size() <= 16,
+            "Expected bounded declared ranges");
+    require(collector.integrity_manifest().find("surge-integrity-manifest-v1") !=
+                std::string::npos,
+            "Missing versioned integrity manifest");
     HMODULE module = LoadLibraryExW(collector.path().c_str(), nullptr,
                                     LOAD_LIBRARY_SEARCH_DLL_LOAD_DIR |
                                         LOAD_LIBRARY_SEARCH_SYSTEM32);
     require(module != nullptr, "Cannot load owned module");
     try {
       const auto rows = collector.snapshot(module);
-      require(rows.size() == 2, "Missing measured range");
+      require(rows.size() == collector.ranges().size(), "Missing measured range");
       for (const auto &row : rows) {
         require(row.find("\"memory_status\":\"complete\"") != std::string::npos,
                 "Range was not readable");

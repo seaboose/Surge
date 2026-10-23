@@ -14,6 +14,7 @@ EXCLUDED = {
     "temporary-test-files",
     "electron",
     "build",
+    "build-manifest",
     "captures",
 }
 

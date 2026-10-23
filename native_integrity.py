@@ -8,6 +8,7 @@ import hashlib
 import json
 import re
 from datetime import datetime, timezone
+import integrity_manifest as integrity
 
 SCHEMA = "surge-native-integrity-v1"
 BASELINE_SCHEMA = "surge-native-baselines-v1"
@@ -110,8 +111,20 @@ def validate_capture(capture):
     for row in rows:
         check_observation(row)
     if capture["schema"] == "native-code-capture-v1":
+        if "integrity_manifest" in capture:
+            raise ValueError("Versioned integrity needs complete multi-range coverage.")
         return rows
     ranges = validate_manifest(capture.get("ranges"))
+    if "integrity_manifest" in capture:
+        for row in rows:
+            integrity.validate(
+                capture["integrity_manifest"],
+                ranges,
+                row["module_sha256"],
+                row.get("module_size"),
+            )
+            if type(row.get("module_size")) is not int:
+                raise ValueError("Versioned capture needs its module size.")
     if len(rows) != len(ranges) * len(PHASES):
         raise ValueError(
             "Capture is incomplete: every phase must report every configured range."
@@ -157,6 +170,11 @@ def validate_coverage(rows):
             validate_health(row)
         rows = [r for r in rows if r.get("stream_health") is not True]
     marked = [r for r in rows if "range_manifest" in r]
+    versioned = [
+        r for r in rows if "integrity_manifest" in r or "integrity_manifest_sha256" in r
+    ]
+    if versioned and (len(versioned) != len(rows) or len(marked) != len(rows)):
+        raise ValueError("Cannot mix versioned coverage and legacy observations.")
     if not marked:
         if any(any(k.startswith("coverage_") for k in r) for r in rows):
             raise ValueError("Coverage needs a range manifest.")
@@ -171,6 +189,17 @@ def validate_coverage(rows):
         manifest = validate_manifest(json.loads(encoded))
         if row.get("range_manifest_sha256") != digest(manifest):
             raise ValueError("Range manifest fingerprint differs.")
+        if versioned:
+            value = row.get("integrity_manifest")
+            if not isinstance(value, str) or len(value) > 32768:
+                raise ValueError("Invalid integrity manifest encoding.")
+            declaration = integrity.validate(
+                json.loads(value), manifest, row["module_sha256"], row.get("module_size")
+            )
+            if type(row.get("module_size")) is not int or row.get(
+                "integrity_manifest_sha256"
+            ) != digest(declaration):
+                raise ValueError("Integrity manifest fingerprint or module size differs.")
         key = (
             row["session_id"],
             row["module_sha256"],
@@ -183,8 +212,15 @@ def validate_coverage(rows):
 
         validate_export(rows, health)
     sessions = {}
+    declarations = {}
     for session, module, phase in groups:
         sessions.setdefault((session, module), set()).add(phase)
+        for row in groups[(session, module, phase)]:
+            current = row.get("integrity_manifest_sha256")
+            key = (session, module)
+            if key in declarations and declarations[key] != current:
+                raise ValueError("Integrity manifest changed within a session.")
+            declarations[key] = current
     if not live and any(phases != set(PHASES) for phases in sessions.values()):
         raise ValueError("Coverage must include initial, sample and restored snapshots.")
     for group in groups.values():
@@ -221,6 +257,7 @@ def validate_baselines(value):
         if not isinstance(entry, dict) or set(entry) - {
             "range_manifest_sha256",
             "range_name",
+            "integrity_manifest_sha256",
         } != {
             "module_sha256",
             "range_rva",
@@ -231,6 +268,12 @@ def validate_baselines(value):
             "reason",
         }:
             raise ValueError("Malformed approval entry.")
+        if "integrity_manifest_sha256" in entry and (
+            not re.fullmatch(r"[0-9a-f]{64}", str(entry["integrity_manifest_sha256"]))
+            or "range_manifest_sha256" not in entry
+            or "range_name" not in entry
+        ):
+            raise ValueError("Versioned approval needs complete manifest identity.")
         if "range_manifest_sha256" in entry or "range_name" in entry:
             if not re.fullmatch(
                 r"[0-9a-f]{64}", str(entry.get("range_manifest_sha256", ""))
@@ -252,7 +295,12 @@ def validate_baselines(value):
         )
         if not isinstance(entry["reason"], str) or not 1 <= len(entry["reason"].strip()) <= 240:
             raise ValueError("An approval needs a short reason.")
-        key = (entry["module_sha256"], entry["range_rva"], entry["range_size"])
+        key = (
+            entry["module_sha256"],
+            entry["range_rva"],
+            entry["range_size"],
+            entry.get("integrity_manifest_sha256"),
+        )
         if key in seen:
             raise ValueError("Duplicate baseline identity.")
         seen.add(key)
@@ -300,6 +348,8 @@ def approve(capture, registry, reason):
             entry.update(
                 range_name=first["range_name"], range_manifest_sha256=digest(capture["ranges"])
             )
+            if "integrity_manifest" in capture:
+                entry["integrity_manifest_sha256"] = digest(capture["integrity_manifest"])
         entry.update(approved_at=datetime.now(timezone.utc).isoformat(), reason=reason)
         entries.append(entry)
     result = {"schema": BASELINE_SCHEMA, "entries": [*registry["entries"], *entries]}
@@ -311,26 +361,43 @@ def convert(capture, registry):
     rows = validate_capture(capture)
     multi = capture["schema"] == "native-code-capture-v2"
     result = [
-        convert_observation(row, registry, capture["ranges"] if multi else None) for row in rows
+        convert_observation(
+            row,
+            registry,
+            capture["ranges"] if multi else None,
+            capture.get("integrity_manifest"),
+        )
+        for row in rows
     ]
     if multi:
         for phase in PHASES:
             group = [r for r in result if r["phase"] == phase]
-            attach_coverage(group, capture["ranges"])
+            attach_coverage(group, capture["ranges"], capture.get("integrity_manifest"))
         validate_coverage(result)
     return result
 
 
-def convert_observation(row, registry, ranges=None):
+def convert_observation(row, registry, ranges=None, integrity_manifest=None):
     """Apply the same approval decision to one-shot and continuous observations."""
     check_observation(row)
+    if "integrity_manifest" in row or "integrity_manifest_sha256" in row:
+        raise ValueError("Raw observations must use their capture-level integrity manifest.")
+    manifest_sha = None
+    if integrity_manifest is not None:
+        if type(row.get("module_size")) is not int:
+            raise ValueError("Versioned observation needs its module size.")
+        integrity.validate(
+            integrity_manifest, ranges, row["module_sha256"], row.get("module_size")
+        )
+        manifest_sha = digest(integrity_manifest)
     entry = next(
         (
             e
             for e in registry["entries"]
             if all(e[k] == row[k] for k in ("module_sha256", "range_rva", "range_size"))
+            and e.get("integrity_manifest_sha256") == manifest_sha
             and (
-                ranges is None
+                (ranges is None and "range_manifest_sha256" not in e)
                 or (
                     e.get("range_manifest_sha256") == digest(ranges)
                     and e.get("range_name") == row["range_name"]
@@ -358,7 +425,7 @@ def convert_observation(row, registry, ranges=None):
     )
 
 
-def attach_coverage(rows, ranges):
+def attach_coverage(rows, ranges, integrity_manifest=None):
     totals = coverage(rows)
     for row in rows:
         row.update(
@@ -366,6 +433,13 @@ def attach_coverage(rows, ranges):
             range_manifest=json.dumps(ranges, sort_keys=True, separators=(",", ":")),
             range_manifest_sha256=digest(ranges),
         )
+        if integrity_manifest is not None:
+            row.update(
+                integrity_manifest=json.dumps(
+                    integrity_manifest, sort_keys=True, separators=(",", ":")
+                ),
+                integrity_manifest_sha256=digest(integrity_manifest),
+            )
 
 
 def default_policy(data):

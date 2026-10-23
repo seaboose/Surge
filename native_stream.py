@@ -22,6 +22,9 @@ ROOT = Path(__file__).resolve().parent
 STREAM_SCHEMA = "surge-native-stream-v1"
 MAX_LINE = 32768
 MAX_SAMPLES = 500
+MAX_WINDOW_BYTES = 8 * 1024 * 1024
+HEALTH_RESERVE_BYTES = 16 * 1024
+SNAPSHOT_ROW_RESERVE_BYTES = 512
 
 
 def integer(value, low=0, high=10_000_000):
@@ -47,7 +50,7 @@ def utc(value):
         raise ValueError("Collection timestamps must use UTC.")
 
 
-def convert_frame(frame, ranges, registry):
+def convert_frame(frame, ranges, registry, integrity_manifest=None):
     """Convert a complete sample without exposing test actions to detection."""
     native.validate_manifest(ranges)
     native.validate_baselines(registry)
@@ -83,7 +86,9 @@ def convert_frame(frame, ranges, registry):
         if identity is not None and current != identity:
             raise ValueError("Process identity changed within a sample.")
         identity = current
-        row = native.convert_observation(raw, registry, ranges)
+        if integrity_manifest is not None and type(raw.get("module_size")) is not int:
+            raise ValueError("Versioned observation needs its module size.")
+        row = native.convert_observation(raw, registry, ranges, integrity_manifest)
         row.update(
             event_id=f"{sequence}:{name}",
             stream_sequence=sequence,
@@ -91,7 +96,7 @@ def convert_frame(frame, ranges, registry):
             stream_dropped_samples=dropped,
         )
         result.append(row)
-    native.attach_coverage(result, ranges)
+    native.attach_coverage(result, ranges, integrity_manifest)
     return result
 
 
@@ -101,6 +106,7 @@ class StreamDecoder:
     def __init__(self, registry):
         self.registry = copy.deepcopy(native.validate_baselines(registry))
         self.ranges = None
+        self.integrity_manifest = None
         self.build = None
         self.sequence = self.dropped_samples = 0
         self.elapsed_ms = -1
@@ -117,6 +123,10 @@ class StreamDecoder:
             if self.ranges is not None or frame.get("build") not in ("v1", "v2"):
                 raise ValueError("Unexpected stream start.")
             self.ranges = copy.deepcopy(native.validate_manifest(frame.get("ranges")))
+            if "integrity_manifest" in frame:
+                self.integrity_manifest = copy.deepcopy(
+                    native.integrity.validate(frame["integrity_manifest"], self.ranges)
+                )
             self.interval_ms = integer(frame.get("interval_ms"), 100, 5000)
             self.duration_ms = integer(frame.get("duration_ms"), 100, 600000)
             self.build = frame["build"]
@@ -135,7 +145,7 @@ class StreamDecoder:
                 raise ValueError("Collection sequence gap is not accounted for.")
             if finite(frame.get("elapsed_ms")) < self.elapsed_ms:
                 raise ValueError("Monotonic collection time went backwards.")
-            rows = convert_frame(frame, self.ranges, self.registry)
+            rows = convert_frame(frame, self.ranges, self.registry, self.integrity_manifest)
             first = rows[0]
             identity = tuple(
                 first[k]
@@ -211,6 +221,7 @@ def validate_export(rows, health):
                 "module_sha256",
                 "baseline_sha256",
                 "range_manifest_sha256",
+                "integrity_manifest_sha256",
                 "stream_evicted_samples",
             )
         )
@@ -325,6 +336,36 @@ def snapshot_rows(
     return rows
 
 
+class SampleWindow:
+    """Keep full samples within both the count limit and a replayable byte budget."""
+
+    def __init__(self):
+        self.groups = deque()
+        self.sizes = deque()
+        self.encoded_bytes = self.evicted = self.samples = 0
+
+    def append(self, rows):
+        # Encode only the incoming group. The allowance covers snapshot counters
+        # and separators; a separate reserve covers the single health record.
+        size = sum(
+            len(engine.canonical(row).encode("utf-8")) + 1 + SNAPSHOT_ROW_RESERVE_BYTES
+            for row in rows
+        )
+        budget = MAX_WINDOW_BYTES - HEALTH_RESERVE_BYTES
+        if not rows or size > budget:
+            raise ValueError("Collection sample exceeds the retained evidence size limit.")
+        while self.groups and (
+            len(self.groups) >= MAX_SAMPLES or self.encoded_bytes + size > budget
+        ):
+            self.groups.popleft()
+            self.encoded_bytes -= self.sizes.popleft()
+            self.evicted += 1
+        self.groups.append(rows)
+        self.sizes.append(size)
+        self.encoded_bytes += size
+        self.samples += 1
+
+
 class NativeSession:
     """One fixed child, one draining thread, and a bounded window of full samples."""
 
@@ -344,8 +385,8 @@ class NativeSession:
         self.decoder = StreamDecoder(registry)
         self.build = build
         self.lock = threading.Lock()
-        self.groups = deque(maxlen=MAX_SAMPLES)
-        self.evicted = self.samples = 0
+        self.window = SampleWindow()
+        self.retained_sequence = self.retained_dropped = 0
         self.error = None
         self.state = "running"
         self.last_received = time.monotonic()
@@ -390,10 +431,11 @@ class NativeSession:
                     self.last_received = time.monotonic()
                     self.ready.set()
                     if rows:
-                        if len(self.groups) == MAX_SAMPLES:
-                            self.evicted += 1
-                        self.groups.append(rows)
-                        self.samples += 1
+                        self.window.append(rows)
+                    # If retaining a sample fails, the prior window still has a
+                    # consistent ending and the failure becomes Unknown health.
+                    self.retained_sequence = self.decoder.sequence
+                    self.retained_dropped = self.decoder.dropped_samples
             code = self.process.wait(timeout=3)
             if code or not self.decoder.ended:
                 raise ValueError("Collection disconnected before a complete ending.")
@@ -422,33 +464,33 @@ class NativeSession:
         with self.lock:
             return dict(
                 state=self.state,
-                samples=self.samples,
-                records=sum(len(g) for g in self.groups),
-                dropped_samples=self.decoder.dropped_samples,
-                evicted_samples=self.evicted,
+                samples=self.window.samples,
+                records=sum(len(g) for g in self.window.groups),
+                dropped_samples=self.retained_dropped,
+                evicted_samples=self.window.evicted,
                 error=self._health_error(),
                 build=self.build,
                 session_id=self.decoder.identity[0] if self.decoder.identity else None,
                 elapsed_ms=max(0, self.decoder.elapsed_ms),
                 limit_samples=MAX_SAMPLES,
                 has_evidence=bool(
-                    self.groups
+                    self.window.groups
                     or self._health_error()
-                    or self.decoder.dropped_samples
-                    or self.evicted
+                    or self.retained_dropped
+                    or self.window.evicted
                 ),
             )
 
     def snapshot(self):
         with self.lock:
             return snapshot_rows(
-                self.groups,
+                self.window.groups,
                 self.state,
-                self.evicted,
-                self.decoder.dropped_samples,
+                self.window.evicted,
+                self.retained_dropped,
                 self._health_error(),
                 baseline_sha256=native.digest(self.decoder.registry),
-                final_sequence=self.decoder.sequence,
+                final_sequence=self.retained_sequence,
             )
 
     def _health_error(self):

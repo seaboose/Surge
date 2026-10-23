@@ -31,18 +31,30 @@ from native_capture import collect
 
 
 class OwnedProcess:
-    def __init__(self, build="v1", duration=60000, interval=100, read=True):
+    def __init__(
+        self,
+        build="v1",
+        duration=60000,
+        interval=100,
+        read=True,
+        executable=None,
+        force_rebase=False,
+    ):
+        # Alternate binaries belong to isolated compatibility-test builds only.
+        arguments = [
+            str(executable or ROOT / "native/build/surge_owned_app.exe"),
+            "--build",
+            build,
+            "--interval-ms",
+            str(interval),
+            "--duration-ms",
+            str(duration),
+            "--test-controls",
+        ]
+        if force_rebase:
+            arguments.append("--test-force-rebase")
         self.process = subprocess.Popen(
-            [
-                str(ROOT / "native/build/surge_owned_app.exe"),
-                "--build",
-                build,
-                "--interval-ms",
-                str(interval),
-                "--duration-ms",
-                str(duration),
-                "--test-controls",
-            ],
+            arguments,
             stdin=subprocess.PIPE,
             stdout=subprocess.PIPE,
             stderr=subprocess.PIPE,
@@ -146,7 +158,9 @@ def resources(process):
         ctypes.POINTER(Memory),
         wintypes.DWORD,
     ]
-    kernel.GetProcessTimes.argtypes = [wintypes.HANDLE] + [ctypes.POINTER(wintypes.FILETIME)] * 4
+    kernel.GetProcessTimes.argtypes = [wintypes.HANDLE] + [
+        ctypes.POINTER(wintypes.FILETIME)
+    ] * 4
     handle = kernel.OpenProcess(0x1000 | 0x10, False, process.pid)
     if not handle:
         raise ctypes.WinError(ctypes.get_last_error())

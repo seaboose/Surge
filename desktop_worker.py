@@ -673,14 +673,29 @@ class Workspace:
                     ),
                 )
                 if "coverage_expected_ranges" in raw:
+                    scope = ""
+                    scope_details = ""
+                    if "integrity_manifest" in raw:
+                        declaration = engine.decode(raw["integrity_manifest"])
+                        scope = (
+                            f"\n{declaration['checked_bytes']}/{declaration['executable_bytes']} "
+                            "executable bytes in scope."
+                        )
+                        scope_details = (
+                            "\n"
+                            + native_integrity.integrity.describe(declaration)
+                            + f"\nIntegrity manifest SHA-256: {raw['integrity_manifest_sha256']}"
+                        )
                     output.append(
                         dict(
                             field="Coverage",
                             value=f"{raw['coverage_read_ranges']}/{raw['coverage_expected_ranges']} ranges read",
                             lines=[
                                 dict(
-                                    text=f"Range: {raw['range_name']}\n{raw['coverage_compared_ranges']} compared with approval; {raw['coverage_unavailable_ranges']} unavailable; {raw['coverage_unapproved_ranges']} unapproved; {raw['coverage_changed_ranges']} changed.",
-                                    details=f"{raw['coverage_read_bytes']}/{raw['coverage_expected_bytes']} configured bytes read. Covers only the declared ranges, not the entire DLL or process.\nManifest SHA-256: {raw['range_manifest_sha256']}",
+                                    text=f"Range: {raw['range_name']}\n{raw['coverage_compared_ranges']} compared with approval; {raw['coverage_unavailable_ranges']} unavailable; {raw['coverage_unapproved_ranges']} unapproved; {raw['coverage_changed_ranges']} changed."
+                                    + scope,
+                                    details=f"{raw['coverage_read_bytes']}/{raw['coverage_expected_bytes']} configured bytes read. Covers only the declared ranges, not the entire DLL or process.\nManifest SHA-256: {raw['range_manifest_sha256']}"
+                                    + scope_details,
                                 )
                             ],
                         )

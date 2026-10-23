@@ -14,6 +14,7 @@ verification/*.json
 benchmarks/rt-iot2022/
 dist/
 native/build/
+native/build-manifest/
 native/baselines.json
 native/captures/
 *.zip

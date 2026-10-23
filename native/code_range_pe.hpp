@@ -1,9 +1,11 @@
 #pragma once
+#include "lab_manifest.hpp"
 #include <algorithm>
 #include <cstdint>
 #include <cstring>
 #include <stdexcept>
 #include <string>
+#include <set>
 #include <vector>
 #include <windows.h>
 
@@ -51,8 +53,105 @@ public:
           std::max(section.Misc.VirtualSize, section.SizeOfRawData) >
               optional_.SizeOfImage - section.VirtualAddress)
         throw std::runtime_error("PE section exceeds file or image");
+      if ((section.SizeOfRawData && section.PointerToRawData < optional_.SizeOfHeaders) ||
+          (std::max(section.Misc.VirtualSize, section.SizeOfRawData) &&
+           section.VirtualAddress < optional_.SizeOfHeaders))
+        throw std::runtime_error("PE section overlaps image headers");
+      for (const auto &previous : sections_) {
+        if (overlaps(section.VirtualAddress,
+                     std::max(section.Misc.VirtualSize, section.SizeOfRawData),
+                     previous.VirtualAddress,
+                     std::max(previous.Misc.VirtualSize, previous.SizeOfRawData)) ||
+            overlaps(section.PointerToRawData, section.SizeOfRawData,
+                     previous.PointerToRawData, previous.SizeOfRawData))
+          throw std::runtime_error("Overlapping PE sections are unsupported");
+      }
       sections_.push_back(section);
     }
+  }
+  DWORD image_size() const { return optional_.SizeOfImage; }
+  std::uint64_t preferred_base() const { return optional_.ImageBase; }
+  struct Span { DWORD rva; DWORD size; };
+  std::vector<Span> executable_ranges() const {
+    std::vector<Span> result;
+    for (const auto &section : sections_) {
+      if (!(section.Characteristics & IMAGE_SCN_MEM_EXECUTE))
+        continue;
+      if (section.Characteristics & IMAGE_SCN_MEM_WRITE)
+        throw std::runtime_error("Writable executable sections are unsupported");
+      if (section.SizeOfRawData)
+        result.push_back({section.VirtualAddress, section.SizeOfRawData});
+    }
+    if (result.empty() || result.size() > 32)
+      throw std::runtime_error("Unsupported executable section count");
+    std::sort(result.begin(), result.end(),
+              [](const Span &a, const Span &b) { return a.rva < b.rva; });
+    return result;
+  }
+  std::vector<LabRangeDeclaration> declarations() const {
+    const auto rva = exported("LabIntegrityManifest");
+    const auto at = offset(rva, sizeof(LabManifestDeclaration));
+    bool readonly = false;
+    for (const auto &section : sections_) {
+      if (rva >= section.VirtualAddress &&
+          rva - section.VirtualAddress < section.SizeOfRawData)
+        readonly = !(section.Characteristics & (IMAGE_SCN_MEM_WRITE | IMAGE_SCN_MEM_EXECUTE));
+    }
+    if (!readonly)
+      throw std::runtime_error("Manifest declaration must be read-only data");
+    const auto descriptor = read<LabManifestDeclaration>(at);
+    if (descriptor.magic != lab_manifest_magic || descriptor.version != 1 ||
+        descriptor.machine != IMAGE_FILE_MACHINE_AMD64 ||
+        descriptor.range_count < 2 || descriptor.range_count > 16)
+      throw std::runtime_error("Unsupported integrity manifest declaration");
+    auto symbol = [](const char *text) {
+      std::size_t length = 0;
+      for (; length < 64 && text[length]; ++length) {
+        const char c = text[length];
+        if (!((c >= 'A' && c <= 'Z') || (c >= 'a' && c <= 'z') ||
+              (length && ((c >= '0' && c <= '9') || c == '_'))))
+          throw std::runtime_error("Invalid manifest export identifier");
+      }
+      if (!length || length == 64)
+        throw std::runtime_error("Unbounded manifest export identifier");
+      for (std::size_t i = length; i < 64; ++i)
+        if (text[i])
+          throw std::runtime_error("Noncanonical manifest export identifier");
+      return std::string(text, length);
+    };
+    std::set<std::string> names;
+    std::vector<LabRangeDeclaration> result;
+    for (unsigned i = 0; i < descriptor.range_count; ++i) {
+      const auto &entry = descriptor.ranges[i];
+      if (!names.insert(symbol(entry.begin)).second ||
+          !names.insert(symbol(entry.end)).second)
+        throw std::runtime_error("Duplicate manifest export identifier");
+      result.push_back(entry);
+    }
+    for (unsigned i = descriptor.range_count; i < 16; ++i) {
+      const auto &entry = descriptor.ranges[i];
+      for (unsigned j = 0; j < 64; ++j)
+        if (entry.begin[j] || entry.end[j])
+          throw std::runtime_error("Unused manifest declarations must be empty");
+    }
+    return result;
+  }
+  struct ResolvedRange {
+    std::string name;
+    DWORD rva;
+    std::vector<unsigned char> expected;
+  };
+  std::vector<ResolvedRange> declared_ranges() const {
+    std::vector<ResolvedRange> result;
+    for (const auto &declaration : declarations()) {
+      DWORD rva = 0;
+      auto expected = probe(rva, declaration.begin, declaration.end);
+      for (const auto &previous : result)
+        if (overlaps(rva, expected.size(), previous.rva, previous.expected.size()))
+          throw std::runtime_error("Declared code ranges overlap");
+      result.push_back({declaration.begin, rva, std::move(expected)});
+    }
+    return result;
   }
   std::size_t offset(DWORD rva, std::size_t size) const {
     if (rva > optional_.SizeOfImage || size > optional_.SizeOfImage - rva)

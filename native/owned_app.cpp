@@ -127,6 +127,17 @@ struct Module {
   }
 };
 
+struct RebaseReservation {
+  void *value = nullptr;
+  ~RebaseReservation() { if (value) VirtualFree(value, 0, MEM_RELEASE); }
+  void reserve(const OwnedCollector &collector) {
+    require(collector.preferred_base() != 0, "Owned preferred address is unavailable");
+    value = VirtualAlloc(reinterpret_cast<void *>(collector.preferred_base()),
+                         collector.image_size(), MEM_RESERVE, PAGE_NOACCESS);
+    require(value != nullptr, "Cannot reserve owned preferred address for rebase test");
+  }
+};
+
 // Only the explicit evaluation mode exposes these controls. Bytes in the two
 // owned probe exports are never executed by this application.
 struct Change {
@@ -154,6 +165,8 @@ struct Change {
     require(module != nullptr, "Load the owned DLL before changing it");
     address = reinterpret_cast<unsigned char *>(module) +
               collector.ranges()[command == "change-secondary" ? 1 : 0].rva;
+    if (command == "change-primary-last")
+      address += collector.ranges()[0].expected.size() - 1;
     if (command == "change-outside") {
       // Fixed NOP padding between our two exports; no arbitrary address input.
       const auto &first = collector.ranges()[0];
@@ -211,13 +224,16 @@ int wmain(int argc, wchar_t **argv) {
   try {
     std::wstring build = L"v1";
     unsigned interval = 500, duration = 600000;
-    bool controls = false, seen_build = false, seen_interval = false,
+    bool controls = false, force_rebase = false, seen_build = false, seen_interval = false,
          seen_duration = false;
     for (int i = 1; i < argc; ++i) {
       const std::wstring argument(argv[i]);
       if (argument == L"--test-controls") {
         require(!controls, "Duplicate test control option");
         controls = true;
+      } else if (argument == L"--test-force-rebase") {
+        require(!force_rebase, "Duplicate rebase test option");
+        force_rebase = true;
       } else {
         require(i + 1 < argc, "Missing option value");
         if (argument == L"--build") {
@@ -237,11 +253,14 @@ int wmain(int argc, wchar_t **argv) {
         }
       }
     }
+    require(!force_rebase || controls, "Rebase test requires evaluation mode");
     HANDLE input = GetStdHandle(STD_INPUT_HANDLE);
     require(input && input != INVALID_HANDLE_VALUE &&
                 GetFileType(input) == FILE_TYPE_PIPE,
             "Launch the owned app with a control pipe");
     OwnedCollector collector(build);
+    RebaseReservation reservation;
+    if (force_rebase) reservation.reserve(collector);
     Module module;
     module.load(collector);
     Change change;
@@ -249,7 +268,8 @@ int wmain(int argc, wchar_t **argv) {
     require(writer.offer(prefix("ready") + ",\"build\":" + quote(utf8(build)) +
                          ",\"interval_ms\":" + std::to_string(interval) +
                          ",\"duration_ms\":" + std::to_string(duration) +
-                         ",\"ranges\":" + collector.manifest() + "}"),
+                         ",\"ranges\":" + collector.manifest() +
+                         ",\"integrity_manifest\":" + collector.integrity_manifest() + "}"),
             "Cannot start stream");
     const auto started = Clock::now();
     auto next = started;
@@ -295,6 +315,7 @@ int wmain(int argc, wchar_t **argv) {
           } else if (command == "load")
             module.load(collector);
           else if (command == "change-primary" ||
+                   command == "change-primary-last" ||
                    command == "change-secondary" ||
                    command == "change-outside" || command == "unreadable")
             change.apply(collector, module.value, command);

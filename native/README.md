@@ -20,7 +20,7 @@ Approval is an explicit decision after reviewing your own fixture build. Collect
 
 For continuous collection after building, choose **Our app** in Surge, select v1 or v2, and **Start**. **Inspect** opens an analyzed snapshot without stopping collection or moving the records you are reading. **Stop** ends collection and opens its final retained snapshot. **Export** saves the current window as JSONL; use **Save case** for the inspected investigation. Starting another session replaces the capture window, so export evidence you want to retain first. Existing imported evidence stays in place until Inspect or Stop supplies a new snapshot.
 
-The app samples every 500 ms, holds the latest 500 full samples (1,000 range observations), and stops after ten minutes. This is a bounded recent window, not an archive of the entire session. Removed older samples and transport drops produce an Unknown collection-health record. Failed or stale collection remains visible; readable ranges retain their own measured verdicts. No baseline file means the build requires review. Approval still uses the explicit command below.
+The app samples every 500 ms, holds up to 500 full samples, and stops after ten minutes. An 8 MiB encoded-byte budget, including space reserved for snapshot metadata, keeps larger manifests within Surge's import limit. This is a bounded recent window, not an archive of the entire session. Removed older samples and transport drops produce an Unknown collection-health record. Failed or stale collection remains visible; readable ranges retain their own measured verdicts. No baseline file means the build requires review. Approval still uses the explicit command below.
 
 ```powershell
 .\.venv\Scripts\python.exe scripts/native_capture.py approve --build v1 --reason "Reviewed fixture build v1"
@@ -38,6 +38,12 @@ To test an update, collect `--build v2` before approval: it requires review. The
 
 Windows CNG computes SHA-256 of the DLL and the bounded code range. The approved identity includes the DLL hash, range name, relative virtual address, range size, expected bytes, and fingerprint of the complete range manifest. Both configured ranges must be readable and unchanged before the command approves them together. Old single-range approvals remain readable but do not automatically approve a new manifest. A strict x64 PE parser rejects invalid layouts, forwarded exports, overlapping or missing file-backed ranges, writable code, and ranges touched by import or relocation fixups. The fixture's two small assembly routines deliberately have no relocation-dependent operands, so changing the module load address does not require changing its expected bytes.
 
+The DLL exports a read-only, pointer-free `LabIntegrityManifest` declaration. Version 1 names 2–16 bounded export pairs; the collector resolves them from the owned file, not a user-supplied address. Its `surge-integrity-manifest-v1` evidence binds the architecture, module fingerprint and size, image size, ranges, executable file-backed spans and exclusions. Checked and excluded spans must partition those executable bytes exactly. Excluded bytes have no measured verdict; the denominator includes executable file padding and is not the whole process.
+
+Approval now also binds this complete versioned manifest. Legacy cases and approvals remain readable, but legacy approvals cannot approve versioned observations. Review and explicitly approve the newly built fixture; collection never migrates approval automatically. A changed coverage declaration requires a separate approval even when its selected bytes are unchanged.
+
+Unsupported versions, malformed declarations, overlapping sections, writable executable sections and fixups touching checked ranges are refused. Owned fixture DLLs disable incremental linking: export jump stubs are not treated as original routine boundaries. The collector does not discover arbitrary optimized C++ functions. See the [compatibility matrix](../docs/native-compatibility.md) for what was tested.
+
 An in-memory mismatch and an unexpected page protection are separate review reasons. A missing approval is a review lead, not evidence that an update is malicious. Failure to read memory leaves comparison values unavailable. The inspector preserves raw bytes, hashes, permissions, Win32 errors, source identity, and approval provenance.
 
 ## Reproduce checks
@@ -52,7 +58,7 @@ node native.test.cjs
 pnpm run test:stream
 ```
 
-Coverage in the existing inspector reports ranges read, compared with approval, unavailable, unapproved, and changed. Details includes configured bytes read and the manifest fingerprint. These totals describe one snapshot of the configured ranges only, not the entire DLL or process. The current manifest covers two routines totaling 15 bytes. A clean sibling range can have No finding while the snapshot has incomplete coverage; the unavailable range remains Unknown.
+Coverage in the existing inspector reports ranges read, compared with approval, unavailable, unapproved, and changed. Versioned observations also show executable bytes in scope; Details explains exclusions and includes both manifest fingerprints. Declared scope is separate from successfully read bytes. The default manifest covers two routines totaling 15 bytes. A clean sibling range can have No finding while the snapshot has incomplete coverage; the unavailable range remains Unknown.
 
 Imports verify coverage against every exported range and reject missing, duplicate, inconsistent, or overlapping declarations. Failed preparation of an unsupported image produces a failed capture rather than skipping a range. The manifest and records are unsigned; consistent fabrication is still outside this trust boundary.
 

@@ -39,7 +39,9 @@ def decode(text):
     try:
         return json.loads(text, object_pairs_hook=_pairs, parse_constant=_invalid_constant)
     except (RecursionError, OverflowError) as exc:
-        raise ValueError("JSON is too deeply nested or contains an unsupported number.") from exc
+        raise ValueError(
+            "JSON is too deeply nested or contains an unsupported number."
+        ) from exc
 
 
 def canonical(value):
@@ -91,7 +93,8 @@ def _flatten(row, prefix="", depth=0):
             result.update(nested)
         elif isinstance(value, list):
             raise FieldFailure(
-                "This field contains an array. Convert arrays to event records before import.", name
+                "This field contains an array. Convert arrays to event records before import.",
+                name,
             )
         else:
             if not isinstance(value, (str, int, float, bool, type(None))):
@@ -105,9 +108,14 @@ def _flatten(row, prefix="", depth=0):
                     "Unsupported numeric magnitude. Use a finite number between -1e100 and 1e100.",
                     name,
                 )
-            if len(str(value)) > 4096:
+            limit = 4096
+            if not prefix and depth == 0 and row.get("schema") == "surge-native-integrity-v1":
+                # These two bounded metadata strings describe a complete native
+                # manifest. Native import validation still checks their contents.
+                limit = {"integrity_manifest": 32768, "range_manifest": 16384}.get(name, limit)
+            if len(str(value)) > limit:
                 raise FieldFailure(
-                    "This value exceeds 4,096 characters. Shorten it or move the long content outside this dataset.",
+                    f"This value exceeds {limit:,} characters. Shorten it or move the long content outside this dataset.",
                     name,
                 )
             if name in result:
@@ -168,7 +176,9 @@ def _source_object(value, prefix="", depth=0):
     if not isinstance(value, _SourcePairs):
         return value
     if depth > 4:
-        raise FieldFailure("Use at most four nested object levels. Reduce nesting here.", prefix)
+        raise FieldFailure(
+            "Use at most four nested object levels. Reduce nesting here.", prefix
+        )
     result = {}
     for index, (key, child) in enumerate(value.items()):
         if index == value.before_duplicate:
@@ -207,7 +217,9 @@ def parse_bytes(raw, name, format=None):
         fail("A source name must be a plain filename.")
     format = format or Path(name).suffix.lower().lstrip(".")
     if format not in ("csv", "json", "jsonl", "ndjson"):
-        fail("Supported files: CSV, JSON arrays, JSONL, and NDJSON. Choose one of these formats.")
+        fail(
+            "Supported files: CSV, JSON arrays, JSONL, and NDJSON. Choose one of these formats."
+        )
     try:
         original = raw.decode("utf-8")
     except UnicodeDecodeError as exc:
@@ -371,7 +383,9 @@ def parse_bytes(raw, name, format=None):
     except ValueError as exc:
         if isinstance(exc, ImportFailure):
             raise
-        fail("JSON contains an unsupported number. Use finite numbers between -1e100 and 1e100.")
+        fail(
+            "JSON contains an unsupported number. Use finite numbers between -1e100 and 1e100."
+        )
     if issues:
         raise ImportFailure(name, issues)
     if not rows:
@@ -417,10 +431,16 @@ def validate_config(config, current, reference):
     context = config.get("context", {})
     if not isinstance(context, dict) or set(context) - {"User", "Host", "Process"}:
         raise ValueError("Context supports User, Host, and Process mappings.")
-    if any(not isinstance(field, str) or field not in current.fields for field in context.values()):
+    if any(
+        not isinstance(field, str) or field not in current.fields for field in context.values()
+    ):
         raise ValueError("A context field is absent from the incoming source.")
     features = config["features"]
-    if not isinstance(features, list) or len(features) > 12 or len(set(features)) != len(features):
+    if (
+        not isinstance(features, list)
+        or len(features) > 12
+        or len(set(features)) != len(features)
+    ):
         raise ValueError("Select at most 12 distinct numeric signals.")
     for field in features:
         if not isinstance(field, str) or field not in current.fields:
@@ -446,13 +466,17 @@ def validate_config(config, current, reference):
         raise ValueError("Deviation threshold must be between 1 and 100.")
     if features:
         if reference is None:
-            raise ValueError("Load a separate reference dataset to interpret numeric deviations.")
+            raise ValueError(
+                "Load a separate reference dataset to interpret numeric deviations."
+            )
         if reference.digest == current.digest:
             raise ValueError(
                 "Reference and incoming files have identical content. Choose a separate reference."
             )
         if not set(features) <= set(reference.fields):
-            raise ValueError("Reference and incoming data must share the selected signal names.")
+            raise ValueError(
+                "Reference and incoming data must share the selected signal names."
+            )
     rules = config["rules"]
     if not isinstance(rules, list) or len(rules) > MAX_RULES:
         raise ValueError("Use at most 32 rules.")
@@ -481,7 +505,10 @@ def validate_config(config, current, reference):
             raise ValueError("Supported operators: gt, ge, lt, le, eq, ne.")
         if rule["op"] in ("gt", "ge", "lt", "le") and number(rule["value"]) is None:
             raise ValueError("Numeric comparisons require a finite numeric value.")
-        if not isinstance(rule["value"], (str, int, float, bool)) or len(str(rule["value"])) > 4096:
+        if (
+            not isinstance(rule["value"], (str, int, float, bool))
+            or len(str(rule["value"])) > 4096
+        ):
             raise ValueError("Rule values must be bounded strings, numbers, or booleans.")
         if (
             isinstance(rule["value"], (int, float))
@@ -542,7 +569,9 @@ def _timestamp(value, format, origin="unspecified"):
             raise ValueError("ISO timestamps need a timezone.")
         return dt.timestamp() * 1000
     except (ValueError, OverflowError, OSError) as exc:
-        raise ValueError("ISO timestamps must include a valid date, time, and timezone.") from exc
+        raise ValueError(
+            "ISO timestamps must include a valid date, time, and timezone."
+        ) from exc
 
 
 def _rule(rule, row):
@@ -618,7 +647,9 @@ def analyze(current, reference, config):
             if key is not None:
                 grouped.setdefault(key, []).append(row)
                 if len(grouped) > 128:
-                    raise ValueError("Reference groups exceed 128. Choose broader category fields.")
+                    raise ValueError(
+                        "Reference groups exceed 128. Choose broader category fields."
+                    )
         for key, rows in grouped.items():
             group_profiles[key] = dict(
                 count=len(rows), profiles=reference_profiles(rows, config["features"], 20)
@@ -626,7 +657,9 @@ def analyze(current, reference, config):
     records, seen, last = [], set(), {}
     for index, row in enumerate(current.rows, 1):
         session = (
-            _identity(row.get(config["session"]), "session") if config["session"] else "all records"
+            _identity(row.get(config["session"]), "session")
+            if config["session"]
+            else "all records"
         )
         event_id = (
             _identity(row.get(config["event_id"]), "record ID")
@@ -741,7 +774,8 @@ def analyze(current, reference, config):
     }
     if by:
         result.update(
-            method="grouped-reference-deviation-and-field-rules-v1", group_profiles=group_profiles
+            method="grouped-reference-deviation-and-field-rules-v1",
+            group_profiles=group_profiles,
         )
     return result
 

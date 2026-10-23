@@ -112,6 +112,11 @@ let app;
     .getByText(/Coverage:/)
     .waitFor();
   await page
+    .locator(".evidence")
+    .getByText(/executable bytes in scope/)
+    .waitFor();
+  assert.equal(await page.locator("h1, h2, h3").count(), 0);
+  await page
     .getByRole("textbox", { name: "Search records" })
     .fill("LabCodeProbe");
   await app.evaluate(() => (global.__statusFailures = 1));

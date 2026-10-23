@@ -3,3 +3,5 @@ EXPORTS
     LabCodeProbeEnd
     LabCodeSecondary
     LabCodeSecondaryEnd
+    LabCodeTertiary
+    LabCodeTertiaryEnd

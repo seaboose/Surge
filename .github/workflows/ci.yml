@@ -49,13 +49,16 @@ jobs:
           if ($LASTEXITCODE) { exit $LASTEXITCODE }
           ./.venv/Scripts/python.exe -B scripts/test_native_live.py
           if ($LASTEXITCODE) { exit $LASTEXITCODE }
-          ./.venv/Scripts/python.exe -B -m unittest test_native_session -v
+          ./.venv/Scripts/python.exe -B -m unittest test_native_session test_native_window -v
           if ($LASTEXITCODE) { exit $LASTEXITCODE }
           ./.venv/Scripts/python.exe -B scripts/test_native_stream.py
           if ($LASTEXITCODE) { exit $LASTEXITCODE }
       - name: Desktop boundary and runtime checks
         working-directory: desktop
         run: pnpm test
+      - name: Native build compatibility
+        shell: pwsh
+        run: ./.venv/Scripts/python.exe -B scripts/test_native_compatibility.py --output verification/native-compatibility.json
       - name: Reproduce published evaluation evidence
         shell: pwsh
         run: |

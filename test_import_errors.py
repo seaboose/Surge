@@ -14,6 +14,18 @@ from test_workbench import config, dataset, reference
 
 
 class ImportErrorTests(unittest.TestCase):
+    def test_larger_native_manifest_allowance_is_narrow_and_bounded(self):
+        native = {"schema": "surge-native-integrity-v1"}
+        for name, limit in (("range_manifest", 16384), ("integrity_manifest", 32768)):
+            data = engine.parse_bytes(
+                json.dumps([{**native, name: "x" * limit}]).encode(), "native.json"
+            )
+            self.assertEqual(len(data.rows[0][name]), limit)
+            self.failure(json.dumps([{**native, name: "x" * (limit + 1)}]))
+            self.failure(json.dumps([{name: "x" * 4097}]))
+            self.failure(json.dumps([{**native, "nested": {name: "x" * 4097}}]))
+        self.failure(json.dumps([{**native, "ordinary": "x" * 4097}]))
+
     def failure(self, text, name="source.json"):
         with self.assertRaises(ImportFailure) as raised:
             engine.parse_bytes(text.encode("utf-8"), name)
@@ -33,7 +45,8 @@ class ImportErrorTests(unittest.TestCase):
     def test_jsonl_blank_lines_and_syntax_use_physical_lines(self):
         error = self.failure('\n{"x": 1}\n\n{"x": }\n{"nested":{"x":[]}}\n', "source.jsonl")
         self.assertEqual(
-            [(x.record, x.line, x.field) for x in error.issues], [(2, 4, None), (3, 5, "nested.x")]
+            [(x.record, x.line, x.field) for x in error.issues],
+            [(2, 4, None), (3, 5, "nested.x")],
         )
         self.assertEqual(error.issues[0].column, 7)
 

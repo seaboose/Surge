@@ -1,5 +1,15 @@
 # Release verification
 
+## Versioned integrity and compatibility
+
+The [compatibility report](../evidence/native-compatibility-validation.json) records Release and Debug development checks followed by a fresh MinSizeRel build with a third declared range. All three passed with the same frozen implementation. Across those controlled checks, 116 clean observations stayed clear, all 18 persistent changes observed inside checked ranges required review, and 20 unavailable observations stayed Unknown. Seven unapproved observations required review. All 161 records replayed through the workspace and saved cases. These are correctness checks, not real-cheat accuracy estimates.
+
+Local validation passed all 270 Python tests, three native CTests, four desktop boundary checks, native evidence and continuous collection journeys, and all five published demo cases. The new native parser test rejects 21 malformed or unsupported images. The security review added regression coverage for stale approvals, metadata stripping, exact coverage accounting and larger native windows.
+
+Testing exposed Debug incremental-link export stubs, which are avoided by explicitly disabling incremental linking for the owned fixture DLLs. It also exposed larger declared manifests exceeding the old field and retained-window limits. Native metadata now has narrow size bounds, and complete samples are retained within both 500 samples and an 8 MiB encoded budget. Eviction remains visible as Unknown health evidence. Existing imports retain their ordinary field limits.
+
+The existing investigation workflow remains unchanged. Current captures require explicit approval of the complete versioned manifest; older cases still replay. The archived network evaluation and published demo cases remain unchanged. Earlier performance measurements below describe their recorded builds, not a fresh performance benchmark of this milestone.
+
 ## Continuous owned-app collection
 
 Version 0.4 adds bounded C++ collection, stable investigation snapshots and independent scenario validation. The existing interface and file import workflow remain available. Local validation passed 249 Python tests, two native CTests, 20 existing desktop investigation/evaluation journeys, the native evidence journey, and the new continuous-capture journey. Scaling and keyboard checks cover 24 display/text combinations. Capture-specific checks cover restarts, retained-window omissions, failed processes, stale evidence, normal shutdown and forced worker shutdown.

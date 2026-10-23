@@ -1,5 +1,6 @@
 ; Leaf x64 probe: no pointers, imports or relocation-dependent operands.
 PUBLIC LabCodeProbe, LabCodeProbeEnd, LabCodeSecondary, LabCodeSecondaryEnd
+PUBLIC LabCodeTertiary, LabCodeTertiaryEnd
 .code
 LabCodeProbe PROC
     mov eax, ecx
@@ -16,4 +17,12 @@ LabCodeSecondary PROC
     ret
 LabCodeSecondaryEnd LABEL BYTE
 LabCodeSecondary ENDP
+DB 4096 DUP (090h)
+LabCodeTertiary PROC
+    mov eax, ecx
+    imul eax, eax, 3
+    add eax, 7
+    ret
+LabCodeTertiaryEnd LABEL BYTE
+LabCodeTertiary ENDP
 END

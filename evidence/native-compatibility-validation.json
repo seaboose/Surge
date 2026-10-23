@@ -1,0 +1,839 @@
+{
+  "scope": "Owned x64 Windows fixture compatibility; not real-cheat accuracy or population generalization",
+  "source_fingerprints": {
+    "native/code_pe_tests.cpp": "5213ff20af88f8b4f4265e7a5161a863d4cc99a15ba01624b97b477cf2189b16",
+    "native/code_range_collector.cpp": "463718d40e7adf04d91cc0dceeffa581318ec306421277e372a3e60d3b1fbe29",
+    "native/collector_smoke.cpp": "61001319d092e6a0c29049d02c92073dbbed344024ee67d60c55dde680446508",
+    "native/fixture_runner.cpp": "f83c8a358a44c23acbb6cc7471d2456b637baa8bca68a8315a02f9bddfc4f87c",
+    "native/lab_module.cpp": "1a3b6608d0d4227d01b1d91113ed6baa9c872c55b63ed62b740346f96fed66db",
+    "native/manifest_pe_tests.cpp": "c95a5efdbe1af601c2546fff3641d712caddfc59d762d011bb08025c3566a7ed",
+    "native/owned_app.cpp": "53c65caa9d7b8e79d08ca8c8d40dc95e608d570e5edab1ef560cba08b96d4d47",
+    "native/code_range_collector.hpp": "c3d678e8270dd3b8e9f956f3e459ebcd1aea68cf795a0a87ed289ac55a762d9f",
+    "native/code_range_pe.hpp": "c895baf4bd574b5e7f5c561e7353842981828e9e77345ac6f95f30871a5ba8f2",
+    "native/lab_manifest.hpp": "873ae51fdf366ba6011f7dbaca061ce65296a961232f11143f8e577de4134b7d",
+    "native/lab_code.asm": "934eb1b34410a9f1bef25620ab20c02bec950c3160e460683efd17f8c110f4f5",
+    "native/lab_code_v2.asm": "01aa1dad63c1267d1194128d6cd69850fbbb8bc8a8b71856f50750ce0aa349da",
+    "native/lab_code.def": "d84df346c3aff829637b81949b031eb2f3468e078da47f4107abbe86429fc9ef",
+    "native/CMakeLists.txt": "0eb5ad7673688aeca7b7210aa84d7f58a0c240f2c86136155448399e169c027b",
+    "integrity_manifest.py": "753e0ddaa6d65e5af0c57f1b124f52b200a5fc9d88b7188e15101f3052d1e8a6",
+    "native_integrity.py": "e6853e026099b3e70bd368383bbd6a2f8b7702beafdd8c84ae9f9f0647a126e8",
+    "native_stream.py": "3135961d44abaa2ff3b304184a46e97ea4a370849ce9327f70108ab399b1f7e0",
+    "engine.py": "6355ce177ce225b25bf276c8f9a4329b31bda47f37792cce7e0e39a17a81e850",
+    "desktop_worker.py": "bb2cbfc240e978becce31cca23d181a90bc939c3b09f729d3bb95a8725813a7a",
+    "scripts/test_native_stream.py": "0e4f12d609cf7ee16a5619345cdd0fe8d21d3c063979ec812052f14a286bc894",
+    "scripts/test_native_compatibility.py": "fa61b26b76aa0078dddf85d20625308d93abc874c99856d23a89eb7bb2f10fba"
+  },
+  "variants": [
+    {
+      "configuration": "Release",
+      "extra_declared_range": false,
+      "compiler": "MSVC 19.44.35229.0",
+      "configuration_cxx_flags": "/O2 /Ob2 /DNDEBUG",
+      "fixture_linking": "Non-incremental export boundaries; see native/CMakeLists.txt",
+      "native_tests": [
+        "bounded_pe_parser",
+        "versioned_manifest_parser",
+        "collector_without_scenarios"
+      ],
+      "checks": [
+        {
+          "build": "v1",
+          "approved": true,
+          "action": "clean",
+          "statuses": [
+            "No finding",
+            "No finding"
+          ]
+        },
+        {
+          "build": "v1",
+          "approved": true,
+          "action": "change-primary",
+          "statuses": [
+            "Review",
+            "No finding"
+          ]
+        },
+        {
+          "build": "v1",
+          "approved": true,
+          "action": "restore",
+          "statuses": [
+            "No finding",
+            "No finding"
+          ]
+        },
+        {
+          "build": "v1",
+          "approved": true,
+          "action": "change-primary-last",
+          "statuses": [
+            "Review",
+            "No finding"
+          ]
+        },
+        {
+          "build": "v1",
+          "approved": true,
+          "action": "restore",
+          "statuses": [
+            "No finding",
+            "No finding"
+          ]
+        },
+        {
+          "build": "v1",
+          "approved": true,
+          "action": "change-secondary",
+          "statuses": [
+            "No finding",
+            "Review"
+          ]
+        },
+        {
+          "build": "v1",
+          "approved": true,
+          "action": "restore",
+          "statuses": [
+            "No finding",
+            "No finding"
+          ]
+        },
+        {
+          "build": "v1",
+          "approved": true,
+          "action": "unreadable",
+          "statuses": [
+            "Unknown",
+            "No finding"
+          ]
+        },
+        {
+          "build": "v1",
+          "approved": true,
+          "action": "restore",
+          "statuses": [
+            "No finding",
+            "No finding"
+          ]
+        },
+        {
+          "build": "v1",
+          "approved": true,
+          "action": "unload",
+          "statuses": [
+            "Unknown",
+            "Unknown"
+          ]
+        },
+        {
+          "build": "v1",
+          "approved": true,
+          "action": "load",
+          "statuses": [
+            "No finding",
+            "No finding"
+          ]
+        },
+        {
+          "build": "v2",
+          "approved": false,
+          "action": "clean",
+          "statuses": [
+            "Review",
+            "Review"
+          ]
+        },
+        {
+          "build": "v2",
+          "approved": true,
+          "action": "clean",
+          "statuses": [
+            "No finding",
+            "No finding"
+          ]
+        },
+        {
+          "build": "v2",
+          "approved": true,
+          "action": "change-primary",
+          "statuses": [
+            "Review",
+            "No finding"
+          ]
+        },
+        {
+          "build": "v2",
+          "approved": true,
+          "action": "restore",
+          "statuses": [
+            "No finding",
+            "No finding"
+          ]
+        },
+        {
+          "build": "v2",
+          "approved": true,
+          "action": "change-primary-last",
+          "statuses": [
+            "Review",
+            "No finding"
+          ]
+        },
+        {
+          "build": "v2",
+          "approved": true,
+          "action": "restore",
+          "statuses": [
+            "No finding",
+            "No finding"
+          ]
+        },
+        {
+          "build": "v2",
+          "approved": true,
+          "action": "change-secondary",
+          "statuses": [
+            "No finding",
+            "Review"
+          ]
+        },
+        {
+          "build": "v2",
+          "approved": true,
+          "action": "restore",
+          "statuses": [
+            "No finding",
+            "No finding"
+          ]
+        },
+        {
+          "build": "v2",
+          "approved": true,
+          "action": "unreadable",
+          "statuses": [
+            "Unknown",
+            "No finding"
+          ]
+        },
+        {
+          "build": "v2",
+          "approved": true,
+          "action": "restore",
+          "statuses": [
+            "No finding",
+            "No finding"
+          ]
+        },
+        {
+          "build": "v2",
+          "approved": true,
+          "action": "unload",
+          "statuses": [
+            "Unknown",
+            "Unknown"
+          ]
+        },
+        {
+          "build": "v2",
+          "approved": true,
+          "action": "load",
+          "statuses": [
+            "No finding",
+            "No finding"
+          ]
+        }
+      ],
+      "clean_range_observations": 32,
+      "changed_range_observations": 6,
+      "unavailable_range_observations": 6,
+      "unapproved_range_observations": 2,
+      "false_positives": 0,
+      "missed_observed_changes": 0,
+      "replay_records": 46,
+      "manifests": {
+        "v1": {
+          "module_sha256": "eab3af6ec141ec4cdb023e50045d9c5b4e9437acc425f0f5aed9ea5e16ec0126",
+          "manifest_sha256": "1b54358f0b8a6dea8a65234becba30afebb43404d3237b27628c5b8689a7b622",
+          "range_count": 2,
+          "checked_bytes": 15,
+          "executable_bytes": 11776,
+          "excluded_bytes": 11761
+        },
+        "v2": {
+          "module_sha256": "581216309ef59da658327301559f7a80c0cec27a9f5c08307f29a459c1e4aea9",
+          "manifest_sha256": "f9054c55fc6d16614bb87b1b9eee2addf2e0325bf02b448cfeee9e2d64ddb93d",
+          "range_count": 2,
+          "checked_bytes": 15,
+          "executable_bytes": 11776,
+          "excluded_bytes": 11761
+        }
+      },
+      "test_mode_required": true
+    },
+    {
+      "configuration": "Debug",
+      "extra_declared_range": false,
+      "compiler": "MSVC 19.44.35229.0",
+      "configuration_cxx_flags": "/Ob0 /Od /RTC1",
+      "fixture_linking": "Non-incremental export boundaries; see native/CMakeLists.txt",
+      "native_tests": [
+        "bounded_pe_parser",
+        "versioned_manifest_parser",
+        "collector_without_scenarios"
+      ],
+      "checks": [
+        {
+          "build": "v1",
+          "approved": true,
+          "action": "clean",
+          "statuses": [
+            "No finding",
+            "No finding"
+          ]
+        },
+        {
+          "build": "v1",
+          "approved": true,
+          "action": "change-primary",
+          "statuses": [
+            "Review",
+            "No finding"
+          ]
+        },
+        {
+          "build": "v1",
+          "approved": true,
+          "action": "restore",
+          "statuses": [
+            "No finding",
+            "No finding"
+          ]
+        },
+        {
+          "build": "v1",
+          "approved": true,
+          "action": "change-primary-last",
+          "statuses": [
+            "Review",
+            "No finding"
+          ]
+        },
+        {
+          "build": "v1",
+          "approved": true,
+          "action": "restore",
+          "statuses": [
+            "No finding",
+            "No finding"
+          ]
+        },
+        {
+          "build": "v1",
+          "approved": true,
+          "action": "change-secondary",
+          "statuses": [
+            "No finding",
+            "Review"
+          ]
+        },
+        {
+          "build": "v1",
+          "approved": true,
+          "action": "restore",
+          "statuses": [
+            "No finding",
+            "No finding"
+          ]
+        },
+        {
+          "build": "v1",
+          "approved": true,
+          "action": "unreadable",
+          "statuses": [
+            "Unknown",
+            "No finding"
+          ]
+        },
+        {
+          "build": "v1",
+          "approved": true,
+          "action": "restore",
+          "statuses": [
+            "No finding",
+            "No finding"
+          ]
+        },
+        {
+          "build": "v1",
+          "approved": true,
+          "action": "unload",
+          "statuses": [
+            "Unknown",
+            "Unknown"
+          ]
+        },
+        {
+          "build": "v1",
+          "approved": true,
+          "action": "load",
+          "statuses": [
+            "No finding",
+            "No finding"
+          ]
+        },
+        {
+          "build": "v2",
+          "approved": false,
+          "action": "clean",
+          "statuses": [
+            "Review",
+            "Review"
+          ]
+        },
+        {
+          "build": "v2",
+          "approved": true,
+          "action": "clean",
+          "statuses": [
+            "No finding",
+            "No finding"
+          ]
+        },
+        {
+          "build": "v2",
+          "approved": true,
+          "action": "change-primary",
+          "statuses": [
+            "Review",
+            "No finding"
+          ]
+        },
+        {
+          "build": "v2",
+          "approved": true,
+          "action": "restore",
+          "statuses": [
+            "No finding",
+            "No finding"
+          ]
+        },
+        {
+          "build": "v2",
+          "approved": true,
+          "action": "change-primary-last",
+          "statuses": [
+            "Review",
+            "No finding"
+          ]
+        },
+        {
+          "build": "v2",
+          "approved": true,
+          "action": "restore",
+          "statuses": [
+            "No finding",
+            "No finding"
+          ]
+        },
+        {
+          "build": "v2",
+          "approved": true,
+          "action": "change-secondary",
+          "statuses": [
+            "No finding",
+            "Review"
+          ]
+        },
+        {
+          "build": "v2",
+          "approved": true,
+          "action": "restore",
+          "statuses": [
+            "No finding",
+            "No finding"
+          ]
+        },
+        {
+          "build": "v2",
+          "approved": true,
+          "action": "unreadable",
+          "statuses": [
+            "Unknown",
+            "No finding"
+          ]
+        },
+        {
+          "build": "v2",
+          "approved": true,
+          "action": "restore",
+          "statuses": [
+            "No finding",
+            "No finding"
+          ]
+        },
+        {
+          "build": "v2",
+          "approved": true,
+          "action": "unload",
+          "statuses": [
+            "Unknown",
+            "Unknown"
+          ]
+        },
+        {
+          "build": "v2",
+          "approved": true,
+          "action": "load",
+          "statuses": [
+            "No finding",
+            "No finding"
+          ]
+        }
+      ],
+      "clean_range_observations": 32,
+      "changed_range_observations": 6,
+      "unavailable_range_observations": 6,
+      "unapproved_range_observations": 2,
+      "false_positives": 0,
+      "missed_observed_changes": 0,
+      "replay_records": 46,
+      "manifests": {
+        "v1": {
+          "module_sha256": "fe06b4b0960b3c07830a50e9f5bd5719a61d2da2c58902bc4f32ccfbe3c7a435",
+          "manifest_sha256": "7eae37774def65d3b8dc3a9af3463576e97d17b27c1af40c6a24c4b8d7a6fb03",
+          "range_count": 2,
+          "checked_bytes": 15,
+          "executable_bytes": 22528,
+          "excluded_bytes": 22513
+        },
+        "v2": {
+          "module_sha256": "96acfc474a25170968211ba1c4274e126a4f668cf9b14d257e50bfd198fc094e",
+          "manifest_sha256": "f048a8b25b7cf0a4aaa3593b4a90d3abed96065b7108d1a8303578d8cfbbd7dc",
+          "range_count": 2,
+          "checked_bytes": 15,
+          "executable_bytes": 22528,
+          "excluded_bytes": 22513
+        }
+      },
+      "test_mode_required": true
+    },
+    {
+      "configuration": "MinSizeRel",
+      "extra_declared_range": true,
+      "compiler": "MSVC 19.44.35229.0",
+      "configuration_cxx_flags": "/O1 /Ob1 /DNDEBUG",
+      "fixture_linking": "Non-incremental export boundaries; see native/CMakeLists.txt",
+      "native_tests": [
+        "bounded_pe_parser",
+        "versioned_manifest_parser",
+        "collector_without_scenarios"
+      ],
+      "checks": [
+        {
+          "build": "v1",
+          "approved": true,
+          "action": "clean",
+          "statuses": [
+            "No finding",
+            "No finding",
+            "No finding"
+          ]
+        },
+        {
+          "build": "v1",
+          "approved": true,
+          "action": "change-primary",
+          "statuses": [
+            "Review",
+            "No finding",
+            "No finding"
+          ]
+        },
+        {
+          "build": "v1",
+          "approved": true,
+          "action": "restore",
+          "statuses": [
+            "No finding",
+            "No finding",
+            "No finding"
+          ]
+        },
+        {
+          "build": "v1",
+          "approved": true,
+          "action": "change-primary-last",
+          "statuses": [
+            "Review",
+            "No finding",
+            "No finding"
+          ]
+        },
+        {
+          "build": "v1",
+          "approved": true,
+          "action": "restore",
+          "statuses": [
+            "No finding",
+            "No finding",
+            "No finding"
+          ]
+        },
+        {
+          "build": "v1",
+          "approved": true,
+          "action": "change-secondary",
+          "statuses": [
+            "No finding",
+            "Review",
+            "No finding"
+          ]
+        },
+        {
+          "build": "v1",
+          "approved": true,
+          "action": "restore",
+          "statuses": [
+            "No finding",
+            "No finding",
+            "No finding"
+          ]
+        },
+        {
+          "build": "v1",
+          "approved": true,
+          "action": "unreadable",
+          "statuses": [
+            "Unknown",
+            "No finding",
+            "No finding"
+          ]
+        },
+        {
+          "build": "v1",
+          "approved": true,
+          "action": "restore",
+          "statuses": [
+            "No finding",
+            "No finding",
+            "No finding"
+          ]
+        },
+        {
+          "build": "v1",
+          "approved": true,
+          "action": "unload",
+          "statuses": [
+            "Unknown",
+            "Unknown",
+            "Unknown"
+          ]
+        },
+        {
+          "build": "v1",
+          "approved": true,
+          "action": "load",
+          "statuses": [
+            "No finding",
+            "No finding",
+            "No finding"
+          ]
+        },
+        {
+          "build": "v2",
+          "approved": false,
+          "action": "clean",
+          "statuses": [
+            "Review",
+            "Review",
+            "Review"
+          ]
+        },
+        {
+          "build": "v2",
+          "approved": true,
+          "action": "clean",
+          "statuses": [
+            "No finding",
+            "No finding",
+            "No finding"
+          ]
+        },
+        {
+          "build": "v2",
+          "approved": true,
+          "action": "change-primary",
+          "statuses": [
+            "Review",
+            "No finding",
+            "No finding"
+          ]
+        },
+        {
+          "build": "v2",
+          "approved": true,
+          "action": "restore",
+          "statuses": [
+            "No finding",
+            "No finding",
+            "No finding"
+          ]
+        },
+        {
+          "build": "v2",
+          "approved": true,
+          "action": "change-primary-last",
+          "statuses": [
+            "Review",
+            "No finding",
+            "No finding"
+          ]
+        },
+        {
+          "build": "v2",
+          "approved": true,
+          "action": "restore",
+          "statuses": [
+            "No finding",
+            "No finding",
+            "No finding"
+          ]
+        },
+        {
+          "build": "v2",
+          "approved": true,
+          "action": "change-secondary",
+          "statuses": [
+            "No finding",
+            "Review",
+            "No finding"
+          ]
+        },
+        {
+          "build": "v2",
+          "approved": true,
+          "action": "restore",
+          "statuses": [
+            "No finding",
+            "No finding",
+            "No finding"
+          ]
+        },
+        {
+          "build": "v2",
+          "approved": true,
+          "action": "unreadable",
+          "statuses": [
+            "Unknown",
+            "No finding",
+            "No finding"
+          ]
+        },
+        {
+          "build": "v2",
+          "approved": true,
+          "action": "restore",
+          "statuses": [
+            "No finding",
+            "No finding",
+            "No finding"
+          ]
+        },
+        {
+          "build": "v2",
+          "approved": true,
+          "action": "unload",
+          "statuses": [
+            "Unknown",
+            "Unknown",
+            "Unknown"
+          ]
+        },
+        {
+          "build": "v2",
+          "approved": true,
+          "action": "load",
+          "statuses": [
+            "No finding",
+            "No finding",
+            "No finding"
+          ]
+        }
+      ],
+      "clean_range_observations": 52,
+      "changed_range_observations": 6,
+      "unavailable_range_observations": 8,
+      "unapproved_range_observations": 3,
+      "false_positives": 0,
+      "missed_observed_changes": 0,
+      "replay_records": 69,
+      "manifests": {
+        "v1": {
+          "module_sha256": "1f3550942e8698883d92a70d1551a769c74b8d75f7d4f7c69f12e86f6748610f",
+          "manifest_sha256": "a220dced8b6bf7dca7be704977dc971a43ab6fa982f87f25bf24d040a2ef4ce0",
+          "range_count": 3,
+          "checked_bytes": 24,
+          "executable_bytes": 11776,
+          "excluded_bytes": 11752
+        },
+        "v2": {
+          "module_sha256": "a7d562040fdadf898d21fed5fdd34c455b1e30d1a48211fe99fc9b85a465d86f",
+          "manifest_sha256": "e3b59ccb80f2fad424eb32fc1c528feb1fea59469ff18e09da0d4f4049d58aae",
+          "range_count": 3,
+          "checked_bytes": 24,
+          "executable_bytes": 11776,
+          "excluded_bytes": 11752
+        }
+      },
+      "test_mode_required": true
+    }
+  ],
+  "limits": [
+    "Only explicitly declared code ranges are compared; executable exclusions remain unchecked.",
+    "The probe routines are assembly fixtures. Compiler modes vary the collector and DLL support code, not arbitrary compiler-generated function boundaries.",
+    "Loader relocations touching checked ranges are refused, not normalized or masked.",
+    "The MinSizeRel extra-range variant is a fresh build configuration, not an independently sampled detection dataset.",
+    "Local manifests and evidence remain unsigned. These tests do not establish client attestation or protection from a compromised collector."
+  ],
+  "validation_sequence": [
+    "Release and Debug development validation",
+    "Implementation frozen",
+    "First MinSizeRel extra-range validation passed without implementation changes"
+  ],
+  "development_issue": "The initial Debug build used incremental export thunks and was refused as an unsupported range. The owned DLL targets now explicitly disable incremental linking. The parser does not follow arbitrary thunks.",
+  "summary": {
+    "clean_range_observations": 116,
+    "changed_range_observations": 18,
+    "unavailable_range_observations": 20,
+    "unapproved_range_observations": 7,
+    "false_positives": 0,
+    "missed_observed_changes": 0,
+    "replay_records": 161,
+    "configurations": 3
+  },
+  "source_fingerprints_lf": {
+    "native/code_pe_tests.cpp": "5213ff20af88f8b4f4265e7a5161a863d4cc99a15ba01624b97b477cf2189b16",
+    "native/code_range_collector.cpp": "9b84cfd74352ce38b15e4410b91bffb59cde18e3b689fe4f8e2e7285702f5880",
+    "native/collector_smoke.cpp": "6fac4785a9838661603d1b36f4fc993f89bbd0f174eb17534dc20405e252851c",
+    "native/fixture_runner.cpp": "b260343893c9e017afc2984516dcf14ab4f4568ed1a86d8c1cc35924cd3112a7",
+    "native/lab_module.cpp": "1a3b6608d0d4227d01b1d91113ed6baa9c872c55b63ed62b740346f96fed66db",
+    "native/manifest_pe_tests.cpp": "c95a5efdbe1af601c2546fff3641d712caddfc59d762d011bb08025c3566a7ed",
+    "native/owned_app.cpp": "53c65caa9d7b8e79d08ca8c8d40dc95e608d570e5edab1ef560cba08b96d4d47",
+    "native/code_range_collector.hpp": "559932a4eb164aa0d03095b351a2a92d9da5c004b14591f5640086d0203bcf17",
+    "native/code_range_pe.hpp": "a22fefb62d30f0fc43b189653e72fe5d5a30a583f7fa541a900e3df0b8918fea",
+    "native/lab_manifest.hpp": "873ae51fdf366ba6011f7dbaca061ce65296a961232f11143f8e577de4134b7d",
+    "native/lab_code.asm": "75266498ba186c6069c5629b8475f68bd6f7c82bdab2cadd5cc88ee30dae7e32",
+    "native/lab_code_v2.asm": "b822c0f7522ed1f6522f81468f4f89d79153a5f45a7253dd4a2ebda6d4789fa5",
+    "native/lab_code.def": "f738e78e851b916dd646935fe8297a238c869a6da433951dfef1afc1b19fa003",
+    "native/CMakeLists.txt": "a80bb9aa4d9af58f9dbccec704efdc4cfd2fc779f85ba4e606f2cb49eb176d35",
+    "integrity_manifest.py": "753e0ddaa6d65e5af0c57f1b124f52b200a5fc9d88b7188e15101f3052d1e8a6",
+    "native_integrity.py": "4301a3024a2e5200d96f4d5a39350822858fcb2435c68cadf3c03d73b1cdb060",
+    "native_stream.py": "3135961d44abaa2ff3b304184a46e97ea4a370849ce9327f70108ab399b1f7e0",
+    "engine.py": "6355ce177ce225b25bf276c8f9a4329b31bda47f37792cce7e0e39a17a81e850",
+    "desktop_worker.py": "36595db994b9089f0c2548dabf9443a5961e763fb2b4f5b17fffb425d48681a8",
+    "scripts/test_native_stream.py": "0e4f12d609cf7ee16a5619345cdd0fe8d21d3c063979ec812052f14a286bc894",
+    "scripts/test_native_compatibility.py": "fa61b26b76aa0078dddf85d20625308d93abc874c99856d23a89eb7bb2f10fba"
+  },
+  "fingerprint_note": "source_fingerprints records the exact workspace bytes evaluated. source_fingerprints_lf records the same verified bytes with CRLF converted to LF for Git publication. Original fingerprints remain unchanged; no other content normalization was applied."
+}

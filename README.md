@@ -12,7 +12,7 @@ Choose **Our app → Start → Inspect** to open a stable snapshot while collect
 
 Surge also imports CSV, JSON and JSON Lines, supports field rules and separate numeric reference data, and evaluates findings against independent labels. Search, exact-value inspection, linked chart points and case comparison support investigation.
 
-Native coverage is **two ranges totaling 15 bytes**, with a **500 ms target interval**, a **500-sample window** and a **10-minute session limit**. Changes outside coverage or between samples can be missed. Missing approval requires review; missing observations remain Unknown. Local unsigned evidence is not client attestation. Surge never attaches to games or Vanguard and does not enforce bans.
+Native coverage is **two ranges totaling 15 bytes**, with a **500 ms target interval**, up to **500 samples** in a byte-bounded window and a **10-minute session limit**. A versioned DLL manifest declares coverage and excluded executable bytes; approval binds the complete declaration. [Compatibility checks](docs/native-compatibility.md) exercise different builds, relocated loading and a third declared range. Changes outside coverage or between samples can be missed. Missing approval requires review; missing observations remain Unknown. Local unsigned evidence is not client attestation. Surge never attaches to games or Vanguard and does not enforce bans.
 
 ## Try the demo
 
