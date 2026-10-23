@@ -117,7 +117,7 @@ jobs:
           Get-Content verification/qualification/first-use-unit.log
           exit $LASTEXITCODE
       - name: Package and test first use (human acceptance remains pending)
-        run: python -B scripts/check_first_use.py
+        run: python -B scripts/probe_first_use_failure.py
       - name: Verify the real launcher on the fresh hosted profile
         timeout-minutes: 3
         shell: pwsh
