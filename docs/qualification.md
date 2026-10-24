@@ -1,5 +1,13 @@
 # Defensive qualification
 
+The hosted Windows `test` job requires the full 21-step profile described in
+[hosted acceptance criteria](hosted-deep-qualification.md), using a pinned portable
+LLVM toolchain. `scripts/check_deep_qualification.py` checks a clean starting
+checkout, packages dependent evidence and verifies the complete result. Its
+`--verify <artifact-folder>` mode verifies a downloaded bundle without depending
+on the original machine paths. Failed attempts remain failed and retain partial
+evidence. Unfamiliar-tester acceptance remains pending; T1/T2/T3 remain incomplete.
+
 From the Surge root in a Windows graphical session, run:
 
 ```powershell

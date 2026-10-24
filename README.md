@@ -51,6 +51,8 @@ These cases come from the owned app. Paths and process identities are removed; d
 
 ## Verification and evidence
 
+The required Windows `test` job runs the [deeper qualification profile](docs/hosted-deep-qualification.md) from a clean checkout before the existing UI and compatibility checks. It includes verified ASan controls, bounded properties, the parser pilot and fixed boundaries, and retention checks. Its portable evidence is retained on success or failure. This does not complete the broader fuzzing campaign or unfamiliar-tester acceptance.
+
 Run `python -B scripts/check_first_use.py` for the permanent [first-use release check](docs/first-use-release-check.md). The same command runs in a separate Windows CI job and retains evidence on failure. It tests the extracted source package; unfamiliar-tester acceptance always remains pending.
 
 [First-use results](docs/first-use-results.md): isolated setup and scripted workflows passed; unfamiliar-tester acceptance remains pending.

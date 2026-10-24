@@ -16,9 +16,11 @@ import uuid
 try:
     from .qualify import ROOT, test_environment, stop_tree
     from .parser_boundary_contract import GUARDS, parse_output, validate_evidence
+    from .windows_toolchain import discover_windows_toolchain
 except ImportError:
     from qualify import ROOT, test_environment, stop_tree
     from parser_boundary_contract import GUARDS, parse_output, validate_evidence
+    from windows_toolchain import discover_windows_toolchain
 
 
 def sha(path):
@@ -80,6 +82,7 @@ def main():
             "native/pilot/boundaries.cpp",
             "scripts/parser_boundary_contract.py",
             "scripts/check_libfuzzer.py",
+            "scripts/windows_toolchain.py",
         )
     }
     started = time.monotonic()
@@ -189,17 +192,7 @@ def main():
         for tool in ("clang-cl.exe", "lld-link.exe", "llvm-cov.exe", "llvm-profdata.exe"):
             if not (llvm / tool).is_file():
                 raise RuntimeError("Missing LLVM tool: " + tool)
-        vs = (
-            Path(os.environ.get("ProgramFiles(x86)", "C:/Program Files (x86)"))
-            / "Microsoft Visual Studio/2022/BuildTools/VC/Tools/MSVC"
-        )
-        vc = max(vs.iterdir(), key=lambda p: tuple(map(int, p.name.split("."))))
-        sdk = (
-            Path(os.environ.get("ProgramFiles(x86)", "C:/Program Files (x86)")) / "Windows Kits/10"
-        )
-        sdk_version = max(
-            (sdk / "Lib").iterdir(), key=lambda p: tuple(map(int, p.name.split(".")))
-        ).name
+        vc, sdk, sdk_version = discover_windows_toolchain()
         env["INCLUDE"] = ";".join(
             str(p)
             for p in [

@@ -15,7 +15,8 @@ concurrency:
 jobs:
   test:
     runs-on: windows-latest
-    timeout-minutes: 20
+    # Includes bounded toolchain acquisition plus the existing 30-minute profile.
+    timeout-minutes: 60
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
         with:
@@ -30,6 +31,24 @@ jobs:
         with:
           version: '11.25.0'
           run_install: false
+      - name: Verify deeper qualification runner contracts
+        shell: pwsh
+        run: |
+          New-Item -ItemType Directory -Force verification/qualification | Out-Null
+          python -B -m unittest -v test_deep_qualification test_deep_failure_probe test_qualification_llvm test_windows_toolchain *> verification/qualification/deep-unit.log
+          $result = $LASTEXITCODE
+          Get-Content verification/qualification/deep-unit.log
+          exit $result
+      - name: Prepare pinned qualification toolchain
+        id: qualification-llvm
+        timeout-minutes: 12
+        shell: pwsh
+        run: ./scripts/setup_qualification_llvm.ps1 -Destination (Join-Path $env:RUNNER_TEMP 'surge-qualification-llvm') -EvidenceDirectory verification/qualification/toolchain
+      - name: Require complete deeper qualification
+        shell: pwsh
+        env:
+          SURGE_QUALIFICATION_LLVM: ${{ steps.qualification-llvm.outputs.llvm_bin }}
+        run: python -B scripts/check_deep_qualification.py --llvm-bin "$env:SURGE_QUALIFICATION_LLVM" --toolchain-evidence verification/qualification/toolchain
       - name: Install and build
         shell: pwsh
         run: ./Setup-Surge.ps1
@@ -90,6 +109,17 @@ jobs:
         run: node demo.test.cjs
       - name: Release hygiene
         run: ./.venv/Scripts/python.exe -B scripts/check_release.py
+      - name: Preserve deeper qualification evidence, including failures
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: deeper-qualification-${{ github.sha }}-${{ github.run_attempt }}
+          path: |
+            verification/qualification/deep-*/artifacts/**
+            verification/qualification/toolchain/**
+            verification/qualification/deep-unit.log
+          if-no-files-found: error
+          retention-days: 30
 
   first-use:
     name: First-use release check
