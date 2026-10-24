@@ -43,6 +43,8 @@ jobs:
         id: qualification-llvm
         timeout-minutes: 12
         shell: pwsh
+        env:
+          SURGE_GITHUB_TOKEN: ${{ github.token }}
         run: ./scripts/setup_qualification_llvm.ps1 -Destination (Join-Path $env:RUNNER_TEMP 'surge-qualification-llvm') -EvidenceDirectory verification/qualification/toolchain
       - name: Require complete deeper qualification
         shell: pwsh

@@ -2,10 +2,13 @@
 
 import hashlib
 import io
+import json
+import os
 from pathlib import Path
 import tarfile
 import tempfile
 import unittest
+import urllib.error
 from unittest import mock
 
 
@@ -44,6 +47,79 @@ class QualificationLLVMTests(unittest.TestCase):
             validate(self.root / "tools", self.root)
         with self.assertRaisesRegex(RuntimeError, "already exists"):
             validate(self.root, self.root / "source")
+
+    def test_token_only_used_for_fixed_metadata_request_and_removed(self):
+        token = "fixture-token-never-a-real-credential"
+        calls = []
+
+        def metadata_response(request, timeout):
+            calls.append((request.full_url, dict(request.header_items()), timeout))
+            return io.BytesIO(b'{"assets":[]}')
+
+        opener = mock.Mock()
+        opener.open.side_effect = metadata_response
+        with mock.patch.dict(os.environ, {"SURGE_GITHUB_TOKEN": token}):
+            with mock.patch("urllib.request.build_opener", return_value=opener):
+                self.assertEqual(self.helper["read_metadata"](), b'{"assets":[]}')
+            self.assertNotIn("SURGE_GITHUB_TOKEN", os.environ)
+            response = io.BytesIO(b"fixture")
+            response.headers = {"Content-Length": "7"}
+            with mock.patch("urllib.request.urlopen", return_value=response) as download:
+                self.helper["download"](
+                    self.helper["DOWNLOAD_URL"], self.root / "download", 7,
+                    hashlib.sha256(b"fixture").hexdigest(),
+                )
+            archive_request = download.call_args.args[0]
+            self.assertIsNone(archive_request.get_header("Authorization"))
+        self.assertEqual(calls, [(self.helper["METADATA_URL"], {
+            "User-agent": "Surge-bounded-qualification", "Accept": "application/vnd.github+json",
+            "Authorization": "Bearer " + token,
+        }, 20)])
+
+    def test_public_metadata_access_does_not_require_token(self):
+        opener = mock.Mock()
+        opener.open.return_value = io.BytesIO(b'{"assets":[]}')
+        with mock.patch.dict(os.environ, {}, clear=True):
+            with mock.patch("urllib.request.build_opener", return_value=opener):
+                self.helper["read_metadata"]()
+        self.assertIsNone(opener.open.call_args.args[0].get_header("Authorization"))
+
+    def test_metadata_redirect_is_refused(self):
+        handler = self.helper["NoMetadataRedirect"]()
+        with self.assertRaisesRegex(RuntimeError, "redirects are refused"):
+            handler.redirect_request(None, None, 302, "redirect", {}, "https://example.invalid/")
+
+    def test_token_never_appears_in_saved_failure_report_or_output(self):
+        token = "fixture-secret-error-must-be-redacted"
+        opener = mock.Mock()
+        opener.open.side_effect = urllib.error.HTTPError(
+            self.helper["METADATA_URL"], 403, "echo " + token, {}, None,
+        )
+        evidence = self.root / "evidence"
+        evidence.mkdir()
+        output = io.StringIO()
+        argv = ["bootstrap", "--destination", str(self.root / "tools"),
+                "--evidence", str(evidence), "--source-root", str(self.root / "source")]
+        with mock.patch.dict(os.environ, {"SURGE_GITHUB_TOKEN": token}):
+            with mock.patch("urllib.request.build_opener", return_value=opener):
+                with mock.patch("sys.argv", argv), mock.patch("sys.stdout", output):
+                    self.assertEqual(self.helper["main"](), 1)
+            self.assertNotIn("SURGE_GITHUB_TOKEN", os.environ)
+        report_text = (evidence / "report.json").read_text(encoding="utf-8")
+        self.assertNotIn(token, report_text + output.getvalue())
+        self.assertIn("HTTP 403", json.loads(report_text)["error"])
+        self.assertFalse((evidence / "release-metadata.json").exists())
+
+    def test_credential_echo_in_metadata_is_never_returned(self):
+        token = "fixture-credential-echo"
+        opener = mock.Mock()
+        opener.open.return_value = io.BytesIO(token.encode())
+        with mock.patch.dict(os.environ, {"SURGE_GITHUB_TOKEN": token}):
+            with mock.patch("urllib.request.build_opener", return_value=opener):
+                with self.assertRaises(RuntimeError) as failure:
+                    self.helper["read_metadata"]()
+            self.assertNotIn("SURGE_GITHUB_TOKEN", os.environ)
+        self.assertNotIn(token, str(failure.exception))
 
     def test_hash_mismatch_preserves_download(self):
         response = io.BytesIO(b"changed")

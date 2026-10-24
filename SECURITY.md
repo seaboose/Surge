@@ -15,6 +15,6 @@ Surge processes local evidence. Treat imported files, field names, values, cases
 
 Do not publish private evidence or raw test profiles. Saved cases include the original records. The repository excludes local datasets, environments, test profiles, and generated outputs by default.
 
-CI has read-only repository permissions, uses pinned action commits, and does not need secrets. Dependency changes require a lockfile update, a fresh install, and the test suites. Do not disable Electron isolation to work around a failing test.
+CI has read-only repository permissions, uses pinned action commits, and needs no user-provided secrets. The toolchain bootstrap confines the built-in job token to the fixed official GitHub release-metadata request; it refuses redirects and removes the token before downloads or tool execution. Dependency changes require a lockfile update, a fresh install, and the test suites. Do not disable Electron isolation to work around a failing test.
 
 If you find a vulnerability, contact the maintainer through the repository's private reporting option when available. Otherwise, open an issue describing the affected component without credentials, private records, or exploit details. This is a development project with no guaranteed response time.
