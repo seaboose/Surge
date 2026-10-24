@@ -35,6 +35,7 @@ def source_files(root=ROOT):
                     and relative.as_posix() != "evidence/surge-evaluation-evidence.zip"
                 )
                 or name.startswith(".env")
+                or name == ".git"  # Linked worktrees store metadata in a file.
                 or name == ".surge-ui.json"
                 or relative.as_posix() == "native/baselines.json"
             ):
