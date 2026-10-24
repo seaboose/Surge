@@ -72,6 +72,42 @@ def refuse_source_destination(destination, source_root):
         raise RuntimeError("LLVM destination already exists; preserve it and use a fresh destination")
 
 
+class NoMetadataRedirect(urllib.request.HTTPRedirectHandler):
+    def redirect_request(self, request, response, code, message, headers, new_url):
+        raise RuntimeError("Release metadata redirects are refused")
+
+
+def read_metadata():
+    # A hosted job may supply its read-only GitHub token to avoid the shared
+    # anonymous API quota. Consume it here so archive/version subprocesses cannot
+    # inherit it. Never attach it to downloads or follow metadata redirects.
+    token = os.environ.pop("SURGE_GITHUB_TOKEN", None)
+    headers = {"User-Agent": "Surge-bounded-qualification",
+               "Accept": "application/vnd.github+json"}
+    if token:
+        headers["Authorization"] = "Bearer " + token
+    request = urllib.request.Request(METADATA_URL, headers=headers)
+    try:
+        opener = urllib.request.build_opener(NoMetadataRedirect())
+        with opener.open(request, timeout=20) as response:
+            raw = response.read(1024 * 1024 + 1)
+        if len(raw) > 1024 * 1024:
+            raise RuntimeError("Release metadata exceeds 1 MiB")
+        if token and token.encode() in raw:
+            raise RuntimeError("Release metadata unexpectedly contains credential data")
+        return raw
+    except Exception as exc:
+        # Transport exception strings can contain request details. Retain only
+        # exception class and an HTTP status; never serialize headers or tokens.
+        status = getattr(exc, "code", None)
+        detail = " HTTP " + str(status) if isinstance(status, int) else ""
+        raise RuntimeError("Official metadata request failed: " + type(exc).__name__ + detail) from None
+    finally:
+        request.remove_header("Authorization")
+        headers.pop("Authorization", None)
+        token = None
+
+
 def download(url, path, expected_bytes, expected_sha256):
     started = time.monotonic()
     request = urllib.request.Request(url, headers={"User-Agent": "Surge-bounded-qualification"})
@@ -190,12 +226,7 @@ def main():
         refuse_source_destination(destination, args.source_root.resolve())
         destination.mkdir(parents=True)
         archive = destination / ASSET
-        request = urllib.request.Request(METADATA_URL, headers={"User-Agent": "Surge-bounded-qualification",
-                                                                "Accept": "application/vnd.github+json"})
-        with urllib.request.urlopen(request, timeout=20) as response:
-            raw = response.read(1024 * 1024 + 1)
-        if len(raw) > 1024 * 1024:
-            raise RuntimeError("Release metadata exceeds 1 MiB")
+        raw = read_metadata()
         (evidence / "release-metadata.json").write_bytes(raw)
         metadata = json.loads(raw)
         matches = [item for item in metadata["assets"] if item["name"] == ASSET]

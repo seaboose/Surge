@@ -26,7 +26,9 @@ ceiling includes bootstrap and both existing suites; qualification keeps its
 It uses standard-library extraction into a fresh external directory, verifies
 official release metadata, and compares the four tools and three runtime/library
 files against the previously verified `.tar.zst` toolchain. Bootstrap has its own
-600-second outer limit. Compiler discovery uses Microsoft's installed-toolchain
+600-second outer limit. Hosted metadata requests use the built-in read-only job
+token to avoid shared anonymous API quotas; redirects are refused and the token
+is removed before archive downloads or compiler execution. Compiler discovery uses Microsoft's installed-toolchain
 locator so the existing parser pilot supports hosted Visual Studio editions.
 
 The `deeper-qualification-<tested-sha>-<attempt>` artifact contains the source
