@@ -4,6 +4,7 @@ import React, {
   useLayoutEffect,
   useMemo,
   useRef,
+  useId,
   useContext,
   createContext,
 } from "react";
@@ -74,6 +75,47 @@ const Button = ({ children, ...props }) => (
     {children}
   </button>
 );
+function InfoBubble({ label, children }) {
+  const id = useId(),
+    panel = useRef();
+  useEffect(() => {
+    const dismiss = () => {
+      if (panel.current?.matches(":popover-open")) panel.current.hidePopover();
+    };
+    window.addEventListener("resize", dismiss);
+    return () => window.removeEventListener("resize", dismiss);
+  }, []);
+  return (
+    <span className="info-bubble">
+      <Button
+        aria-label={label}
+        popoverTarget={id}
+        onClick={(event) => {
+          const box = event.currentTarget.getBoundingClientRect();
+          panel.current.style.left = `${Math.max(16, Math.min(box.left, window.innerWidth - 376))}px`;
+          const below = box.bottom < window.innerHeight / 2;
+          panel.current.style.top = below ? `${box.bottom + 8}px` : "auto";
+          panel.current.style.bottom = below
+            ? "auto"
+            : `${window.innerHeight - box.top + 8}px`;
+        }}
+      >
+        <span aria-hidden="true">i</span>
+      </Button>
+      <span
+        ref={panel}
+        id={id}
+        popover="auto"
+        className="info-panel"
+        role="note"
+        aria-label={label}
+        tabIndex={0}
+      >
+        {children}
+      </span>
+    </span>
+  );
+}
 function ExportOptions({ items }) {
   const host = useRef();
   useEffect(() => {
@@ -1324,9 +1366,14 @@ function CaseLibraryDialog({ run, working, close }) {
         </Button>
       </div>
       <small>
-        Import keeps a library copy. Open case file inspects an external case
-        without adding it.
+        Import adds a copy. Open leaves the file outside your library.
       </small>
+      <InfoBubble label="About case files">
+        Import case keeps a verified copy in this computer's library. Open case
+        file lets you inspect an external case without adding it. Export case
+        creates a portable copy you can reopen or import elsewhere. Original
+        files stay unchanged.
+      </InfoBubble>
       {error && <p role="alert">{error}</p>}
       {!data && !error && <p>Loading cases…</p>}
       {data?.unavailable > 0 && (
@@ -2219,10 +2266,14 @@ function Results({ active }) {
               ? ` · ${s.observation_counts.notices} collection notices`
               : ""}
             .
-            {s.observation_counts.ranges_per_sample !== null
-              ? ` Each retained sample contains ${s.observation_counts.ranges_per_sample} range observations.`
-              : " The number of range observations varies by sample."}
           </small>
+          <InfoBubble label="About sample counts">
+            {s.observation_counts.ranges_per_sample !== null
+              ? `Each retained sample contains ${s.observation_counts.ranges_per_sample} range observations.`
+              : "The number of range observations varies by sample."}{" "}
+            Counts describe the evidence currently open. A live collection may
+            contain newer samples.
+          </InfoBubble>
         </div>
       )}
       <div className="actions">
@@ -3004,7 +3055,7 @@ function Evaluate({ active }) {
     <div className="column full evaluation">
       <p className="view-help">
         Measure detection performance using independently assigned labels.
-        Analyze the evidence first, then import labels for this source.
+        Import labels for the analyzed evidence below.
       </p>
       <div className="actions">
         <Button onClick={() => run("labels_load")}>Import labels</Button>
@@ -3018,33 +3069,36 @@ function Evaluate({ active }) {
       {error && <p role="alert">{error}</p>}
       {!s.labels && (
         <div className="scroll grow">
-          <p>
-            Current data is the test source. Reference data sets the numeric
-            profile; labels never enter detection.
-          </p>
-          <p>
-            Save a blank template for this source. Ask a reviewer to label
-            records from independent evidence, without seeing Surge’s decisions.
-            Import their completed JSON file.
-          </p>
-          <p>
+          <ol className="evaluation-steps">
+            <li>Save a label template for this evidence.</li>
+            <li>
+              Ask a reviewer to label it from independent evidence, without
+              seeing Surge's decisions.
+            </li>
+            <li>
+              Import the completed JSON file to review detection performance.
+            </li>
+          </ol>
+          <span>Labeling guidance</span>
+          <InfoBubble label="Labeling guidance">
             Use legitimate or target for truth, a short group such as
             “legitimate update”, and a note explaining the label. Leave unknown
             truth as null.
-          </p>
-          <p>
-            Record the author, labeling method, reference/test partition,
-            purpose, and whether labels were independent of the detector. Use
-            untouched sessions, users, or time periods where appropriate.
-          </p>
+            <br />
+            <br />
+            Record the author, method, reference/test partition, purpose, and
+            independence from the detector. Use untouched sessions, users or
+            time periods where appropriate. Current data is the test source;
+            reference data sets the numeric profile. Labels never enter
+            detection.
+          </InfoBubble>
           <p>
             Keep labels outside the source data and reference. Do not map answer
             fields into rules or numeric signals.
           </p>
           <p>
-            Labels and evaluations are separate files. Save the case, labels,
-            and evaluation together; reopening a case requires importing its
-            labels again.
+            Labels are separate from the case. Keep the case, labels and
+            evaluation together; import labels again after reopening a case.
           </p>
           <small>
             Independent annotation and representative data are needed before
@@ -3259,11 +3313,20 @@ function Details({ active }) {
           {data.reference && <pre>SHA-256: {data.reference.sha256}</pre>}
           <p>
             {Object.entries(data.summary)
-              .map(([k, v]) => `${k}: ${v}`)
+              .map(
+                ([k, v]) =>
+                  `${{ total: "Records", Review: "Need review", Unknown: "Unknown", "No finding": "No finding", rows_with_gaps: "Records with gaps" }[k] || k}: ${v}`,
+              )
               .join(" · ")}
           </p>
-          <pre>{data.settings}</pre>
-          <pre>{data.profiles}</pre>
+          <details>
+            <summary>Analysis settings</summary>
+            <pre>{data.settings}</pre>
+          </details>
+          <details>
+            <summary>Numeric reference profiles</summary>
+            <pre>{data.profiles}</pre>
+          </details>
           <p>
             Constant references use 1% of the absolute median as scale, with a
             1e-9 minimum.

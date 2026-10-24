@@ -1,5 +1,16 @@
 # Defensive qualification
 
+The [combined candidate criteria](combined-candidate-acceptance.md) bind the
+final source package to both required hosted checks and downloaded evidence.
+Additional named CI steps cover [optional-help clarity](visual-clarity-acceptance.md),
+the [fixed approval contract](approval-contract-acceptance.md), and isolated
+[stream](stream-model-acceptance.md) and [manifest](manifest-model-acceptance.md)
+model revalidation. They retain separate reports, source hashes, limits and
+portable verification. They do not change the existing 21-step profile or turn
+known-case replay into new held-back evidence. The original combined campaign
+and unfamiliar-user acceptance remain unfinished; each component's results
+describe only what it executed.
+
 The desktop step includes the bounded [case-library recovery campaign](case-recovery-acceptance.md):
 48 owned scenarios repeated twice, fresh-process inspection, fixed budgets and
 retained fault evidence. Hosted artifacts include its hidden staging residue so

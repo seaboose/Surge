@@ -221,7 +221,19 @@ class CaseLibrary {
       await this.call("library_verify", { path: file });
       // A same-directory hard link publishes complete bytes without replacing
       // a destination that appeared during verification. No unsafe copy fallback.
-      await fs.link(file, destination);
+      try {
+        await fs.link(file, destination);
+      } catch (error) {
+        if (["ENOTSUP", "EOPNOTSUPP"].includes(error.code))
+          throw Object.assign(
+            new Error(
+              "This location does not support safe case export. Choose another local folder. The library copy is unchanged.",
+              { cause: error },
+            ),
+            { code: error.code },
+          );
+        throw error;
+      }
     } catch (error) {
       try {
         await fs.rm(staging, { recursive: true, force: true });

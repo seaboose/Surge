@@ -1018,6 +1018,44 @@ button {
 .result-guide {
   color: var(--muted);
 }
+.info-bubble {
+  display: inline;
+  margin-left: 6px;
+}
+.evaluation-steps {
+  padding-left: 22px;
+  line-height: 1.6;
+}
+.evaluation-steps li {
+  margin-bottom: 12px;
+}
+.info-bubble > button {
+  width: 24px;
+  height: 24px;
+  padding: 0;
+  border-radius: 50%;
+  font:
+    600 13px Georgia,
+    serif;
+  color: var(--muted);
+  vertical-align: middle;
+}
+.info-panel {
+  position: fixed;
+  margin: 0;
+  width: min(360px, calc(100vw - 32px));
+  max-height: calc(50vh - 24px);
+  overflow: auto;
+  padding: 14px 16px;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  color: var(--ink);
+  background: var(--panel);
+  font:
+    14px/1.6 "Segoe UI",
+    sans-serif;
+  overflow-wrap: anywhere;
+}
 
 .snapshot-status {
   display: flex;

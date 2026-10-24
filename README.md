@@ -14,9 +14,11 @@ Choose **Try Demo**, then **Start collection**. The included v2 sample runs sepa
 
 ![Surge reopening recorded observations from the owned sample](docs/surge-saved-results.png)
 
-*Current interface. The results screenshot shows a saved case, not live capture; counts describe that particular recorded snapshot.*
+*Recorded candidate interface. The results screenshot shows a saved case with two retained samples and four range observations, not live capture.*
 
 For files, choose **Import evidence**, map fields or rules, then **Analyze**. CSV, JSON and JSON Lines are supported. Separate numeric reference data supports comparisons; **Evaluate** uses independent labels, while **Compare** examines the same source under different settings. **Case details** shows fingerprints, settings and provenance. **Alt+1–5** switches views; **Ctrl+plus/minus/0** controls zoom.
+
+Small information buttons provide optional explanations for case files, sample counts and labeling. Case details keeps fingerprints visible, with analysis settings and numeric profiles available in expandable sections.
 
 ## Scope and limits
 
@@ -51,6 +53,8 @@ These cases come from the owned app. Paths and process identities are removed; d
 
 ## Verification and evidence
 
+The [source candidate guide](docs/release-candidate.md) covers setup, preserving cases and the remaining release gates. [Focused visual checks](docs/visual-clarity-results.md) and [supported-limit measurements](docs/supported-limits-performance-results.md) identify their tested local snapshots. [Hosted recovery results](docs/hosted-recovery-results.md) identify the earlier recovery commit; they do not qualify subsequent UI or validation changes. Final combined-candidate qualification and unfamiliar-tester acceptance remain separate gates.
+
 The required Windows `test` job runs the [deeper qualification profile](docs/hosted-deep-qualification.md) from a clean checkout before the existing UI and compatibility checks. It includes verified ASan controls, bounded properties, the parser pilot and fixed boundaries, and retention checks. Its portable evidence is retained on success or failure. This does not complete the broader fuzzing campaign or unfamiliar-tester acceptance.
 
 Run `python -B scripts/check_first_use.py` for the permanent [first-use release check](docs/first-use-release-check.md). The same command runs in a separate Windows CI job and retains evidence on failure. It tests the extracted source package; unfamiliar-tester acceptance always remains pending.
@@ -59,7 +63,7 @@ Run `python -B scripts/check_first_use.py` for the permanent [first-use release 
 
 The [first-use acceptance criteria](docs/first-use-acceptance.md) separate isolated machine checks from [unfamiliar-participant tasks](docs/first-use-tester.md). Automated completion does not establish independent usability.
 
-[Current release results](docs/current-release-results.md): all 21 clean-checkout qualification steps and seven additional desktop journeys passed on the recorded snapshot. Full results, preserved failures and unfinished testing are distinguished there.
+[Earlier release snapshot](docs/current-release-results.md): all 21 clean-checkout qualification steps and seven additional desktop journeys passed on that historical snapshot. Its results do not qualify the later combined candidate. Preserved failures and unfinished testing remain distinguished.
 
 Run `python -B scripts/qualify.py` for the [defensive qualification](docs/qualification.md). Add `--asan --properties --libfuzzer --llvm-bin <LLVM-bin-directory> --retention` for all 21 existing checks. A graphical Windows session and documented build prerequisites are required. Each attempt generates JSON/Markdown reports and separate logs, stopping on failure.
 

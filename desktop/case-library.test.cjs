@@ -118,7 +118,10 @@ test("unsupported exclusive export publication preserves evidence and destinatio
     };
     await assert.rejects(
       library.export(a.entry.id, destination),
-      (error) => error.code === "ENOTSUP",
+      (error) =>
+        error.code === "ENOTSUP" &&
+        /Choose another local folder/.test(error.message) &&
+        error.cause?.code === "ENOTSUP",
     );
   } finally {
     fs.link = link;

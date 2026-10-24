@@ -160,9 +160,13 @@ async function check(name, fn) {
         0,
       );
       await click("Evaluate");
-      await page
-        .getByText("Current data is the test source.", { exact: false })
-        .waitFor();
+      await click("Labeling guidance");
+      await page.getByRole("note", { name: "Labeling guidance" }).waitFor();
+      assert.match(
+        await page.getByRole("note", { name: "Labeling guidance" }).innerText(),
+        /Current data is the test source;.*Labels never enter detection\./s,
+      );
+      await page.keyboard.press("Escape");
       const blank = path.join(files, "blank.json");
       await dialog(blank, true);
       await click("Save label template");

@@ -77,6 +77,33 @@ jobs:
       - name: Desktop boundary and runtime checks
         working-directory: desktop
         run: pnpm test
+      - name: Optional help and case-detail clarity
+        working-directory: desktop
+        run: node visual-clarity.test.cjs all
+      - name: Bounded approval and replay contracts
+        run: ./.venv/Scripts/python.exe -B scripts/run_approval_contract.py
+      - name: Isolated stream and replay model revalidation
+        shell: pwsh
+        run: |
+          ./.venv/Scripts/python.exe -B scripts/run_stream_model.py --revalidation-of stream-model-98d93a4f4d38 *> verification/qualification/stream-model-console.log
+          $result = $LASTEXITCODE
+          Get-Content verification/qualification/stream-model-console.log
+          if ($result) { exit $result }
+          $reports = @(Get-ChildItem verification/qualification/stream-model-*/report.json)
+          if ($reports.Count -ne 1) { throw 'Expected exactly one stream-model report.' }
+          ./.venv/Scripts/python.exe -B scripts/verify_model_evidence.py $reports[0].DirectoryName
+          exit $LASTEXITCODE
+      - name: Isolated manifest and approval model revalidation
+        shell: pwsh
+        run: |
+          ./.venv/Scripts/python.exe -B scripts/run_manifest_model.py --revalidation-of manifest-model-314869383270 *> verification/qualification/manifest-model-console.log
+          $result = $LASTEXITCODE
+          Get-Content verification/qualification/manifest-model-console.log
+          if ($result) { exit $result }
+          $reports = @(Get-ChildItem verification/qualification/manifest-model-*/report.json)
+          if ($reports.Count -ne 1) { throw 'Expected exactly one manifest-model report.' }
+          ./.venv/Scripts/python.exe -B scripts/verify_model_evidence.py $reports[0].DirectoryName
+          exit $LASTEXITCODE
       - name: Native build compatibility
         shell: pwsh
         run: ./.venv/Scripts/python.exe -B scripts/test_native_compatibility.py --output verification/native-compatibility.json
@@ -121,6 +148,14 @@ jobs:
             verification/qualification/toolchain/**
             verification/qualification/deep-unit.log
             verification/qualification/case-recovery-*/**
+            verification/qualification/visual-clarity-*/results.json
+            verification/qualification/visual-clarity-*/*.png
+            verification/qualification/approval-contract-*/**
+            verification/qualification/approval-supervisor-*/**
+            verification/qualification/stream-model-*/**
+            verification/qualification/stream-model-console.log
+            verification/qualification/manifest-model-*/**
+            verification/qualification/manifest-model-console.log
           # Owned interrupted fixtures include hidden staging files in their manifests.
           include-hidden-files: true
           if-no-files-found: error
