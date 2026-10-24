@@ -120,6 +120,9 @@ jobs:
             verification/qualification/deep-*/artifacts/**
             verification/qualification/toolchain/**
             verification/qualification/deep-unit.log
+            verification/qualification/case-recovery-*/**
+          # Owned interrupted fixtures include hidden staging files in their manifests.
+          include-hidden-files: true
           if-no-files-found: error
           retention-days: 30
 

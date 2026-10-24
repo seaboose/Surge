@@ -1,5 +1,12 @@
 # Defensive qualification
 
+The desktop step includes the bounded [case-library recovery campaign](case-recovery-acceptance.md):
+48 owned scenarios repeated twice, fresh-process inspection, fixed budgets and
+retained fault evidence. Hosted artifacts include its hidden staging residue so
+the complete evidence manifests can be checked after download. See the
+[local recovery results](case-recovery-results.md) and
+[hosted recovery acceptance criteria](hosted-recovery-acceptance.md).
+
 The hosted Windows `test` job requires the full 21-step profile described in
 [hosted acceptance criteria](hosted-deep-qualification.md), using a pinned portable
 LLVM toolchain. `scripts/check_deep_qualification.py` checks a clean starting

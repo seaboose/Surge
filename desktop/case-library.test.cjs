@@ -99,3 +99,41 @@ test("linked managed evidence is rejected", async (t) => {
   await assert.rejects(library.delete(a.entry.id), /Linked/);
   assert.equal((await library.list()).unavailable, 1);
 });
+
+test("unsupported exclusive export publication preserves evidence and destination", async (t) => {
+  const { library, dir } = await setup(t);
+  const a = await library.save("Owned source", 1);
+  const source = (await library.entry(a.entry.id)).file;
+  const before = await fs.readFile(source);
+  const destination = path.join(dir, "unsupported.case.json");
+  const link = fs.link;
+  let calls = 0;
+  try {
+    fs.link = async (from, to) => {
+      if (to !== destination) return link(from, to);
+      calls++;
+      throw Object.assign(new Error("Owned unsupported-link simulation."), {
+        code: "ENOTSUP",
+      });
+    };
+    await assert.rejects(
+      library.export(a.entry.id, destination),
+      (error) => error.code === "ENOTSUP",
+    );
+  } finally {
+    fs.link = link;
+  }
+  assert.equal(calls, 1);
+  await assert.rejects(fs.stat(destination), { code: "ENOENT" });
+  assert.deepEqual(await fs.readFile(source), before);
+  assert.deepEqual(
+    (await library.list()).entries.map((entry) => entry.id),
+    [a.entry.id],
+  );
+  assert.deepEqual(
+    (await fs.readdir(dir)).filter((name) => name.startsWith(".surge-export-")),
+    [],
+  );
+  await library.export(a.entry.id, destination);
+  assert.deepEqual(await fs.readFile(destination), before);
+});

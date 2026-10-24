@@ -15,11 +15,17 @@ function caseName(name) {
     );
   return name.trim();
 }
+function cleanupFailure(error, detail) {
+  const failure = new Error(`${error.message} ${detail}`, { cause: error });
+  if (error.code) failure.code = error.code;
+  return failure;
+}
 async function copyCase(source, destination) {
-  const input = await fs.open(source, "r");
-  let output,
+  let input,
+    output,
     created = false;
   try {
+    input = await fs.open(source, "r");
     if (!(await input.stat()).isFile()) throw new Error("Choose a case file.");
     output = await fs.open(destination, "wx");
     created = true;
@@ -31,20 +37,39 @@ async function copyCase(source, destination) {
       total += bytesRead;
       if (total > 64 * 1024 * 1024) throw new Error("Case exceeds 64 MiB.");
       let offset = 0;
-      while (offset < bytesRead)
-        offset += (await output.write(buffer, offset, bytesRead - offset))
-          .bytesWritten;
+      while (offset < bytesRead) {
+        const { bytesWritten } = await output.write(
+          buffer,
+          offset,
+          bytesRead - offset,
+        );
+        if (
+          !Number.isInteger(bytesWritten) ||
+          bytesWritten <= 0 ||
+          bytesWritten > bytesRead - offset
+        )
+          throw new Error("Case copy made invalid write progress.");
+        offset += bytesWritten;
+      }
     }
-  } catch (error) {
-    if (output) {
-      await output.close();
-      output = null;
-    }
-    if (created) await fs.unlink(destination).catch(() => {});
-    throw error;
-  } finally {
+    await output.close();
+    output = null;
     await input.close();
-    if (output) await output.close();
+    input = null;
+  } catch (error) {
+    let incomplete = false;
+    for (const handle of [output, input])
+      if (handle)
+        await handle.close().catch(() => {
+          incomplete = true;
+        });
+    if (created)
+      await fs.unlink(destination).catch(() => {
+        incomplete = true;
+      });
+    if (incomplete)
+      throw cleanupFailure(error, "Temporary copy cleanup is incomplete.");
+    throw error;
   }
 }
 class CaseLibrary {
@@ -138,7 +163,8 @@ class CaseLibrary {
   async rename(id, name) {
     name = caseName(name);
     const e = await this.entry(id),
-      tmp = path.join(e.dir, `.name-${randomUUID()}`);
+      // Keep interrupted metadata writes outside the published case directory.
+      tmp = path.join(this.root, `.name-${randomUUID()}`);
     try {
       await fs.writeFile(tmp, JSON.stringify({ ...e.meta, name }), {
         flag: "wx",
@@ -184,12 +210,36 @@ class CaseLibrary {
   }
   async export(id, destination) {
     const e = await this.entry(id);
-    await copyCase(e.file, destination);
+    const staging = path.join(
+      path.dirname(destination),
+      `.surge-export-${randomUUID()}`,
+    );
+    await fs.mkdir(staging);
+    const file = path.join(staging, "case.json");
     try {
-      await this.call("library_verify", { path: destination });
+      await copyCase(e.file, file);
+      await this.call("library_verify", { path: file });
+      // A same-directory hard link publishes complete bytes without replacing
+      // a destination that appeared during verification. No unsafe copy fallback.
+      await fs.link(file, destination);
     } catch (error) {
-      await fs.unlink(destination).catch(() => {});
+      try {
+        await fs.rm(staging, { recursive: true, force: true });
+      } catch {
+        throw cleanupFailure(
+          error,
+          "Export did not complete; temporary cleanup is incomplete.",
+        );
+      }
       throw error;
+    }
+    try {
+      await fs.rm(staging, { recursive: true, force: true });
+    } catch {
+      return {
+        message:
+          "Portable case exported; temporary cleanup is incomplete. The library copy is unchanged.",
+      };
     }
     return {
       message: "Portable case exported. The library copy is unchanged.",

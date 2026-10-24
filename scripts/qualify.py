@@ -164,7 +164,7 @@ def plan(asan=False, properties=False, libfuzzer=False, llvm_bin=None, retention
         ("owned_stream_checks", [python, "-B", "scripts/test_native_stream.py"], ".", 180),
         (
             "desktop_boundary",
-            ["node", "--test", "security.test.cjs", "runtime.test.cjs", "case-library.test.cjs"],
+            ["node", "--test", "security.test.cjs", "runtime.test.cjs", "case-library.test.cjs", "case-recovery.test.cjs"],
             "desktop",
             120,
         ),
