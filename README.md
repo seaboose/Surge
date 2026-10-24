@@ -26,7 +26,19 @@ Native coverage is **two ranges totaling 15 bytes**, with a **500 ms target inte
 
 Changes outside coverage or between samples can be missed. Missing approval requires Review; unreadable approved observations are Unknown. Review can coexist with collection gaps. Local unsigned evidence is not client attestation or whole-process assurance. Surge never attaches to games or Vanguard and does not enforce bans. File imports accept up to 10,000 records and 16 MiB per source.
 
-## Set up on Windows
+## Open the Windows package
+
+For a packaged candidate, extract the complete `Surge-<candidate>-windows-x64.zip`
+and open `Surge.exe`. Python, Node.js and a compiler are not required. The included
+sample has an approval for its exact build; startup never approves new builds.
+Follow the [Windows package guide](docs/windows-package.md) for preserving cases,
+replacing the folder and diagnosing startup failures. The accompanying generated
+qualification report identifies the exact tested ZIP and remaining limitations.
+
+The package is an unsigned review candidate. Unfamiliar-tester acceptance remains
+pending; a successful automated run does not establish independent usability.
+
+## Set up from source on Windows
 
 Install Python 3.11+ with Tcl/Tk, Node.js 22.12+, and pnpm 11.25.0. CI uses Python 3.12 and Node 24. From the repository root:
 
@@ -85,5 +97,12 @@ The separate [IoT evaluation](docs/evaluation.md) has a false-positive rate too 
 ## Development and distribution
 
 Read the [architecture](docs/architecture.md), [security notes](SECURITY.md), [development guide](desktop/README.md), and [release checks](docs/release-checks.md). The renderer is sandboxed and cannot provide arbitrary paths or commands to collection.
+
+The [Windows package acceptance criteria](docs/windows-package-acceptance.md)
+define separate build and downloaded-package checks, with explicit resource limits
+and preserved failure evidence. The [package release check](docs/windows-package-check.md)
+documents the build, CI gate and report verification. [Participant tasks](docs/windows-package-tester.md)
+and a [blank session record](docs/windows-package-session-record.md) are provided
+for the still-pending unfamiliar-user session.
 
 Run `python scripts/package_source.py` to package source. Published demo/evaluation evidence is included; local captures, approvals, environments and test outputs are excluded. This is a source distribution, not a signed installer. Application code is MIT licensed; dependency and dataset terms are in [NOTICE](NOTICE.md).

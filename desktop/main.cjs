@@ -12,6 +12,8 @@ const { spawn } = require("node:child_process");
 const path = require("node:path");
 const fs = require("node:fs/promises");
 const { validate } = require("./boundary.cjs");
+const runtime = require("./runtime.cjs");
+const startup = require("./startup.cjs");
 
 protocol.registerSchemesAsPrivileged([
   {
@@ -29,15 +31,53 @@ let win,
 const ROOT = path.resolve(__dirname, "..");
 const { CaseLibrary } = require("./case-library.cjs");
 let library;
-function failWorker(message) {
+let profileError;
+let profile = app.getPath("userData");
+try {
+  profile = startup.configureProfile(app);
+} catch (error) {
+  profileError = error;
+}
+const diagnostics = new startup.StartupDiagnostics(
+  profile,
+  app.getVersion(),
+  app.isPackaged,
+);
+const runtimeIdentity = {
+  packaged: app.isPackaged,
+  applicationRoot: ROOT,
+  backendPath: path.join(ROOT, "desktop_worker.py"),
+  pythonExecutable: null,
+  profilePath: profile,
+  nativeExecutable: path.join(ROOT, "native/build/surge_owned_app.exe"),
+  baselinePath: path.join(ROOT, "native/baselines.json"),
+  diagnosticPath: diagnostics.file,
+  workerPid: null,
+  pythonVersion: null,
+  backendModulePaths: null,
+  ready: false,
+  status: "starting",
+  errorCode: null,
+};
+// Read-only metadata for trusted main-process qualification. This is not IPC
+// and is never exposed to the renderer or written into startup diagnostics.
+Object.defineProperty(app, "surgeRuntimeIdentity", {
+  get: () => Object.freeze({ ...runtimeIdentity }),
+});
+function failWorker(message, code = "SURGE_WORKER_STOPPED") {
   for (const item of pending.values()) {
     clearTimeout(item.timer);
-    item.reject(new Error(message));
+    item.reject(Object.assign(new Error(message), { code }));
   }
   pending.clear();
 }
 function startWorker() {
-  const python = require("./runtime.cjs").pythonPath(ROOT);
+  const python = runtime.pythonPath(ROOT, process.env, process.platform, {
+    packaged: app.isPackaged,
+    resourcesPath: process.resourcesPath,
+  });
+  runtimeIdentity.pythonExecutable = python;
+  diagnostics.record("worker", "starting");
   const workerEnv = {};
   for (const key of ["SystemRoot", "WINDIR", "TEMP", "TMP"]) {
     if (process.env[key]) workerEnv[key] = process.env[key];
@@ -49,7 +89,7 @@ function startWorker() {
       "-B",
       "-u",
       "-c",
-      "import sys; sys.path.insert(0, sys.argv[1]); import desktop_worker; desktop_worker.main()",
+      "import json, sys; sys.path.insert(0, sys.argv[1]); import desktop_worker; print(json.dumps({'surge_runtime_identity': 1, 'executable': sys.executable, 'version': sys.version.split()[0], 'modules': {name: sys.modules[name].__file__ for name in ('desktop_worker', 'engine', 'native_integrity', 'native_stream')}}), flush=True); desktop_worker.main()",
       ROOT,
     ],
     {
@@ -60,11 +100,15 @@ function startWorker() {
       env: workerEnv,
     },
   );
+  runtimeIdentity.workerPid = worker.pid || null;
   worker.stdout.setEncoding("utf8");
   worker.stdout.on("data", (chunk) => {
     output += chunk;
     if (output.length > 32 * 1024 * 1024) {
-      failWorker("Worker response exceeded its limit. Reopen Surge.");
+      failWorker(
+        "Worker response exceeded its limit. Reopen Surge.",
+        "SURGE_WORKER_PROTOCOL",
+      );
       worker.kill();
       return;
     }
@@ -73,8 +117,36 @@ function startWorker() {
       const line = output.slice(0, newline);
       output = output.slice(newline + 1);
       try {
-        const reply = JSON.parse(line),
-          item = pending.get(reply.id);
+        const reply = JSON.parse(line);
+        if (reply?.surge_runtime_identity === 1) {
+          const samePath = (actual, expected) =>
+            typeof actual === "string" &&
+            path.isAbsolute(actual) &&
+            (process.platform === "win32"
+              ? path.resolve(actual).toLowerCase() ===
+                path.resolve(expected).toLowerCase()
+              : path.resolve(actual) === path.resolve(expected));
+          if (
+            runtimeIdentity.pythonVersion ||
+            !/^\d+\.\d+\.\d+/.test(reply.version) ||
+            !samePath(reply.executable, python) ||
+            ![
+              "desktop_worker",
+              "engine",
+              "native_integrity",
+              "native_stream",
+            ].every((name) =>
+              samePath(reply.modules?.[name], path.join(ROOT, name + ".py")),
+            )
+          )
+            throw startup.startupError("SURGE_WORKER_PROTOCOL");
+          runtimeIdentity.pythonVersion = reply.version;
+          runtimeIdentity.backendModulePaths = Object.freeze({
+            ...reply.modules,
+          });
+          continue;
+        }
+        const item = pending.get(reply.id);
         if (!item) continue;
         clearTimeout(item.timer);
         pending.delete(reply.id);
@@ -82,7 +154,10 @@ function startWorker() {
           ? item.resolve(reply.value)
           : item.reject(new Error(reply.error || "Operation failed."));
       } catch {
-        failWorker("Worker response was invalid. Reopen Surge.");
+        failWorker(
+          "Worker response was invalid. Reopen Surge.",
+          "SURGE_WORKER_PROTOCOL",
+        );
         worker.kill();
       }
     }
@@ -95,6 +170,7 @@ function startWorker() {
   worker.on("error", () =>
     failWorker(
       "Python could not start. Check the configured runtime and reopen Surge.",
+      "SURGE_WORKER_SPAWN",
     ),
   );
   worker.on("exit", () =>
@@ -103,15 +179,23 @@ function startWorker() {
     ),
   );
 }
-function call(method, args) {
+function call(method, args, timeout = 120000) {
   return new Promise((resolve, reject) => {
     if (!worker || worker.exitCode !== null || !worker.stdin.writable)
-      return reject(new Error("Analysis worker is unavailable. Reopen Surge."));
+      return reject(
+        Object.assign(
+          new Error("Analysis worker is unavailable. Reopen Surge."),
+          { code: "SURGE_WORKER_STOPPED" },
+        ),
+      );
     const id = ++sequence;
     const timer = setTimeout(() => {
-      failWorker("Operation timed out. Reopen Surge before continuing.");
+      failWorker(
+        "Operation timed out. Reopen Surge before continuing.",
+        "SURGE_WORKER_TIMEOUT",
+      );
       worker.kill();
-    }, 120000);
+    }, timeout);
     pending.set(id, { resolve, reject, timer });
     worker.stdin.write(
       JSON.stringify({ protocol: 1, id, method, args }) + "\n",
@@ -252,6 +336,16 @@ else {
   app
     .whenReady()
     .then(async () => {
+      diagnostics.record("startup", "starting");
+      if (profileError) throw profileError;
+      // Resolve the bundled runtime first; packaged launches never use PATH or
+      // a developer override, including when a required file is missing.
+      runtime.pythonPath(ROOT, process.env, process.platform, {
+        packaged: app.isPackaged,
+        resourcesPath: process.resourcesPath,
+      });
+      startup.checkResources(ROOT, app.isPackaged);
+      diagnostics.record("resources", "ready");
       const assets = new Map([
         ["/index.html", "index.html"],
         ["/app.js", "app.js"],
@@ -285,6 +379,10 @@ else {
         callback({ cancel: !details.url.startsWith("surge://app/") });
       });
       startWorker();
+      const initial = await call("state", {}, startup.STARTUP_TIMEOUT_MS);
+      if (initial?.protocol !== 1 || !runtimeIdentity.pythonVersion)
+        throw startup.startupError("SURGE_WORKER_PROTOCOL");
+      diagnostics.record("worker", "ready");
       win = new BrowserWindow({
         width: 1360,
         height: 880,
@@ -353,10 +451,40 @@ else {
       });
       win.once("ready-to-show", () => win.show());
       await win.loadURL("surge://app/index.html");
+      runtimeIdentity.ready = true;
+      runtimeIdentity.status = "ready";
+      diagnostics.record("renderer", "ready");
     })
-    .catch((error) => {
-      dialog.showErrorBox("Surge could not start", error.message);
-      app.quit();
+    .catch(async (error) => {
+      runtimeIdentity.ready = false;
+      runtimeIdentity.status = "failed";
+      if (worker && worker.exitCode === null && worker.signalCode === null)
+        worker.kill();
+      const failure = startup.failureMessage(
+        error,
+        app.isPackaged,
+        diagnostics,
+      );
+      runtimeIdentity.errorCode = failure.code;
+      diagnostics.record("startup", "failed", failure.code);
+      // Async native guidance keeps trusted diagnostics inspectable. No worker
+      // stderr, imported filenames, exception text or payload enters this UI.
+      const detail = startup.failureMessage(
+        error,
+        app.isPackaged,
+        diagnostics,
+      ).detail;
+      await dialog.showMessageBox({
+        type: "error",
+        title: "Surge could not start",
+        message: "Surge could not start",
+        detail,
+        buttons: ["Close"],
+        defaultId: 0,
+        cancelId: 0,
+        noLink: true,
+      });
+      app.exit(1);
     });
 }
 app.on("window-all-closed", () => app.quit());

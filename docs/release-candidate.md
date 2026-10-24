@@ -12,7 +12,7 @@ version remains 0.4.0.
 1. Extract the versioned `Surge-<label>-source.zip` into a new local folder. Keep
    the previous folder until you have opened your cases successfully. Do not
    overwrite an existing source tree or copy its installed dependencies.
-2. Install the prerequisites listed in the [README](../README.md#set-up-on-windows):
+2. Install the prerequisites listed in the [README](../README.md#set-up-from-source-on-windows):
    Python 3.11+ with Tcl/Tk, Node.js 22.12+ and pnpm 11.25.0. The recorded hosted
    checks use Python 3.12 and Node 24.
 3. In File Explorer, open the extracted folder containing `README.md` and

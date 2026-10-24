@@ -163,9 +163,21 @@ jobs:
 
   first-use:
     name: First-use release check
+    needs: [package-build, package-consumer]
+    # A failed/cancelled/skipped dependency must fail this already-required job.
+    if: always()
     runs-on: windows-latest
     timeout-minutes: 35
     steps:
+      - name: Require successful built-package acceptance
+        shell: pwsh
+        env:
+          PACKAGE_BUILD_RESULT: ${{ needs.package-build.result }}
+          PACKAGE_CONSUMER_RESULT: ${{ needs.package-consumer.result }}
+        run: |
+          if ($env:PACKAGE_BUILD_RESULT -ne 'success' -or $env:PACKAGE_CONSUMER_RESULT -ne 'success') {
+            throw "Package gates incomplete: build=$env:PACKAGE_BUILD_RESULT consumer=$env:PACKAGE_CONSUMER_RESULT"
+          }
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
         with:
           persist-credentials: false
@@ -208,5 +220,132 @@ jobs:
             verification/qualification/first-use-*/artifacts/**
             verification/qualification/launcher-*/artifacts/**
             verification/qualification/first-use-unit.log
+          if-no-files-found: error
+          retention-days: 30
+
+  package-build:
+    name: Build Windows package
+    runs-on: windows-latest
+    timeout-minutes: 25
+    outputs:
+      artifact-id: ${{ steps.package-upload.outputs.artifact-id }}
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5
+        with:
+          python-version: '3.12'
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version: '24'
+      - uses: pnpm/action-setup@b906affcce14559ad1aafd4ab0e942779e9f58b1 # v4
+        with:
+          version: '11.25.0'
+          run_install: false
+      - name: Install locked build libraries without a developer Electron download
+        working-directory: desktop
+        run: pnpm install --frozen-lockfile --ignore-scripts
+      - name: Verify package build and report contracts
+        shell: pwsh
+        run: |
+          New-Item -ItemType Directory -Force verification/qualification | Out-Null
+          python -B -m unittest -v test_windows_package test_windows_package_report *> verification/qualification/package-build-unit.log
+          $result = $LASTEXITCODE
+          Get-Content verification/qualification/package-build-unit.log
+          exit $result
+      - name: Build clean self-contained candidate with exact sample approval
+        run: python -B scripts/build_windows_package.py
+      - name: Preserve immutable package and build attempts
+        id: package-upload
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: windows-package-${{ github.sha }}-${{ github.run_attempt }}
+          path: |
+            verification/qualification/windows-package-*/*.zip
+            verification/qualification/windows-package-*/*.json
+            verification/qualification/windows-package-*/*.log
+            !verification/qualification/windows-package-cache/**
+            verification/qualification/package-build-unit.log
+          if-no-files-found: error
+          retention-days: 30
+
+  package-consumer:
+    name: Packaged Windows acceptance
+    needs: package-build
+    runs-on: windows-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5
+        with:
+          python-version: '3.12'
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version: '24'
+      - uses: pnpm/action-setup@b906affcce14559ad1aafd4ab0e942779e9f58b1 # v4
+        with:
+          version: '11.25.0'
+          run_install: false
+      - name: Install separate locked UI test harness
+        working-directory: desktop
+        run: pnpm install --frozen-lockfile --ignore-scripts
+      - name: Download exact package producer artifact
+        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4.3.0
+        with:
+          artifact-ids: ${{ needs.package-build.outputs.artifact-id }}
+          path: verification/downloaded-package
+          merge-multiple: true
+      - name: Verify consumer failure contracts
+        shell: pwsh
+        run: |
+          New-Item -ItemType Directory -Force verification/qualification | Out-Null
+          python -B -m unittest -v test_windows_package_consumer *> verification/qualification/package-consumer-unit.log
+          $result = $LASTEXITCODE
+          Get-Content verification/qualification/package-consumer-unit.log
+          exit $result
+      - name: Verify actual nonpassing process and timeout probes
+        shell: pwsh
+        run: |
+          $manifests = @(Get-ChildItem verification/downloaded-package -Recurse -Filter package-manifest.json)
+          if ($manifests.Count -ne 1) { throw 'Expected one downloaded package manifest.' }
+          $manifest = $manifests[0]
+          $metadata = Get-Content $manifest.FullName -Raw | ConvertFrom-Json
+          $package = Join-Path $manifest.Directory.FullName $metadata.archive.name
+          python -B scripts/check_windows_package.py --package "$package" --manifest "$($manifest.FullName)" --probe-failure
+          if ($LASTEXITCODE -ne 1) { throw 'Expected the declared failure probe to exit 1.' }
+          $reports = @(Get-ChildItem verification/qualification/windows-consumer-*/artifacts/report.json)
+          if ($reports.Count -ne 1) { throw 'Expected one preserved failure report.' }
+          python -B scripts/verify_windows_consumer.py --report "$($reports[0].FullName)" --manifest "$($manifest.FullName)" --expected-failure
+          exit $LASTEXITCODE
+      - name: Exercise downloaded executable with no developer-runtime lookup
+        shell: pwsh
+        run: |
+          $manifests = @(Get-ChildItem verification/downloaded-package -Recurse -Filter package-manifest.json)
+          if ($manifests.Count -ne 1) { throw 'Expected one downloaded package manifest.' }
+          $manifest = $manifests[0]
+          $metadata = Get-Content $manifest.FullName -Raw | ConvertFrom-Json
+          $package = Join-Path $manifest.Directory.FullName $metadata.archive.name
+          python -B scripts/check_windows_package.py --package "$package" --manifest "$($manifest.FullName)" --ordinary-profile
+          exit $LASTEXITCODE
+      - name: Verify complete consumer evidence
+        shell: pwsh
+        run: |
+          $manifest = @(Get-ChildItem verification/downloaded-package -Recurse -Filter package-manifest.json)[0]
+          $passed = @(Get-ChildItem verification/qualification/windows-consumer-*/artifacts/report.json | Where-Object { (Get-Content $_.FullName -Raw | ConvertFrom-Json).status -eq 'passed' })
+          if ($passed.Count -ne 1) { throw 'Expected one passing consumer report.' }
+          python -B scripts/verify_windows_consumer.py --report "$($passed[0].FullName)" --manifest "$($manifest.FullName)"
+          exit $LASTEXITCODE
+      - name: Preserve consumer checks and all failed attempts
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: windows-package-acceptance-${{ github.sha }}-${{ github.run_attempt }}
+          path: |
+            verification/qualification/windows-consumer-*/artifacts/**
+            verification/qualification/package-consumer-unit.log
           if-no-files-found: error
           retention-days: 30
