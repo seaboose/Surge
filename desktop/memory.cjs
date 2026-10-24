@@ -91,6 +91,7 @@ async function ready() {
   );
 }
 async function click(name) {
+  await require("./test-export-menu.cjs").revealExport(page, name);
   if (
     ["Load policy", "Save policy", "Edit rules", "Map context"].includes(name)
   ) {
@@ -169,7 +170,7 @@ async function checkpoint(name, action) {
   page.setDefaultTimeout(20000);
   page.on("pageerror", (e) => errors.push(e.message));
   await page
-    .getByRole("button", { name: "Import data", exact: true })
+    .getByRole("button", { name: "Import evidence", exact: true })
     .waitFor();
   sampler = spawn(
     PYTHON,
@@ -189,7 +190,7 @@ async function checkpoint(name, action) {
   await checkpoint("empty");
   await checkpoint("import", async () => {
     await dialog(incoming);
-    await click("Import data");
+    await click("Import evidence");
     await page.waitForFunction(
       () =>
         document.querySelector('table[aria-label="Preview"] tbody')?.children
@@ -225,13 +226,13 @@ async function checkpoint(name, action) {
     }
     await page.getByLabel("Search records").fill("ordinary-user");
     await page.waitForTimeout(180);
-    await click("Details");
+    await click("Case details");
     await page.getByText("Constant references use", { exact: false }).waitFor();
-    await click("Findings");
+    await click("Results");
   });
   await checkpoint("save", async () => {
     await dialog(saved, true);
-    await click("Save case");
+    await click("Export case file");
     assert.ok(fs.existsSync(saved));
   });
   await checkpoint("compare", async () => {
@@ -245,7 +246,7 @@ async function checkpoint(name, action) {
   await checkpoint("repeat-import", async () => {
     await click("Data");
     await dialog(incoming);
-    await click("Import data");
+    await click("Import evidence");
     await page.waitForFunction(
       () =>
         document.querySelector('table[aria-label="Preview"] tbody')?.children
@@ -256,7 +257,7 @@ async function checkpoint(name, action) {
     const tiny = path.join(folder, "tiny.json");
     fs.writeFileSync(tiny, '[{"value":1}]');
     await dialog(tiny);
-    await click("Import data");
+    await click("Import evidence");
     await page.waitForFunction(
       () =>
         document.querySelector('table[aria-label="Preview"] tbody')?.children
@@ -282,7 +283,7 @@ async function checkpoint(name, action) {
   );
   await checkpoint("dense-search", async () => {
     await dialog(dense);
-    await click("Import data");
+    await click("Import evidence");
     await page
       .getByRole("table", { name: "Preview" })
       .locator("tbody tr")
@@ -300,7 +301,7 @@ async function checkpoint(name, action) {
     async function loadLarge() {
       await click("Data");
       await dialog(incoming);
-      await click("Import data");
+      await click("Import evidence");
       await dialog(policy);
       await click("Load policy");
       await click("Analyze");
@@ -312,14 +313,14 @@ async function checkpoint(name, action) {
       await click("Compare");
       await dialog(saved);
       await click("Choose case");
-      await click("Findings");
+      await click("Results");
     }
     for (let cycle = 1; cycle <= 8; cycle++) {
       await checkpoint("cycle-large-" + cycle, loadLarge);
       await checkpoint("cycle-small-" + cycle, async () => {
         await click("Data");
         await dialog(tiny);
-        await click("Import data");
+        await click("Import evidence");
         await page.waitForFunction(
           () =>
             document.querySelector('table[aria-label="Preview"] tbody')
@@ -353,9 +354,9 @@ async function checkpoint(name, action) {
               .first()
               .click();
             await page.getByRole("region", { name: "Full record" }).waitFor();
-            await click("Details");
+            await click("Case details");
             await click("Compare");
-            await click("Findings");
+            await click("Results");
           }
           await page.waitForTimeout(75);
         }
@@ -364,7 +365,7 @@ async function checkpoint(name, action) {
     await checkpoint("long-small-replacement", async () => {
       await click("Data");
       await dialog(tiny);
-      await click("Import data");
+      await click("Import evidence");
       await page.waitForFunction(
         () =>
           document.querySelector('table[aria-label="Preview"] tbody')?.children
@@ -380,7 +381,7 @@ async function checkpoint(name, action) {
       if (cycle) {
         await click("Data");
         await dialog(incoming);
-        await click("Import data");
+        await click("Import evidence");
         await dialog(policy);
         await click("Load policy");
         await click("Analyze");
@@ -393,7 +394,7 @@ async function checkpoint(name, action) {
       }
       await click("Data");
       await dialog(path.join(folder, "tiny.json"));
-      await click("Import data");
+      await click("Import evidence");
       await page.waitForFunction(
         () =>
           document.querySelector('table[aria-label="Preview"] tbody')?.children

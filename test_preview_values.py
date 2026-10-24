@@ -2,6 +2,7 @@
 
 import copy
 import json
+import time
 import unittest
 from unittest.mock import patch
 import tkinter as tk
@@ -727,15 +728,44 @@ class PreviewValuesTests(unittest.TestCase):
         self.assertEqual(win.preview_values.tag_ranges("search_current"), ())
         self.assertEqual(win.preview_match_actions.winfo_manager(), "")
 
+    def focus_for_keyboard(self, widget):
+        # Window activation and queued focus events must settle before a key is
+        # generated. Retry readiness only, never the key or its expected result.
+        deadline = time.monotonic() + 1.0
+        while True:
+            self.win.update()
+            widget.focus_force()
+            self.win.update()
+            if widget.winfo_viewable() and self.win.focus_get() is widget:
+                return
+            if time.monotonic() >= deadline:
+                self.fail(f"Keyboard target not ready: focus={self.win.focus_get()}, "
+                          f"viewable={widget.winfo_viewable()}")
+            time.sleep(0.01)
+
+    def test_match_keyboard_with_pending_focus_transfer(self):
+        entry = self.win.preview_search_entry
+        original = entry.focus_force
+        pending = True
+
+        def request_focus():
+            nonlocal pending
+            original()
+            if pending:
+                pending = False
+                self.win.after_idle(self.win.preview.focus_set)
+
+        with patch.object(entry, "focus_force", side_effect=request_focus):
+            self.test_match_keyboard_scroll_and_warning_visible_at_minimum_size()
+
     def test_match_keyboard_scroll_and_warning_visible_at_minimum_size(self):
         self.load([{"reading": None, "payload": "hit " + "x " * 1400 + "hit"}, {"reading": 10}])
         win = self.win
         win.deiconify()
         win.geometry("1100x760")
         note = self.open_warning("features", "missing or nonnumeric")
-        win.preview_search_entry.focus_force()
         win.preview_search.set("hit")
-        win.update()
+        self.focus_for_keyboard(win.preview_search_entry)
         win.preview_search_entry.event_generate("<F3>")
         win.update()
         self.assertEqual(win._preview_match_index, 1)
@@ -747,6 +777,7 @@ class PreviewValuesTests(unittest.TestCase):
             self.assertLess(widget.winfo_rooty(), win.preview_values.winfo_rooty())
         self.assertGreater(win.preview_values.winfo_height(), 40)
         self.assertEqual(win.preview_warning.cget("text"), note.text)
+        self.focus_for_keyboard(win.preview_search_entry)
         win.preview_search_entry.event_generate("<Shift-F3>")
         win.update()
         self.assertEqual(win._preview_match_index, 0)

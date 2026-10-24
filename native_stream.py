@@ -50,6 +50,20 @@ def utc(value):
         raise ValueError("Collection timestamps must use UTC.")
 
 
+def live_identity(row):
+    """One process/build contract for live samples and their exported replay."""
+    integer(row.get("pid"), 1, 0xFFFFFFFF)
+    # Creation FILETIME is an opaque decimal identity, not an ISO timestamp.
+    # Keep the live protocol's existing string/integer representation support.
+    if not re.fullmatch(r"[0-9]{1,20}", str(row.get("process_started", ""))):
+        raise ValueError("Invalid process creation identity.")
+    if row.get("build") not in ("v1", "v2"):
+        raise ValueError("Unsupported live build identity.")
+    return tuple(
+        row.get(k) for k in ("session_id", "pid", "module_sha256", "process_started", "build")
+    )
+
+
 def convert_frame(frame, ranges, registry, integrity_manifest=None):
     """Convert a complete sample without exposing test actions to detection."""
     native.validate_manifest(ranges)
@@ -74,15 +88,8 @@ def convert_frame(frame, ranges, registry, integrity_manifest=None):
         if "scenario" in raw:
             raise ValueError("Scenario labels cannot enter continuous collection.")
         seen.add(name)
-        integer(raw.get("pid"), 1, 0xFFFFFFFF)
         utc(raw.get("captured_at"))
-        # Windows creation FILETIME is an opaque identity, not an ISO timestamp.
-        if not re.fullmatch(r"[0-9]{1,20}", str(raw.get("process_started", ""))):
-            raise ValueError("Invalid process creation identity.")
-        current = tuple(
-            raw.get(k)
-            for k in ("session_id", "pid", "module_sha256", "process_started", "build")
-        )
+        current = live_identity(raw)
         if identity is not None and current != identity:
             raise ValueError("Process identity changed within a sample.")
         identity = current
@@ -147,10 +154,7 @@ class StreamDecoder:
                 raise ValueError("Monotonic collection time went backwards.")
             rows = convert_frame(frame, self.ranges, self.registry, self.integrity_manifest)
             first = rows[0]
-            identity = tuple(
-                first[k]
-                for k in ("session_id", "pid", "module_sha256", "process_started", "build")
-            )
+            identity = live_identity(first)
             if first["build"] != self.build or (
                 self.identity is not None and identity != self.identity
             ):
@@ -213,12 +217,9 @@ def validate_export(rows, health):
         integer(row.get("stream_dropped_samples"))
         integer(row.get("stream_evicted_samples", 0))
         utc(row.get("captured_at"))
-        current = tuple(
+        current = live_identity(row) + tuple(
             row.get(k)
             for k in (
-                "session_id",
-                "pid",
-                "module_sha256",
                 "baseline_sha256",
                 "range_manifest_sha256",
                 "integrity_manifest_sha256",
@@ -249,7 +250,9 @@ def validate_export(rows, health):
             ):
                 raise ValueError("The beginning of the collection window is missing.")
         elif (
-            sequence - previous["stream_sequence"] - 1
+            sequence <= previous["stream_sequence"]
+            or first["stream_dropped_samples"] < previous["stream_dropped_samples"]
+            or sequence - previous["stream_sequence"] - 1
             != first["stream_dropped_samples"] - previous["stream_dropped_samples"]
             or first["stream_elapsed_ms"] < previous["stream_elapsed_ms"]
         ):
@@ -465,6 +468,7 @@ class NativeSession:
             return dict(
                 state=self.state,
                 samples=self.window.samples,
+                final_sequence=self.retained_sequence,
                 records=sum(len(g) for g in self.window.groups),
                 dropped_samples=self.retained_dropped,
                 evicted_samples=self.window.evicted,

@@ -9,6 +9,7 @@ from __future__ import annotations
 import copy
 from array import array
 from dataclasses import asdict, replace
+from datetime import datetime, timezone
 import json
 import sys
 from pathlib import Path
@@ -47,7 +48,7 @@ def default_config():
     )
 
 
-def short_reason(record):
+def short_reason(record, raw=None):
     native_reasons = {
         "Code differs from approved baseline": "Code changed",
         "Build is not approved": "Build not approved",
@@ -72,6 +73,26 @@ def short_reason(record):
         )
     )
     if not reasons:
+        if record["gaps"]:
+            return "Input needs attention"
+        if raw and raw.get("schema") == native_integrity.SCHEMA:
+            if raw.get("stream_health"):
+                return "Collection evidence incomplete"
+            if raw.get("memory_status") != "complete":
+                return "Range read incomplete"
+            if raw.get("baseline_approved") is not True:
+                return "No recorded approved reference"
+            if raw.get("memory_matches") is False:
+                return "Code differs from approved reference"
+            if raw.get("protection_matches") is False:
+                return "Page protection differs from approved reference"
+            if (
+                raw.get("memory_matches") is True
+                and raw.get("protection_matches") is True
+                and record.get("status") == "No finding"
+            ):
+                return "Matched approved reference"
+            return "Comparison inconclusive"
         return "Input needs attention" if record["gaps"] else "No configured condition matched"
     return reasons[0] + (f" · +{len(reasons)-1} reasons" if len(reasons) > 1 else "")
 
@@ -93,6 +114,97 @@ def share_verified_source(data, candidates):
     return data
 
 
+def demo_summary(rows, summary):
+    """Describe only the inspected evidence, never the live collection status."""
+    observations = [r for r in rows if not r.get("stream_health")]
+    expected = (
+        bool(observations)
+        and len(observations) == len(rows)
+        and all(
+            r.get("memory_status") == "complete"
+            and all(
+                r.get(k) is True
+                for k in ("baseline_approved", "memory_matches", "protection_matches")
+            )
+            for r in observations
+        )
+        and summary.get("No finding") == len(rows)
+        and all(summary.get(k) == 0 for k in ("Review", "Unknown", "rows_with_gaps"))
+    )
+    return dict(
+        expected=expected,
+        ranges=len(
+            {
+                (r.get("module_sha256"), r.get("range_name"), r.get("range_rva"))
+                for r in observations
+            }
+        ),
+        review=summary.get("Review", 0),
+        unknown=summary.get("Unknown", 0),
+    )
+
+
+def native_observation_explanation(row, status):
+    """Explain this validated record; never turn absent evidence into a match."""
+    if row.get("schema") != native_integrity.SCHEMA:
+        return None
+    if row.get("stream_health"):
+        return "Collection reported missing or incomplete evidence. This notice is not a code-range observation."
+    if row.get("memory_status") != "complete":
+        text = "This range could not be read completely; its comparison is inconclusive."
+    elif row.get("baseline_approved") is not True:
+        text = "This range has no recorded approved reference; an approved match cannot be established."
+    elif row.get("memory_matches") is False:
+        text = "This range's code differed from its recorded approved reference. Review the change."
+    elif row.get("protection_matches") is False:
+        text = "This range's page protection differed from its recorded approved reference. Review the change."
+    elif row.get("memory_matches") is True and row.get("protection_matches") is True:
+        text = "This range matched its recorded approved reference for code and page protection. The range was read completely."
+    else:
+        text = "The evidence does not establish a complete match for this range."
+    if (
+        row.get("stream_final_dropped")
+        or row.get("stream_evicted_samples")
+        or row.get("collection_error")
+    ):
+        text += " Collection also reports missing or incomplete evidence."
+    if status == "Review":
+        text += " The configured analysis flags this record for review."
+    elif status == "Unknown":
+        text += " The configured analysis remains inconclusive."
+    return text
+
+
+def observation_counts(rows):
+    """Count the viewed stream rows, never the moving collector window."""
+    observations = [r for r in rows if not r.get("stream_health")]
+    if not observations or any(type(r.get("stream_sequence")) is not int for r in observations):
+        return None
+    samples = {}
+    for row in observations:
+        key = (row.get("session_id"), row["stream_sequence"])
+        samples[key] = samples.get(key, 0) + 1
+    sizes = set(samples.values())
+    return dict(
+        samples=len(samples),
+        observations=len(observations),
+        notices=len(rows) - len(observations),
+        ranges_per_sample=next(iter(sizes)) if len(sizes) == 1 else None,
+    )
+
+
+def saved_evidence_summary(data, result):
+    """Summarize verified saved native evidence, without a live-session claim.
+
+    Case verification recomputes the configured analysis. Native validation also
+    checks derived verdicts against the captured bytes and coverage declarations,
+    even when a saved policy no longer contains the usual integrity rules.
+    """
+    if native_integrity.default_policy(data) is None:
+        return None
+    return demo_summary(data.rows, result["summary"])
+
+
 class Workspace:
     def __init__(self):
         self.current = self.reference = self.result = self.previous = None
@@ -106,6 +218,8 @@ class Workspace:
         self.source_paths = {"current": None, "reference": None}
         self.labels = self.evaluation_cache = None
         self.capture = None
+        self.inspected_capture = None
+        self.saved_result = None
 
     def close(self):
         if self.capture:
@@ -119,16 +233,32 @@ class Workspace:
         data = engine.parse_bytes(raw, f"our-app-{self.capture.build}.jsonl")
         config = native_integrity.default_policy(data)
         result = engine.analyze(data, None, config)
+        index = investigation.search_index(data, config, result)
+        observations = [row for row in rows if not row.get("stream_health")]
+        # Derive the inspected endpoint from these exact validated rows, never
+        # from status(), which can already describe a newer collection sample.
+        last = observations[-1] if observations else {}
+        inspected_capture = dict(
+            session_id=last.get("session_id"),
+            capture_state=last.get("stream_capture_state"),
+            final_sequence=last.get("stream_final_sequence"),
+            captured_at=last.get("captured_at"),
+            inspected_at=datetime.now(timezone.utc).isoformat(),
+            records=len(observations),
+            samples=len({row["stream_sequence"] for row in observations}),
+        )
         # Publish a complete snapshot together; collection keeps its own window.
         self.current, self.reference, self.config = data, None, config
         self.labels = self.current_case = None
         self.source_paths = {"current": None, "reference": None}
         self.invalidate()
         self.result = result
-        self.index = investigation.search_index(data, config, result)
+        self.index = index
+        self.inspected_capture = inspected_capture
         return self.snapshot()
 
     def invalidate(self, report=None):
+        self.saved_result = None
         self.evaluation_cache = None
         self.revision += 1
         self.result = self.previous = None
@@ -174,13 +304,23 @@ class Workspace:
             numeric_evidence=bool(
                 self.result
                 and any(
-                    e["kind"] == "deviation"
-                    for r in self.result["records"]
-                    for e in r["evidence"]
+                    e["kind"] == "deviation" for r in self.result["records"] for e in r["evidence"]
                 )
             ),
             meaning=self.result["meaning"] if self.result else "",
             capture=self.capture.status() if self.capture else None,
+            inspected_capture=self.inspected_capture,
+            saved_result=self.saved_result,
+            observation_counts=(
+                observation_counts(self.current.rows)
+                if self.current and self.result and (self.inspected_capture or self.saved_result)
+                else None
+            ),
+            demo_result=(
+                demo_summary(self.current.rows, self.result["summary"])
+                if self.inspected_capture and self.current and self.result
+                else None
+            ),
         )
 
     def case(self):
@@ -218,9 +358,7 @@ class Workspace:
         if data is None:
             raise ValueError("Source is not loaded.")
         affected = (
-            list(note["rows"])
-            if note["rows"] is not None
-            else list(range(1, len(data.rows) + 1))
+            list(note["rows"]) if note["rows"] is not None else list(range(1, len(data.rows) + 1))
         )
         return data, affected, list(note["related"]), note["fields"], note, note["source"]
 
@@ -229,6 +367,9 @@ class Workspace:
             raise ValueError("Invalid request.")
         if method == "state":
             return self.snapshot()
+        if method == "library_verify":
+            engine.open_case(args["path"])
+            return {"verified": True}
         if method == "native_start":
             if set(args) != {"build"}:
                 raise ValueError("Choose an owned build only.")
@@ -272,6 +413,7 @@ class Workspace:
             setattr(self, role, data)
             self.source_paths[role] = str(Path(args["path"]).resolve())
             if role == "current":
+                self.inspected_capture = None
                 self.labels = None
                 self.config = native_policy or default_config()
                 self.current_case = None
@@ -281,17 +423,24 @@ class Workspace:
             (current, reference, config, result), case_file = engine.open_case(
                 args["path"], with_manifest=True
             )
+            saved_result = saved_evidence_summary(current, result)
             self.current, self.reference, self.config = current, reference, config
+            self.inspected_capture = None
             self.labels = None
             self.invalidate()
             self.result = result
             self.current_case = case_file
+            self.saved_result = saved_result
             self.source_paths = {"current": None, "reference": None}
             self.index = investigation.search_index(current, config, result)
             return self.snapshot()
         self.require_revision(args)
         if not self.current:
             raise ValueError("Import data or open a case first.")
+        if method == "library_snapshot":
+            self.require_result()
+            engine.save_case(args["path"], *self.case())
+            return {"saved": True}
         if method == "configure":
             config = copy.deepcopy(args["config"])
             # Rules travel as text, preserving integers beyond JS's exact range.
@@ -530,9 +679,7 @@ class Workspace:
                 raise ValueError("Invalid direction.")
             row = args.get("row", 0)
             candidates = (
-                [r for r in affected if r > row]
-                if step == 1
-                else [r for r in affected if r < row]
+                [r for r in affected if r > row] if step == 1 else [r for r in affected if r < row]
             )
             target = (candidates[0] if step == 1 else candidates[-1]) if candidates else None
             positions = sorted(set(affected) | set(related))
@@ -576,17 +723,13 @@ class Workspace:
                         row=record["row"],
                         status=record["status"],
                         priority=workflow.priority(record, self.config),
-                        numeric_evidence=any(
-                            e["kind"] == "deviation" for e in record["evidence"]
-                        ),
-                        reason=short_reason(record),
+                        numeric_evidence=any(e["kind"] == "deviation" for e in record["evidence"]),
+                        reason=short_reason(record, self.current.rows[record["row"] - 1]),
                     )
                 )
             page = bounded_int(args.get("page", 0), 0, max((len(selected) - 1) // 100, 0))
             if args.get("locate") in [r["row"] for r in selected]:
-                page = (
-                    next(i for i, r in enumerate(selected) if r["row"] == args["locate"]) // 100
-                )
+                page = next(i for i, r in enumerate(selected) if r["row"] == args["locate"]) // 100
             return dict(
                 rows=selected[page * 100 : (page + 1) * 100],
                 total=len(selected),
@@ -725,6 +868,7 @@ class Workspace:
                 status=record["status"],
                 priority=workflow.priority(record, self.config),
                 groups=output,
+                explanation=native_observation_explanation(raw, record["status"]),
                 gaps=record["gaps"],
                 time=time_label(record, self.config, raw),
                 reference_group=record.get("reference_group"),
@@ -744,9 +888,7 @@ class Workspace:
             if self.chart_cache is None or self.chart_cache[0] != width:
                 self.chart_cache = width, [
                     asdict(p)
-                    for p in chart.points(
-                        self.result["records"], width, self.config["threshold"]
-                    )
+                    for p in chart.points(self.result["records"], width, self.config["threshold"])
                 ]
             points = self.chart_cache[1]
             row = args.get("row")
@@ -771,12 +913,8 @@ class Workspace:
             if step not in (-1, 1):
                 raise ValueError("Invalid direction.")
             rows = [r["row"] for r in self.result["records"] if r["scores"]]
-            candidates = (
-                [r for r in rows if r > row] if step == 1 else [r for r in rows if r < row]
-            )
-            return {
-                "row": (candidates[0] if step == 1 else candidates[-1]) if candidates else None
-            }
+            candidates = [r for r in rows if r > row] if step == 1 else [r for r in rows if r < row]
+            return {"row": (candidates[0] if step == 1 else candidates[-1]) if candidates else None}
         if method in ("save", "alerts", "compare", "comparison", "details"):
             self.require_result()
             if method == "save":

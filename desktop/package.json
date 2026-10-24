@@ -6,7 +6,9 @@
   "scripts": {
     "build": "node build.cjs",
     "start": "electron .",
-    "test": "node --test security.test.cjs runtime.test.cjs",
+    "test": "node --test security.test.cjs runtime.test.cjs startup.test.cjs case-library.test.cjs case-recovery.test.cjs",
+    "test:library": "node library-ui.test.cjs",
+    "test:saved-flow": "node saved-flow.test.cjs && node saved-context.test.cjs",
     "test:accessibility": "node accessibility.test.cjs",
     "test:stream": "node stream.test.cjs",
     "test:ui": "node parity.cjs && node evaluation.test.cjs",

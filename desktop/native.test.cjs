@@ -49,7 +49,7 @@ let app;
       path.join(captureRoot, captureFolder, file + ".jsonl"),
     );
     await page
-      .getByRole("button", { name: "Import data", exact: true })
+      .getByRole("button", { name: "Import evidence", exact: true })
       .click();
     if (file === "v1-memory-change")
       await app.evaluate(() => {
@@ -62,7 +62,7 @@ let app;
       );
       await page.getByText(/Analyzing records/).waitFor();
     }
-    await page.getByRole("button", { name: "Findings", exact: true }).click();
+    await page.getByRole("button", { name: "Results", exact: true }).click();
     const evidence = await page.evaluate(async (file) => {
       const state = await window.surge.request("state", {});
       return await window.surge.request("evidence", {
@@ -137,8 +137,12 @@ let app;
           global.__delay.save = 600;
           dialog.showSaveDialog = async () => ({ canceled: true });
         });
+        await require("./test-export-menu.cjs").revealExport(
+          page,
+          "Export case file",
+        );
         await page
-          .getByRole("button", { name: "Save case", exact: true })
+          .getByRole("button", { name: "Export case file", exact: true })
           .click();
         await page.getByText(/Saving case/).waitFor();
         assert.equal(
@@ -146,10 +150,10 @@ let app;
           false,
         );
         await page
-          .getByRole("button", { name: "Details", exact: true })
+          .getByRole("button", { name: "Case details", exact: true })
           .click();
         await page
-          .getByRole("button", { name: "Findings", exact: true })
+          .getByRole("button", { name: "Results", exact: true })
           .click();
         await page
           .getByText("Canceled. Your workspace is unchanged.", { exact: true })
@@ -159,7 +163,6 @@ let app;
         assert.equal(evidence.value.groups[0].value, "Unavailable");
       }
     }
-    assert.equal(await page.locator("h1,h2,h3,header").count(), 0);
   }
   assert.deepEqual(errors, []);
   console.log(

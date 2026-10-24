@@ -161,6 +161,10 @@ def coverage(rows):
 
 
 def validate_coverage(rows):
+    # Embedded declarations have the same duplicate-key/nonfinite-number policy
+    # as the outer evidence. Import lazily to keep standalone conversion usable.
+    from engine import decode
+
     # Stream health records report collection loss, not measured code ranges.
     health = [r for r in rows if r.get("stream_health") is True]
     if health:
@@ -182,23 +186,33 @@ def validate_coverage(rows):
     if len(marked) != len(rows):
         raise ValueError("Cannot mix declared coverage and legacy observations.")
     groups = {}
+    # One-entry, invocation-local reuse avoids repeatedly decoding identical
+    # immutable metadata. Row fingerprints and context are still checked below.
+    previous_range = previous_declaration = None
     for row in rows:
         encoded = row["range_manifest"]
         if not isinstance(encoded, str) or len(encoded) > 16384:
             raise ValueError("Invalid range manifest encoding.")
-        manifest = validate_manifest(json.loads(encoded))
-        if row.get("range_manifest_sha256") != digest(manifest):
+        if previous_range is None or previous_range[0] != encoded:
+            manifest = validate_manifest(decode(encoded))
+            previous_range = (encoded, manifest, digest(manifest))
+            previous_declaration = None
+        _, manifest, manifest_digest = previous_range
+        if row.get("range_manifest_sha256") != manifest_digest:
             raise ValueError("Range manifest fingerprint differs.")
         if versioned:
             value = row.get("integrity_manifest")
             if not isinstance(value, str) or len(value) > 32768:
                 raise ValueError("Invalid integrity manifest encoding.")
-            declaration = integrity.validate(
-                json.loads(value), manifest, row["module_sha256"], row.get("module_size")
-            )
-            if type(row.get("module_size")) is not int or row.get(
-                "integrity_manifest_sha256"
-            ) != digest(declaration):
+            if type(row.get("module_size")) is not int:
+                raise ValueError("Integrity manifest fingerprint or module size differs.")
+            context = (value, row["module_sha256"], row["module_size"])
+            if previous_declaration is None or previous_declaration[0] != context:
+                declaration = integrity.validate(
+                    decode(value), manifest, row["module_sha256"], row["module_size"]
+                )
+                previous_declaration = (context, digest(declaration))
+            if row.get("integrity_manifest_sha256") != previous_declaration[1]:
                 raise ValueError("Integrity manifest fingerprint or module size differs.")
         key = (
             row["session_id"],
@@ -224,7 +238,7 @@ def validate_coverage(rows):
     if not live and any(phases != set(PHASES) for phases in sessions.values()):
         raise ValueError("Coverage must include initial, sample and restored snapshots.")
     for group in groups.values():
-        manifest = json.loads(group[0]["range_manifest"])
+        manifest = decode(group[0]["range_manifest"])
         if len(group) != len(manifest) or len({r["range_name"] for r in group}) != len(group):
             raise ValueError("Coverage is incomplete or contains duplicate ranges.")
         expected = {r["range_name"]: r for r in manifest}

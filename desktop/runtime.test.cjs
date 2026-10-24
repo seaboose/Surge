@@ -30,3 +30,46 @@ test("runtime resolves a relocated environment and explicit override without a s
     fs.rmSync(root, { recursive: true, force: true });
   }
 });
+
+test("packaged runtime ignores overrides and never falls back to a developer environment", () => {
+  const folder = fs.mkdtempSync(path.join(os.tmpdir(), "surge packaged é "));
+  try {
+    const resources = path.join(folder, "resources");
+    const root = path.join(resources, "app");
+    const bundled = path.join(resources, "python", "python.exe");
+    const developer = path.join(root, ".venv", "Scripts", "python.exe");
+    fs.mkdirSync(path.dirname(developer), { recursive: true });
+    fs.writeFileSync(developer, "developer fixture");
+    fs.mkdirSync(path.dirname(bundled), { recursive: true });
+    fs.writeFileSync(bundled, "bundled fixture");
+    const options = { packaged: true, resourcesPath: resources };
+    const env = {
+      SURGE_PYTHON: developer,
+      PYTHONHOME: folder,
+      PYTHONPATH: folder,
+    };
+    assert.equal(pythonPath(root, env, "win32", options), bundled);
+    fs.unlinkSync(bundled);
+    assert.throws(() => pythonPath(root, env, "win32", options), {
+      code: "SURGE_BUNDLED_PYTHON_MISSING",
+    });
+    fs.mkdirSync(bundled);
+    assert.throws(() => pythonPath(root, env, "win32", options), {
+      code: "SURGE_BUNDLED_PYTHON_MISSING",
+    });
+  } finally {
+    fs.rmSync(folder, { recursive: true, force: true });
+  }
+});
+
+test("missing source override reports configuration guidance instead of raw filesystem errors", () => {
+  const missing = path.join(
+    os.tmpdir(),
+    "surge missing interpreter",
+    "python.exe",
+  );
+  assert.throws(() => pythonPath(".", { SURGE_PYTHON: missing }, "win32"), {
+    code: "SURGE_PYTHON_INVALID",
+    message: /SURGE_PYTHON must name/,
+  });
+});

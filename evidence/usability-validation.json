@@ -1,0 +1,274 @@
+{
+  "schema": "surge-usability-verification-v1",
+  "runs": [
+    {
+      "id": "usability-011a4cadef",
+      "checks": [
+        {
+          "check": "stream.test",
+          "status": "failed",
+          "exit_code": 1,
+          "seconds": 22.469,
+          "log_sha256": "675c029854cc5a35a1d28ea7eed6990245280cf0be95fb01b2fa21b27812ad55"
+        }
+      ]
+    },
+    {
+      "id": "usability-ac8240308a",
+      "checks": [
+        {
+          "check": "stream.test",
+          "status": "passed",
+          "exit_code": 0,
+          "seconds": 13.25,
+          "log_sha256": "75840f249eff66d184606a4c182990e5577b42f37da93803571c9d27528d341e"
+        },
+        {
+          "check": "native.test",
+          "status": "passed",
+          "exit_code": 0,
+          "seconds": 15.39,
+          "log_sha256": "08af0e9eda63d61a83b9d2cf19549917865a7c7a5c5b6a7fe91bd6449b73e5ba"
+        },
+        {
+          "check": "accessibility.test",
+          "status": "passed",
+          "exit_code": 0,
+          "seconds": 13.563,
+          "log_sha256": "c03a0e4ecc253b9df45645951a953f43739657aa817677d626c6098cafab315b"
+        },
+        {
+          "check": "parity",
+          "status": "failed",
+          "exit_code": 1,
+          "seconds": 19.0,
+          "log_sha256": "585b6ff067f96f15e395422ac94a1eb437afb60ce323df6bd401921e0c67987e"
+        }
+      ]
+    },
+    {
+      "id": "usability-142b7563af",
+      "checks": [
+        {
+          "check": "parity",
+          "status": "failed",
+          "exit_code": 1,
+          "seconds": 19.75,
+          "log_sha256": "597476686449203c3dede68e0d6f7da9d774dd904f281826b1c8781e2d33a85b"
+        }
+      ]
+    },
+    {
+      "id": "usability-f91075979b",
+      "checks": [
+        {
+          "check": "parity",
+          "status": "passed",
+          "exit_code": 0,
+          "seconds": 18.657,
+          "log_sha256": "3b9037d894b2778daf1149d287df7e4d99a36f8401d0d711b2cda8d8fa546d6e"
+        }
+      ]
+    },
+    {
+      "id": "usability-5cdba8b73e",
+      "checks": [
+        {
+          "check": "python",
+          "status": "passed",
+          "exit_code": 0,
+          "seconds": 51.89,
+          "log_sha256": "68742404f31f0090c6306072c19f4e2bffaa43c52f1a2f948b8549405ffeba3f"
+        }
+      ]
+    },
+    {
+      "id": "usability-final-4a5eac9235",
+      "checks": [
+        {
+          "check": "build",
+          "status": "passed",
+          "exit_code": 0,
+          "seconds": 0.234,
+          "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "check": "stage-1",
+          "status": "passed",
+          "exit_code": 0,
+          "seconds": 1.266,
+          "log_sha256": "b479a4d5e4528a4aa320a1d882ec6aeeab7a90fee94a24c694ce304fd8aa0f71"
+        },
+        {
+          "check": "stage-2",
+          "status": "passed",
+          "exit_code": 0,
+          "seconds": 1.312,
+          "log_sha256": "c324fae9daa277e20c09f2883d69b8ab1925c525757910a34d89d50e60cbd7b9"
+        },
+        {
+          "check": "stage-3",
+          "status": "passed",
+          "exit_code": 0,
+          "seconds": 4.984,
+          "log_sha256": "3606686508d6bd16cd688837b39b7c9c121fd9f4e6e2f3d6cb0395229c09ae41"
+        },
+        {
+          "check": "stage-4",
+          "status": "passed",
+          "exit_code": 0,
+          "seconds": 1.281,
+          "log_sha256": "c443b244484d3109ab6bd58d7856eea045fd0892b4748f6fde121582fec61998"
+        },
+        {
+          "check": "stage-5",
+          "status": "passed",
+          "exit_code": 0,
+          "seconds": 1.25,
+          "log_sha256": "e4260aad5801db56749a0559c1fef5c3f9f589a016fc19b1b32a30afcad6b43b"
+        },
+        {
+          "check": "stage-6",
+          "status": "passed",
+          "exit_code": 0,
+          "seconds": 1.828,
+          "log_sha256": "2644092e1499c7ec7189503924c3b948a3fdd0472c7546b47483fbabd2e21287"
+        },
+        {
+          "check": "stage-7",
+          "status": "passed",
+          "exit_code": 0,
+          "seconds": 1.578,
+          "log_sha256": "e860b7f36fb8d495aabe3ba506a86fbc819a83b395970834a91d64fd2c3fed7f"
+        },
+        {
+          "check": "parity",
+          "status": "passed",
+          "exit_code": 0,
+          "seconds": 19.875,
+          "log_sha256": "a42b8c5d3b5de91160854d06fe883d36483d4d84c32c675520c52ca1883adba3"
+        },
+        {
+          "check": "evaluation.test",
+          "status": "passed",
+          "exit_code": 0,
+          "seconds": 2.672,
+          "log_sha256": "810e0067b5bd49fcf423de29cd807e58d3688c8cac2ca5d01b4abbc991e9cc5d"
+        }
+      ]
+    }
+  ],
+  "stages": [
+    {
+      "stage": 1,
+      "status": "passed",
+      "folder": "usability-1-0ar9eF",
+      "files": {
+        "completed.png": "082e9aad0a72e03b26c43de69e0a23db86c027c657bd1523ec499aca4a3dfd09",
+        "opening.png": "8c43b53b9ed7836ef4509b1d66605305c63ceddd25e4846fa620c77e0d2b0650",
+        "policy.json": "4da8bb2e7b1430823aa3b0ca9e52ea521f10771baf40bb89717abcc257cbd490",
+        "records.json": "1edf384d92e0d6e16444890f4eddd0ac5f1c6f7a64729e5500c14c341a8aee1f",
+        "result.json": "b4e7fff93508125a0e8db4e0aa0e91ab7a17e70aa0fe588a20d8440e06994205"
+      }
+    },
+    {
+      "stage": 2,
+      "status": "passed",
+      "folder": "usability-2-Hf2kd7",
+      "files": {
+        "completed.png": "5a45d84b16941f73923cb7d79bda4dc9596d0b499592bb28ae6f3fb7e271d054",
+        "opening.png": "ae31288b44f4be4b6943a416d27f8d9d69b475fa3478a8f162b2abdb8e17ad23",
+        "policy.json": "4da8bb2e7b1430823aa3b0ca9e52ea521f10771baf40bb89717abcc257cbd490",
+        "records.json": "1edf384d92e0d6e16444890f4eddd0ac5f1c6f7a64729e5500c14c341a8aee1f",
+        "result.json": "132017bde0addfecfb92e9e0274b9130709d573b743fa8d2faa2f7307aaa62e1"
+      }
+    },
+    {
+      "stage": 3,
+      "status": "passed",
+      "folder": "usability-3-5K3QSU",
+      "files": {
+        "completed.png": "1a6ffcce98b75b64d1b96ae54d17b451d15bf46e839516a1f87baa29d7a18b1e",
+        "opening.png": "8c43b53b9ed7836ef4509b1d66605305c63ceddd25e4846fa620c77e0d2b0650",
+        "policy.json": "4da8bb2e7b1430823aa3b0ca9e52ea521f10771baf40bb89717abcc257cbd490",
+        "records.json": "1edf384d92e0d6e16444890f4eddd0ac5f1c6f7a64729e5500c14c341a8aee1f",
+        "result.json": "23d65d8d52eb3ee54b3df3a10afb9b2970bffd80fe7b51e60d676074cdc3506a"
+      }
+    },
+    {
+      "stage": 4,
+      "status": "passed",
+      "folder": "usability-4-5QjFcs",
+      "files": {
+        "completed.png": "59509a588df6c69c39fd0ab67ea85c58b7334e3e9af3d611ed056b256680baf8",
+        "opening.png": "8c43b53b9ed7836ef4509b1d66605305c63ceddd25e4846fa620c77e0d2b0650",
+        "policy.json": "4da8bb2e7b1430823aa3b0ca9e52ea521f10771baf40bb89717abcc257cbd490",
+        "records.json": "1edf384d92e0d6e16444890f4eddd0ac5f1c6f7a64729e5500c14c341a8aee1f",
+        "result.json": "390d23b96ab84ee10997848f6051fdbf1db3d98b73e37466bc71e4fe94f1a194"
+      }
+    },
+    {
+      "stage": 5,
+      "status": "passed",
+      "folder": "usability-5-FwqIAo",
+      "files": {
+        "completed.png": "9236c1e25c4f077d4dbf99c6ee61066e6f0ce42daa13b42f0428ca961e1e3146",
+        "opening.png": "8c43b53b9ed7836ef4509b1d66605305c63ceddd25e4846fa620c77e0d2b0650",
+        "policy.json": "4da8bb2e7b1430823aa3b0ca9e52ea521f10771baf40bb89717abcc257cbd490",
+        "records.json": "1edf384d92e0d6e16444890f4eddd0ac5f1c6f7a64729e5500c14c341a8aee1f",
+        "result.json": "dae9633a2f29fbbd7f85c293989e8898ae7f4411dab3766e80d0b06d6271b89b"
+      }
+    },
+    {
+      "stage": 6,
+      "status": "passed",
+      "folder": "usability-6-9i3VKY",
+      "files": {
+        "completed.png": "fb4cf87e7d3a49cea9e7466c176e0e6568cbbded341f21ee4591eb7431e5ef35",
+        "opening.png": "8c43b53b9ed7836ef4509b1d66605305c63ceddd25e4846fa620c77e0d2b0650",
+        "policy.json": "4da8bb2e7b1430823aa3b0ca9e52ea521f10771baf40bb89717abcc257cbd490",
+        "records.json": "1edf384d92e0d6e16444890f4eddd0ac5f1c6f7a64729e5500c14c341a8aee1f",
+        "result.json": "4ec895596b90dc0d1d9b7f188ac9a5440f3435dcf3eb4f1834781eb7b2ebd40a",
+        "scale-1.5.png": "2db18a4de8a0eda19dd842fb79b1f8397ce07003c53ca5d58e32b00be7fa3059",
+        "scale-1.png": "fb4cf87e7d3a49cea9e7466c176e0e6568cbbded341f21ee4591eb7431e5ef35",
+        "scale-2.png": "a6185652717b7c4cfdb6549b624c45445d9bb1fb0d768369792babc9f343211a"
+      }
+    },
+    {
+      "stage": 7,
+      "status": "passed",
+      "folder": "usability-7-noknnR",
+      "files": {
+        "completed.png": "79305e1157c4975883a71b678353408fb47178e0398af47ff0a7da9e9efc4729",
+        "opening.png": "8c43b53b9ed7836ef4509b1d66605305c63ceddd25e4846fa620c77e0d2b0650",
+        "policy.json": "4da8bb2e7b1430823aa3b0ca9e52ea521f10771baf40bb89717abcc257cbd490",
+        "records.json": "1edf384d92e0d6e16444890f4eddd0ac5f1c6f7a64729e5500c14c341a8aee1f",
+        "result.json": "5c4b2df86ce682654b3ebf8cb20fb5c311d158c56428138c67c69ffdfad994e7"
+      }
+    }
+  ],
+  "post_review_snapshot_check": {
+    "folder": "usability-3-dF0YTw",
+    "files": {
+      "completed.png": "a9d5c7d2aff15ded34abc3f984877a051e143829faf5213887240fea56507db6",
+      "opening.png": "8c43b53b9ed7836ef4509b1d66605305c63ceddd25e4846fa620c77e0d2b0650",
+      "policy.json": "4da8bb2e7b1430823aa3b0ca9e52ea521f10771baf40bb89717abcc257cbd490",
+      "records.json": "1edf384d92e0d6e16444890f4eddd0ac5f1c6f7a64729e5500c14c341a8aee1f",
+      "result.json": "bebecd47ffd2a9cf59007ae67eeca32a344c42d9acbb65160ef9ff8eb850cc04"
+    }
+  },
+  "source_sha256": {
+    "desktop/src/main.jsx": "7268ea8bb865c54851ae17ef3b6c5c38052e33578514c5dfeb6d53b1894681f2",
+    "desktop/src/style.css": "29e101887add24ce770dc3cfe369a0253f52275132f3d3c0aaf5d67669b67d27",
+    "desktop/main.cjs": "60655f739366062ee944ab4f107c22a5cc841ed5dbee07058ead194a2c335d7f",
+    "desktop_worker.py": "cbfd7196575347a06e50b089eab1c7d7be1ae34cf4794c1f6e6bd15bf0cd03c6",
+    "native_stream.py": "d3f281409f879d8be3415d8d279912cd477636af1e4d530e94fb6108da0a8915",
+    "desktop/usability.test.cjs": "fa4ab48eda9faae573ba24c4219cd517999ae2a984d118cb8fd5e834cc1f4cff",
+    "test_desktop_capture_provenance.py": "40989da204724eaeb7246a38464534a93b70ea4275a667975c437f8e3abbb00b"
+  },
+  "python_tests": 337,
+  "accessibility_combinations": 24,
+  "security_boundary_tests": 4,
+  "original_fuzz_campaign": "incomplete",
+  "clean_checkout_verification": false
+}

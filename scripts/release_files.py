@@ -15,7 +15,9 @@ EXCLUDED = {
     "electron",
     "build",
     "build-manifest",
+    "build-asan",
     "captures",
+    "work",
 }
 
 
@@ -25,12 +27,15 @@ def source_files(root=ROOT):
         for name in sorted(files):
             path = Path(folder) / name
             relative = path.relative_to(root)
+            if relative.parts[:2] == ("verification", "qualification"):
+                continue
             if (
                 (
                     path.suffix in {".pyc", ".log", ".zip"}
                     and relative.as_posix() != "evidence/surge-evaluation-evidence.zip"
                 )
                 or name.startswith(".env")
+                or name == ".git"  # Linked worktrees store metadata in a file.
                 or name == ".surge-ui.json"
                 or relative.as_posix() == "native/baselines.json"
             ):

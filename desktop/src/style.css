@@ -9,7 +9,7 @@
   --orange: #ff9a48;
   --red: #ff5c8b;
   font-family: "Segoe UI", sans-serif;
-  font-size: 13px;
+  font-size: 14px;
   background: var(--bg);
   color: var(--ink);
 }
@@ -23,10 +23,7 @@ button,
 input,
 select,
 textarea {
-  font:
-    0.92308rem Consolas,
-    "Cascadia Code",
-    monospace;
+  font: inherit;
   color: inherit;
 }
 button,
@@ -42,13 +39,11 @@ button {
   cursor: pointer;
   transition:
     background-color 160ms ease,
-    border-color 160ms ease,
-    box-shadow 160ms ease;
+    border-color 160ms ease;
 }
 button:hover:enabled {
   border-color: var(--cyan);
   background: #12313b;
-  box-shadow: 0 0 9px #00e2ed24;
 }
 button:active:enabled {
   background: #20374b;
@@ -64,7 +59,6 @@ button.primary {
   background: #073740;
   border-color: #00a8b4;
   color: #b8fcff;
-  box-shadow: 0 0 14px #00e2ed12;
 }
 button.active,
 nav button.active {
@@ -120,9 +114,7 @@ pre {
   tab-size: 2;
 }
 code,
-.label,
 .field-name,
-th,
 .source-strip {
   font-family: Consolas, monospace;
 }
@@ -133,7 +125,7 @@ th,
   grid-template-rows: minmax(0, 1fr) auto;
 }
 nav {
-  width: 8rem;
+  width: 9.5rem;
   overflow: auto;
   min-height: 0;
   flex-shrink: 0;
@@ -187,6 +179,48 @@ main.with-capture {
 }
 .capture-controls > small {
   display: block;
+}
+.capture-controls h2 {
+  margin: 0;
+  font-size: 1.2rem;
+}
+.capture-controls > details:not([open]) {
+  display: inline-block;
+  margin: 8px 20px 0 0;
+}
+.export-options {
+  position: relative;
+  align-self: flex-start;
+}
+.export-options > summary {
+  padding: 8px 11px;
+  cursor: pointer;
+}
+.export-options > div {
+  position: absolute;
+  z-index: 5;
+  width: min(360px, 65vw);
+  padding: 12px;
+  background: var(--panel);
+  border: 1px solid var(--line);
+  box-shadow: 0 8px 24px #0008;
+}
+.export-options > div > div {
+  margin-bottom: 12px;
+}
+.export-options small {
+  display: block;
+  margin-top: 5px;
+}
+.saved-confirmation {
+  display: flex;
+  gap: 16px;
+  align-items: center;
+  flex-wrap: wrap;
+  padding: 12px;
+  border: 1px solid var(--line);
+  background: var(--panel);
+  flex-shrink: 0;
 }
 .capture-status > :first-child {
   color: var(--cyan);
@@ -437,7 +471,12 @@ tr.selected {
   max-height: 230px;
   overflow: auto;
 }
-table[aria-label="Findings"] td:last-child {
+.results-table th:nth-child(3),
+.results-table td:nth-child(3) {
+  white-space: nowrap;
+  width: 1%;
+}
+.results-table td:last-child {
   white-space: normal;
   overflow-wrap: anywhere;
   min-width: 120px;
@@ -934,4 +973,256 @@ nav button {
 
 .actions > .control > span {
   flex-shrink: 0;
+}
+
+/* Keep entry choices readable without decorative competition. */
+.empty {
+  overflow: auto;
+  padding: 24px;
+  justify-content: safe center;
+}
+.empty h1 {
+  font-size: 24px;
+  margin: 0 0 8px;
+  font-weight: 600;
+}
+.empty > p {
+  max-width: 640px;
+  text-align: center;
+  margin: 0 0 24px;
+}
+.entry-help {
+  max-width: 640px;
+  margin: 18px 0;
+}
+.entry-help p {
+  margin: 6px 0;
+}
+
+textarea {
+  font-family: Consolas, "Cascadia Code", monospace;
+}
+footer {
+  font-family: "Segoe UI", sans-serif;
+  font-size: 12px;
+}
+button {
+  overflow-wrap: anywhere;
+}
+
+.view-help {
+  margin: 0 0 12px;
+  color: var(--muted);
+  flex-shrink: 0;
+}
+.result-guide {
+  color: var(--muted);
+}
+.info-bubble {
+  display: inline;
+  margin-left: 6px;
+}
+.evaluation-steps {
+  padding-left: 22px;
+  line-height: 1.6;
+}
+.evaluation-steps li {
+  margin-bottom: 12px;
+}
+.info-bubble > button {
+  width: 24px;
+  height: 24px;
+  padding: 0;
+  border-radius: 50%;
+  font:
+    600 13px Georgia,
+    serif;
+  color: var(--muted);
+  vertical-align: middle;
+}
+.info-panel {
+  position: fixed;
+  margin: 0;
+  width: min(360px, calc(100vw - 32px));
+  max-height: calc(50vh - 24px);
+  overflow: auto;
+  padding: 14px 16px;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  color: var(--ink);
+  background: var(--panel);
+  font:
+    14px/1.6 "Segoe UI",
+    sans-serif;
+  overflow-wrap: anywhere;
+}
+
+.snapshot-status {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin: 10px 0;
+  padding: 10px 12px;
+  border-left: 2px solid var(--line);
+  background: var(--panel);
+  overflow-wrap: anywhere;
+}
+.snapshot-status span {
+  color: var(--muted);
+}
+/* Opening identity stays decorative; actions retain native button semantics. */
+.surge-opening {
+  min-height: 100%;
+  display: grid;
+  grid-template-columns: 44% 56%;
+  padding: clamp(20px, 4vw, 64px);
+  padding-bottom: 16px;
+  background: radial-gradient(ellipse at 21% 67%, #10344170, transparent 48%);
+  overflow: auto;
+  align-content: center;
+}
+.opening-identity {
+  padding: 12px 24px 0 0;
+}
+.opening-identity h1 {
+  font-size: clamp(42px, 5vw, 64px);
+  letter-spacing: -2px;
+  font-weight: 600;
+  margin: 0 0 19px;
+}
+.opening-identity p {
+  font-size: 1.2rem;
+  line-height: 1.7;
+  color: #b1c2ce;
+  max-width: 350px;
+  margin: 0;
+}
+.signal-art {
+  width: min(100%, 348px);
+  color: #26dce0;
+  margin: 26px 0 0 -6px;
+  filter: drop-shadow(0 0 14px #15c6d220);
+}
+.opening-actions {
+  padding: 12px 0 30px 25px;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  justify-content: center;
+}
+.opening-action {
+  white-space: normal;
+  text-align: left;
+  position: relative;
+  width: 100%;
+  min-height: 137px;
+  padding: 26px 50px 26px 70px;
+  border: 1px solid #2b3e4c;
+  border-radius: 8px;
+  background: #111c27;
+}
+.opening-action strong {
+  font-size: 1.5rem;
+  font-weight: 600;
+  display: block;
+  margin: 0 0 10px;
+}
+.opening-action > span:not(.opening-icon) {
+  font-size: 1rem;
+  color: #b1c2ce;
+  line-height: 1.5;
+  display: block;
+}
+.opening-action .opening-icon {
+  position: absolute;
+  left: 25px;
+  top: 27px;
+  color: #55dce0;
+  font-size: 26px;
+}
+.opening-action b {
+  position: absolute;
+  right: 24px;
+  top: 29px;
+  color: #68dce1;
+  font-size: 22px;
+  font-weight: 400;
+}
+.case-list {
+  list-style: none;
+  padding: 0;
+}
+.saved-case-context {
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;
+  gap: 8px;
+  padding: 14px 18px;
+  background: #142934;
+  border: 1px solid #365562;
+  border-radius: 8px;
+  overflow-wrap: anywhere;
+}
+.saved-case-context > span {
+  color: #b5c9d4;
+}
+.saved-observations {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+.saved-observations span {
+  color: #b5c9d4;
+}
+table caption {
+  text-align: left;
+  font-weight: 600;
+  padding: 6px 0;
+  color: #d5e8f2;
+}
+.saved-case-context .actions {
+  flex-wrap: wrap;
+}
+.case-list li {
+  padding: 16px 0;
+  border-bottom: 1px solid #334854;
+  overflow-wrap: anywhere;
+}
+.case-list small {
+  display: block;
+  margin-top: 5px;
+}
+.case-list .actions {
+  flex-wrap: wrap;
+}
+.app:not(:has(nav)) main:not(.with-capture) {
+  overflow: auto;
+}
+.with-capture .surge-opening {
+  min-height: auto;
+  flex-shrink: 0;
+}
+.with-capture .signal-art {
+  display: none;
+}
+@media (max-width: 850px) {
+  .surge-opening {
+    grid-template-columns: 1fr;
+    align-content: start;
+  }
+  .opening-identity {
+    padding: 0 0 24px;
+  }
+  .opening-identity p {
+    max-width: 100%;
+  }
+  .signal-art {
+    display: none;
+  }
+  .opening-actions {
+    padding: 0 0 24px;
+  }
+  .opening-action {
+    min-height: 110px;
+  }
 }

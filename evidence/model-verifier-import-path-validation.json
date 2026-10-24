@@ -1,0 +1,73 @@
+{
+  "after": "9 verifier tests passed in 1.569s; subprocess confirms unchanged path and root module import",
+  "before": "New subprocess regression failed; scripts/test_native_stream.py resolved incorrectly",
+  "correction": "Restore sys.path in finally after trusted runner imports, including nested path changes",
+  "current_verifier_checked_existing_artifacts": {
+    "manifest-model-314869383270": {
+      "completed_cases": 632,
+      "frozen_sources_unchanged": true,
+      "report_sha256": "e993e9f636eb8a5aed6f47da1bc039306034b850b2eaa2283bf406e22079fc50",
+      "status": "passed"
+    },
+    "stream-model-1f358369d5e8": {
+      "completed_cases": 252,
+      "frozen_sources_unchanged": true,
+      "report_sha256": "88b27888932139e8511e33a4539543595d7ea502b145c9082ebc5b4021f46a9d",
+      "status": "passed"
+    }
+  },
+  "finding": "Verifier imports changed the caller's module search path and broke root test discovery",
+  "full_candidate_preflight": "Separate followup owned by the release check; not claimed here",
+  "historical_archives": {
+    "Surge-manifest-model-evidence.zip": {
+      "byte_unchanged": true,
+      "current_followup_test_count": 9,
+      "sha256": "bb3a09cddbed5007671762c8449bbd380c495d5caa08b71d76b30df59ccfc69d",
+      "verifier_test_count": 8
+    },
+    "Surge-stream-model-evidence.zip": {
+      "byte_unchanged": true,
+      "current_followup_test_count": 9,
+      "sha256": "caa18e688459fd93a5805ec0b505ac4535a6b2e75ecf4bcd1a9a63c72b285740",
+      "verifier_test_count": 8
+    }
+  },
+  "model_campaigns_rerun": false,
+  "original_combined_campaign": "incomplete",
+  "preserved_files": {
+    "initial_preflight": {
+      "bytes": 1187,
+      "path": "verification/qualification/combined-candidate/preflight-458ec2f2ff8c/python.log",
+      "sha256": "1f95bcfceb414b3d4461ee5918b602d8d09d1f0776318e0f62914be66504c450"
+    },
+    "regression_before": {
+      "bytes": 1174,
+      "path": "verification/qualification/model-import-path-fix/before.log",
+      "sha256": "1aec7741508461049a1b94511b6ac4a155eda23a8fea127aa333953048cb46ac"
+    },
+    "regression_source": {
+      "bytes": 5615,
+      "path": "test_model_evidence.py",
+      "sha256": "91a068ba0d7ac996bfcc2f6ffb74372e1920426379d8d00d252ad8f1037555cc"
+    },
+    "regressions_after": {
+      "bytes": 1510,
+      "path": "verification/qualification/model-import-path-fix/after.log",
+      "sha256": "36083722a78d8be3cf28f97d709f7228e2c983b537840c856aafefc849c72ec7"
+    },
+    "verifier_after": {
+      "bytes": 14160,
+      "path": "scripts/verify_model_evidence.py",
+      "sha256": "f78ed33d7a577148361fbc48270f6eb06a5e306fa4c20871fc488fb3fa3b5561"
+    },
+    "verifier_before": {
+      "bytes": 13964,
+      "path": "verification/qualification/model-import-path-fix/verifier-before.py",
+      "sha256": "125675810201bc9fb66c2ffb37555c2dd5404156d726ab3d39bd3111179bb72a"
+    }
+  },
+  "production_and_frozen_model_sources": "unchanged",
+  "schema": "surge-model-verifier-import-path-validation-v1",
+  "status": "passed",
+  "unfamiliar_tester_acceptance": "pending"
+}
