@@ -1,0 +1,1017 @@
+{
+  "schema": "surge-hosted-recovery-milestone-v1",
+  "status": "passed",
+  "generated_utc": "2026-10-24T05:23:55.399197+00:00",
+  "candidate_sha": "937a19b8f821a72dfc46126948394a223d88c55c",
+  "scope": "Committed recovery candidate only; later UI, performance, release and approval-contract changes are not part of these hosted runs.",
+  "candidate_archive": {
+    "path": "candidate-937a19b.zip",
+    "bytes": 2934039,
+    "sha256": "c1ed8412838bca258e7189d286385b5443761e49a24cfedcb2fcb02c000938a2"
+  },
+  "criteria": {
+    "path": "hosted-recovery-acceptance.md",
+    "bytes": 3213,
+    "sha256": "e98e7275f59089fc445946402eaa7d1c36f29030d4e710b0cfc33c9b6c1dc664"
+  },
+  "acceptance": {
+    "criterion_1": "passed",
+    "criterion_2": "passed",
+    "criterion_3": "passed",
+    "criterion_4": "passed",
+    "criterion_5": "passed",
+    "criterion_6": "passed",
+    "criterion_7": "passed"
+  },
+  "runs": [
+    {
+      "run": {
+        "id": 40064930011,
+        "event": "push",
+        "head_sha": "937a19b8f821a72dfc46126948394a223d88c55c",
+        "run_attempt": 1,
+        "html_url": "https://github.com/seaboose/Surge/actions/runs/40064930011",
+        "conclusion": "success"
+      },
+      "checkout_sha": "937a19b8f821a72dfc46126948394a223d88c55c",
+      "jobs": [
+        {
+          "id": 120786054303,
+          "name": "test",
+          "conclusion": "success",
+          "log": {
+            "bytes": 182207,
+            "sha256": "f545aae187a60389e8d8bf24f47a1aa9b052a4e2f5b7d1013be823cbe5891964"
+          }
+        },
+        {
+          "id": 120786054385,
+          "name": "First-use release check",
+          "conclusion": "success",
+          "log": {
+            "bytes": 30264,
+            "sha256": "b2cd2988fd0fffa8a44764728df463b69219053512afaa4611bd2e883989e2a0"
+          }
+        }
+      ],
+      "artifacts": [
+        {
+          "id": 12549370768,
+          "name": "first-use-937a19b8f821a72dfc46126948394a223d88c55c-1",
+          "bytes": 4977386,
+          "sha256": "5510efdfa1a82f7bd181c8908a100fe31e18006d729e5530b915cc9a7645d00d",
+          "github_digest_matches": true
+        },
+        {
+          "id": 12548744378,
+          "name": "deeper-qualification-937a19b8f821a72dfc46126948394a223d88c55c-1",
+          "bytes": 12160696,
+          "sha256": "495971cad09a99164283f09f7de3d052a32bc50af32f82bb3bbdcc0e70e115fb",
+          "github_digest_matches": true
+        }
+      ],
+      "deep": {
+        "verification": {
+          "schema": "surge-deep-verification-v1",
+          "status": "verified_passed",
+          "files": 401,
+          "bytes": 139022644,
+          "source_files": 273,
+          "git": {
+            "head": "937a19b8f821a72dfc46126948394a223d88c55c",
+            "clean": true
+          },
+          "human_acceptance": "pending",
+          "broader_fuzzing": "incomplete_not_run",
+          "checks": {
+            "setup": "passed",
+            "native_configure": "passed",
+            "native_build": "passed",
+            "python_suite": "passed",
+            "properties_install": "passed",
+            "properties": "passed",
+            "native_ctest": "passed",
+            "asan_configure": "passed",
+            "asan_build": "passed",
+            "asan_control": "passed",
+            "asan_detection": "passed",
+            "asan_ctest": "passed",
+            "libfuzzer": "passed",
+            "retention": "passed",
+            "demo_replay": "passed",
+            "owned_fixture_replay": "passed",
+            "owned_stream_checks": "passed",
+            "desktop_boundary": "passed",
+            "desktop_native": "passed",
+            "desktop_stream": "passed",
+            "source_hygiene": "passed"
+          }
+        },
+        "source_comparison": {
+          "files": 273,
+          "committed_archive": {
+            "bytes": 2934039,
+            "sha256": "c1ed8412838bca258e7189d286385b5443761e49a24cfedcb2fcb02c000938a2"
+          },
+          "actual_archive": {
+            "bytes": 2927133,
+            "sha256": "13e8f8accbe1324a7fc1d8d46e7e49c6c88d51714e3b5d74508bda2f66d9b68b"
+          },
+          "raw_bytes_equal": true,
+          "raw_differing_files": [],
+          "normalized_bytes_equal": true,
+          "normalized_differing_files": [],
+          "note": "Compared to preserved Git archive export, not raw Git blobs."
+        },
+        "qualification_seconds": 353.282,
+        "budgets": {
+          "total_seconds": 1800,
+          "per_step_elapsed_within_budget": true,
+          "parser": {
+            "corpus_bytes": 33554432,
+            "input_bytes": 65536,
+            "log_bytes": 10485760,
+            "outer_seconds": 60,
+            "per_input_seconds": 2,
+            "rss_limit_mb": 512,
+            "runs_per_seed": 5000,
+            "seconds_per_seed": 30,
+            "seeds": [
+              17,
+              20261023
+            ]
+          },
+          "retention": {
+            "accounting_budget": 8372224,
+            "health_reserve_bytes": 16384,
+            "import_bytes": 16777216,
+            "max_samples": 500,
+            "row_reserve_bytes": 512,
+            "window_bytes": 8388608
+          }
+        },
+        "python_tests": 429,
+        "python_skips": 0,
+        "native_ctest": 3,
+        "asan_ctest": 3,
+        "msvc_asan_control_exit": 0,
+        "msvc_asan_detection_exit": 86,
+        "property_evaluations": 768,
+        "property_runs": 12,
+        "parser_checks": 28,
+        "parser_seconds": 23.922,
+        "parser_instrumentation": "passed",
+        "parser_controls": "passed",
+        "fuzz_total": 10000,
+        "corpus_files": 112,
+        "corpus_bytes": 312516,
+        "retained_corpus_coverage": {
+          "branches": {
+            "count": 220,
+            "covered": 178,
+            "notcovered": 42,
+            "percent": 80.9090909090909
+          },
+          "functions": {
+            "count": 14,
+            "covered": 13,
+            "percent": 92.85714285714286
+          },
+          "instantiations": {
+            "count": 22,
+            "covered": 20,
+            "percent": 90.9090909090909
+          },
+          "lines": {
+            "count": 267,
+            "covered": 230,
+            "percent": 86.14232209737828
+          },
+          "mcdc": {
+            "count": 0,
+            "covered": 0,
+            "notcovered": 0,
+            "percent": 0
+          },
+          "regions": {
+            "count": 302,
+            "covered": 265,
+            "notcovered": 37,
+            "percent": 87.74834437086093
+          }
+        },
+        "fixed_boundary_coverage": {
+          "branches": {
+            "count": 220,
+            "covered": 177,
+            "notcovered": 43,
+            "percent": 80.45454545454545
+          },
+          "functions": {
+            "count": 14,
+            "covered": 13,
+            "percent": 92.85714285714286
+          },
+          "instantiations": {
+            "count": 22,
+            "covered": 21,
+            "percent": 95.45454545454545
+          },
+          "lines": {
+            "count": 267,
+            "covered": 249,
+            "percent": 93.25842696629213
+          },
+          "mcdc": {
+            "count": 0,
+            "covered": 0,
+            "notcovered": 0,
+            "percent": 0
+          },
+          "regions": {
+            "count": 302,
+            "covered": 279,
+            "notcovered": 23,
+            "percent": 92.3841059602649
+          }
+        },
+        "boundary_cases": 88,
+        "boundary_evaluations": 176,
+        "boundary_guards": 14,
+        "boundary_max_input_bytes": 64512,
+        "retention_cases": 24,
+        "retention_evaluations": 48,
+        "source_unchanged": true,
+        "git_before": {
+          "head": "937a19b8f821a72dfc46126948394a223d88c55c",
+          "clean": true
+        },
+        "git_after": {
+          "head": "937a19b8f821a72dfc46126948394a223d88c55c",
+          "clean": true
+        }
+      },
+      "first_use": {
+        "status": "verified_passed",
+        "checks": 16,
+        "log_hashes_verified": 16,
+        "ui_assertions": {
+          "deletion": 3,
+          "library": 9,
+          "replay": 8,
+          "unapproved": 5,
+          "approved": 6,
+          "saved": 10
+        },
+        "seconds": 58.453,
+        "source_files": 273,
+        "source_comparison": {
+          "files": 273,
+          "committed_archive": {
+            "bytes": 2934039,
+            "sha256": "c1ed8412838bca258e7189d286385b5443761e49a24cfedcb2fcb02c000938a2"
+          },
+          "actual_archive": {
+            "bytes": 2930409,
+            "sha256": "178c5d0a79ac5e27ee4a588a8f1f0f43edfd47c51833c781df1e75d91523665d"
+          },
+          "raw_bytes_equal": true,
+          "raw_differing_files": [],
+          "normalized_bytes_equal": true,
+          "normalized_differing_files": [],
+          "note": "Compared to preserved Git archive export, not raw Git blobs."
+        },
+        "archive_sha256": "178c5d0a79ac5e27ee4a588a8f1f0f43edfd47c51833c781df1e75d91523665d",
+        "git": {
+          "head": "937a19b8f821a72dfc46126948394a223d88c55c",
+          "clean": true
+        },
+        "launcher": {
+          "status": "passed",
+          "criteria": {
+            "L1": "passed",
+            "L2": "passed",
+            "L3": "passed",
+            "L4": "passed",
+            "L5": "passed"
+          },
+          "startup_seconds": 5.359,
+          "shutdown_seconds": 0.282,
+          "forced_cleanup": false,
+          "source_matches_first_use_manifest": true,
+          "human_acceptance": "pending",
+          "native_dialogs": "not_run"
+        }
+      },
+      "recovery_campaigns": [
+        {
+          "name": "case-recovery-2026-10-24T05-12-56-743Z-0ebfa961",
+          "status": "verified_passed",
+          "completed_executions": 96,
+          "named_scenarios": 48,
+          "assertions": 1646,
+          "acknowledged_sigkill_controls": 32,
+          "fresh_restarts": 96,
+          "repeat_pairs_identical": 48,
+          "elapsed_ms": 18111,
+          "manifest_files": 1452,
+          "retained_bytes": 40591240,
+          "combined_log_bytes": 100484,
+          "source_files": 4,
+          "raw_source_bytes_equal": true,
+          "line_ending_only_differences": [],
+          "hidden_files_verified": 44,
+          "report_sha256": "ecae48ba77b882b018e38c4dd823085a47ef79273855486d8e34d4a987ae1cb5",
+          "manifest_sha256": "ced6e08ccdf07648dd9c63eb25165d12a4e140bfbf9ce8119b2085f4424435a6",
+          "sources": [
+            {
+              "path": "desktop/case-library.cjs",
+              "bytes": 7941,
+              "sha256": "a425b17b13e19a67ac5c8730f05b5bef78edc4a4b8d969ccbe22102c2f459084"
+            },
+            {
+              "path": "desktop/case-recovery.test.cjs",
+              "bytes": 30743,
+              "sha256": "977993db40b2909307e29da227c6f953e1c3f3b31487ecdc0f1972210247903b"
+            },
+            {
+              "path": "desktop/case-recovery-child.cjs",
+              "bytes": 9672,
+              "sha256": "e8ba0f642621d2d22215577d5196fcf1a3a2f6609cd1eab7f3722453ce713653"
+            },
+            {
+              "path": "docs/case-recovery-acceptance.md",
+              "bytes": 4936,
+              "sha256": "5533f78ad2b2c6c88da9271d27186fc322ac0c5bbe0b94ea2930c538435a189a"
+            }
+          ],
+          "locations": [
+            {
+              "artifact_id": 12548744378,
+              "artifact_prefix": "case-recovery-2026-10-24T05-12-56-743Z-0ebfa961/"
+            }
+          ]
+        },
+        {
+          "name": "case-recovery-2026-10-24T05-15-07-866Z-8aa46cac",
+          "status": "verified_passed",
+          "completed_executions": 96,
+          "named_scenarios": 48,
+          "assertions": 1646,
+          "acknowledged_sigkill_controls": 32,
+          "fresh_restarts": 96,
+          "repeat_pairs_identical": 48,
+          "elapsed_ms": 18961,
+          "manifest_files": 1452,
+          "retained_bytes": 40591258,
+          "combined_log_bytes": 100484,
+          "source_files": 4,
+          "raw_source_bytes_equal": true,
+          "line_ending_only_differences": [],
+          "hidden_files_verified": 44,
+          "report_sha256": "4df27d4dff8880baffe57739b8522eac69af380d3df7944c6f3fceabda937af3",
+          "manifest_sha256": "f4cba9cc3cc78328a4d4a0bda79507739c550900dc4fe422b8a4e920058d22a7",
+          "sources": [
+            {
+              "path": "desktop/case-library.cjs",
+              "bytes": 7941,
+              "sha256": "a425b17b13e19a67ac5c8730f05b5bef78edc4a4b8d969ccbe22102c2f459084"
+            },
+            {
+              "path": "desktop/case-recovery.test.cjs",
+              "bytes": 30743,
+              "sha256": "977993db40b2909307e29da227c6f953e1c3f3b31487ecdc0f1972210247903b"
+            },
+            {
+              "path": "desktop/case-recovery-child.cjs",
+              "bytes": 9672,
+              "sha256": "e8ba0f642621d2d22215577d5196fcf1a3a2f6609cd1eab7f3722453ce713653"
+            },
+            {
+              "path": "docs/case-recovery-acceptance.md",
+              "bytes": 4936,
+              "sha256": "5533f78ad2b2c6c88da9271d27186fc322ac0c5bbe0b94ea2930c538435a189a"
+            }
+          ],
+          "locations": [
+            {
+              "artifact_id": 12548744378,
+              "artifact_prefix": "case-recovery-2026-10-24T05-15-07-866Z-8aa46cac/"
+            }
+          ]
+        }
+      ],
+      "recovery_summary": {
+        "distinct_campaigns": 2,
+        "scenario_executions": 192,
+        "sigkill_controls": 64,
+        "fresh_restarts": 192,
+        "assertions": 3292,
+        "cross_campaign_semantic_outcomes_identical": true
+      }
+    },
+    {
+      "run": {
+        "id": 40064933427,
+        "event": "pull_request",
+        "head_sha": "937a19b8f821a72dfc46126948394a223d88c55c",
+        "run_attempt": 1,
+        "html_url": "https://github.com/seaboose/Surge/actions/runs/40064933427",
+        "conclusion": "success"
+      },
+      "checkout_sha": "00e5ed68eced4ed3c438bfe2805a826cc016ffcb",
+      "jobs": [
+        {
+          "id": 120786064320,
+          "name": "test",
+          "conclusion": "success",
+          "log": {
+            "bytes": 183045,
+            "sha256": "8dfdaa672e356fc143721b827662820d5978cbf5a0e5caf18564250a8f42e5fd"
+          }
+        },
+        {
+          "id": 120786064379,
+          "name": "First-use release check",
+          "conclusion": "success",
+          "log": {
+            "bytes": 31091,
+            "sha256": "fb5327eea12d37918a1c4e127671f676695c241850da2af226f38118e8b421d2"
+          }
+        }
+      ],
+      "artifacts": [
+        {
+          "id": 12549436452,
+          "name": "deeper-qualification-00e5ed68eced4ed3c438bfe2805a826cc016ffcb-1",
+          "bytes": 12160803,
+          "sha256": "e173d285936f926fa6929b4514582922a736e9172e3324967731dc1db1f44513",
+          "github_digest_matches": true
+        },
+        {
+          "id": 12549145905,
+          "name": "first-use-00e5ed68eced4ed3c438bfe2805a826cc016ffcb-1",
+          "bytes": 4978019,
+          "sha256": "ac9da3ef10446534e1bbebc76b0086b7e470877009be24f5826ff3839d1424da",
+          "github_digest_matches": true
+        }
+      ],
+      "deep": {
+        "verification": {
+          "schema": "surge-deep-verification-v1",
+          "status": "verified_passed",
+          "files": 401,
+          "bytes": 139022581,
+          "source_files": 273,
+          "git": {
+            "head": "00e5ed68eced4ed3c438bfe2805a826cc016ffcb",
+            "clean": true
+          },
+          "human_acceptance": "pending",
+          "broader_fuzzing": "incomplete_not_run",
+          "checks": {
+            "setup": "passed",
+            "native_configure": "passed",
+            "native_build": "passed",
+            "python_suite": "passed",
+            "properties_install": "passed",
+            "properties": "passed",
+            "native_ctest": "passed",
+            "asan_configure": "passed",
+            "asan_build": "passed",
+            "asan_control": "passed",
+            "asan_detection": "passed",
+            "asan_ctest": "passed",
+            "libfuzzer": "passed",
+            "retention": "passed",
+            "demo_replay": "passed",
+            "owned_fixture_replay": "passed",
+            "owned_stream_checks": "passed",
+            "desktop_boundary": "passed",
+            "desktop_native": "passed",
+            "desktop_stream": "passed",
+            "source_hygiene": "passed"
+          }
+        },
+        "source_comparison": {
+          "files": 273,
+          "committed_archive": {
+            "bytes": 2934039,
+            "sha256": "c1ed8412838bca258e7189d286385b5443761e49a24cfedcb2fcb02c000938a2"
+          },
+          "actual_archive": {
+            "bytes": 2927133,
+            "sha256": "13e8f8accbe1324a7fc1d8d46e7e49c6c88d51714e3b5d74508bda2f66d9b68b"
+          },
+          "raw_bytes_equal": true,
+          "raw_differing_files": [],
+          "normalized_bytes_equal": true,
+          "normalized_differing_files": [],
+          "note": "Compared to preserved Git archive export, not raw Git blobs."
+        },
+        "qualification_seconds": 305.344,
+        "budgets": {
+          "total_seconds": 1800,
+          "per_step_elapsed_within_budget": true,
+          "parser": {
+            "corpus_bytes": 33554432,
+            "input_bytes": 65536,
+            "log_bytes": 10485760,
+            "outer_seconds": 60,
+            "per_input_seconds": 2,
+            "rss_limit_mb": 512,
+            "runs_per_seed": 5000,
+            "seconds_per_seed": 30,
+            "seeds": [
+              17,
+              20261023
+            ]
+          },
+          "retention": {
+            "accounting_budget": 8372224,
+            "health_reserve_bytes": 16384,
+            "import_bytes": 16777216,
+            "max_samples": 500,
+            "row_reserve_bytes": 512,
+            "window_bytes": 8388608
+          }
+        },
+        "python_tests": 429,
+        "python_skips": 0,
+        "native_ctest": 3,
+        "asan_ctest": 3,
+        "msvc_asan_control_exit": 0,
+        "msvc_asan_detection_exit": 86,
+        "property_evaluations": 768,
+        "property_runs": 12,
+        "parser_checks": 28,
+        "parser_seconds": 21.532,
+        "parser_instrumentation": "passed",
+        "parser_controls": "passed",
+        "fuzz_total": 10000,
+        "corpus_files": 112,
+        "corpus_bytes": 312516,
+        "retained_corpus_coverage": {
+          "branches": {
+            "count": 220,
+            "covered": 178,
+            "notcovered": 42,
+            "percent": 80.9090909090909
+          },
+          "functions": {
+            "count": 14,
+            "covered": 13,
+            "percent": 92.85714285714286
+          },
+          "instantiations": {
+            "count": 22,
+            "covered": 20,
+            "percent": 90.9090909090909
+          },
+          "lines": {
+            "count": 267,
+            "covered": 230,
+            "percent": 86.14232209737828
+          },
+          "mcdc": {
+            "count": 0,
+            "covered": 0,
+            "notcovered": 0,
+            "percent": 0
+          },
+          "regions": {
+            "count": 302,
+            "covered": 265,
+            "notcovered": 37,
+            "percent": 87.74834437086093
+          }
+        },
+        "fixed_boundary_coverage": {
+          "branches": {
+            "count": 220,
+            "covered": 177,
+            "notcovered": 43,
+            "percent": 80.45454545454545
+          },
+          "functions": {
+            "count": 14,
+            "covered": 13,
+            "percent": 92.85714285714286
+          },
+          "instantiations": {
+            "count": 22,
+            "covered": 21,
+            "percent": 95.45454545454545
+          },
+          "lines": {
+            "count": 267,
+            "covered": 249,
+            "percent": 93.25842696629213
+          },
+          "mcdc": {
+            "count": 0,
+            "covered": 0,
+            "notcovered": 0,
+            "percent": 0
+          },
+          "regions": {
+            "count": 302,
+            "covered": 279,
+            "notcovered": 23,
+            "percent": 92.3841059602649
+          }
+        },
+        "boundary_cases": 88,
+        "boundary_evaluations": 176,
+        "boundary_guards": 14,
+        "boundary_max_input_bytes": 64512,
+        "retention_cases": 24,
+        "retention_evaluations": 48,
+        "source_unchanged": true,
+        "git_before": {
+          "head": "00e5ed68eced4ed3c438bfe2805a826cc016ffcb",
+          "clean": true
+        },
+        "git_after": {
+          "head": "00e5ed68eced4ed3c438bfe2805a826cc016ffcb",
+          "clean": true
+        }
+      },
+      "first_use": {
+        "status": "verified_passed",
+        "checks": 16,
+        "log_hashes_verified": 16,
+        "ui_assertions": {
+          "library": 9,
+          "deletion": 3,
+          "approved": 6,
+          "replay": 8,
+          "unapproved": 5,
+          "saved": 10
+        },
+        "seconds": 80.609,
+        "source_files": 273,
+        "source_comparison": {
+          "files": 273,
+          "committed_archive": {
+            "bytes": 2934039,
+            "sha256": "c1ed8412838bca258e7189d286385b5443761e49a24cfedcb2fcb02c000938a2"
+          },
+          "actual_archive": {
+            "bytes": 2930409,
+            "sha256": "31717b00c6526a146584d55fa15fe8b08090f904dd17a00f9bf63087c0520e4b"
+          },
+          "raw_bytes_equal": true,
+          "raw_differing_files": [],
+          "normalized_bytes_equal": true,
+          "normalized_differing_files": [],
+          "note": "Compared to preserved Git archive export, not raw Git blobs."
+        },
+        "archive_sha256": "31717b00c6526a146584d55fa15fe8b08090f904dd17a00f9bf63087c0520e4b",
+        "git": {
+          "head": "00e5ed68eced4ed3c438bfe2805a826cc016ffcb",
+          "clean": true
+        },
+        "launcher": {
+          "status": "passed",
+          "criteria": {
+            "L1": "passed",
+            "L2": "passed",
+            "L3": "passed",
+            "L4": "passed",
+            "L5": "passed"
+          },
+          "startup_seconds": 6.781,
+          "shutdown_seconds": 0.406,
+          "forced_cleanup": false,
+          "source_matches_first_use_manifest": true,
+          "human_acceptance": "pending",
+          "native_dialogs": "not_run"
+        }
+      },
+      "recovery_campaigns": [
+        {
+          "name": "case-recovery-2026-10-24T05-11-57-559Z-a36f03b1",
+          "status": "verified_passed",
+          "completed_executions": 96,
+          "named_scenarios": 48,
+          "assertions": 1646,
+          "acknowledged_sigkill_controls": 32,
+          "fresh_restarts": 96,
+          "repeat_pairs_identical": 48,
+          "elapsed_ms": 15135,
+          "manifest_files": 1452,
+          "retained_bytes": 40591224,
+          "combined_log_bytes": 100484,
+          "source_files": 4,
+          "raw_source_bytes_equal": true,
+          "line_ending_only_differences": [],
+          "hidden_files_verified": 44,
+          "report_sha256": "667509126499f552bc849b40ccc487d7d7c7fc051622097841e7b62b88af8e19",
+          "manifest_sha256": "7e900c2c276178aa262f024867113c4ee3270cc90293ecbacb2965d31204be03",
+          "sources": [
+            {
+              "path": "desktop/case-library.cjs",
+              "bytes": 7941,
+              "sha256": "a425b17b13e19a67ac5c8730f05b5bef78edc4a4b8d969ccbe22102c2f459084"
+            },
+            {
+              "path": "desktop/case-recovery.test.cjs",
+              "bytes": 30743,
+              "sha256": "977993db40b2909307e29da227c6f953e1c3f3b31487ecdc0f1972210247903b"
+            },
+            {
+              "path": "desktop/case-recovery-child.cjs",
+              "bytes": 9672,
+              "sha256": "e8ba0f642621d2d22215577d5196fcf1a3a2f6609cd1eab7f3722453ce713653"
+            },
+            {
+              "path": "docs/case-recovery-acceptance.md",
+              "bytes": 4936,
+              "sha256": "5533f78ad2b2c6c88da9271d27186fc322ac0c5bbe0b94ea2930c538435a189a"
+            }
+          ],
+          "locations": [
+            {
+              "artifact_id": 12549436452,
+              "artifact_prefix": "case-recovery-2026-10-24T05-11-57-559Z-a36f03b1/"
+            }
+          ]
+        },
+        {
+          "name": "case-recovery-2026-10-24T05-13-55-003Z-fdf0031c",
+          "status": "verified_passed",
+          "completed_executions": 96,
+          "named_scenarios": 48,
+          "assertions": 1646,
+          "acknowledged_sigkill_controls": 32,
+          "fresh_restarts": 96,
+          "repeat_pairs_identical": 48,
+          "elapsed_ms": 14635,
+          "manifest_files": 1452,
+          "retained_bytes": 40591226,
+          "combined_log_bytes": 100484,
+          "source_files": 4,
+          "raw_source_bytes_equal": true,
+          "line_ending_only_differences": [],
+          "hidden_files_verified": 44,
+          "report_sha256": "e378b02f306e9b584b165fdce9cef8fef4b0885d52ca5863b89036c804c81ed9",
+          "manifest_sha256": "2ef7a637fdd90c90e9e9be0f75cb84090988822a41e7f1ce62ac73f37a3bfc8d",
+          "sources": [
+            {
+              "path": "desktop/case-library.cjs",
+              "bytes": 7941,
+              "sha256": "a425b17b13e19a67ac5c8730f05b5bef78edc4a4b8d969ccbe22102c2f459084"
+            },
+            {
+              "path": "desktop/case-recovery.test.cjs",
+              "bytes": 30743,
+              "sha256": "977993db40b2909307e29da227c6f953e1c3f3b31487ecdc0f1972210247903b"
+            },
+            {
+              "path": "desktop/case-recovery-child.cjs",
+              "bytes": 9672,
+              "sha256": "e8ba0f642621d2d22215577d5196fcf1a3a2f6609cd1eab7f3722453ce713653"
+            },
+            {
+              "path": "docs/case-recovery-acceptance.md",
+              "bytes": 4936,
+              "sha256": "5533f78ad2b2c6c88da9271d27186fc322ac0c5bbe0b94ea2930c538435a189a"
+            }
+          ],
+          "locations": [
+            {
+              "artifact_id": 12549436452,
+              "artifact_prefix": "case-recovery-2026-10-24T05-13-55-003Z-fdf0031c/"
+            }
+          ]
+        }
+      ],
+      "recovery_summary": {
+        "distinct_campaigns": 2,
+        "scenario_executions": 192,
+        "sigkill_controls": 64,
+        "fresh_restarts": 192,
+        "assertions": 3292,
+        "cross_campaign_semantic_outcomes_identical": true
+      }
+    }
+  ],
+  "totals": {
+    "hosted_runs": 2,
+    "required_job_successes": 4,
+    "recovery_campaigns": 4,
+    "recovery_executions": 384,
+    "explicit_assertions": 6584,
+    "acknowledged_interruption_controls": 128,
+    "fresh_restarts": 384,
+    "recovery_manifest_file_instances": 5808,
+    "hidden_file_instances_verified": 176,
+    "new_failed_hosted_runs": 0
+  },
+  "local_preflight": [
+    {
+      "id": "contracts-worker",
+      "exit_code": 0,
+      "seconds": 2.469,
+      "log": "contracts-worker.log",
+      "bytes": 7982,
+      "sha256": "7783f6ead6d624016e3c52c9a377d115e4cf4ea55fd3900197ee5d2c74c00989"
+    },
+    {
+      "id": "desktop",
+      "exit_code": 0,
+      "seconds": 26.812,
+      "log": "desktop.log",
+      "bytes": 5644,
+      "sha256": "8ec3b0385efc6a1304b059e10ede36e58940fd81d4717ebda9c58d5714b1b2c9"
+    },
+    {
+      "id": "release",
+      "exit_code": 0,
+      "seconds": 0.875,
+      "log": "release.log",
+      "bytes": 102,
+      "sha256": "66d95cad7d4b0bd2b462396d02bee43fa04dc9358889cb82ad144f458f10c47a"
+    },
+    {
+      "id": "diff",
+      "exit_code": 0,
+      "seconds": 0.094,
+      "log": "diff.log",
+      "bytes": 225,
+      "sha256": "2161e6c926c5c19eff0d60024b80b5de80bfb7150596896c68df6ad1ff6c8477"
+    }
+  ],
+  "verifier_controls": {
+    "schema": "surge-recovery-verifier-development-controls-v1",
+    "status": "passed",
+    "verified_utc": "2026-10-24T03:55:19.041663+00:00",
+    "operation": "Read-only checks of retained evidence plus in-memory invalid-evidence controls. No test campaign rerun and no fixture files changed.",
+    "source_provenance": "Current uncommitted recovery source, used solely for verifier development; not hosted candidate qualification.",
+    "checks": [
+      {
+        "name": "positive-case-recovery-2026-10-24T03-20-56-371Z-c72b2c09",
+        "status": "passed",
+        "outcome": "valid evidence accepted",
+        "evidence_status": "verified_passed"
+      },
+      {
+        "name": "positive-case-recovery-2026-10-24T03-22-16-965Z-7c5b0a5c",
+        "status": "passed",
+        "outcome": "valid evidence accepted",
+        "evidence_status": "verified_passed"
+      },
+      {
+        "name": "hidden-file-omission",
+        "status": "passed",
+        "outcome": "invalid evidence refused",
+        "error": "manifest_file_set_including_hidden"
+      },
+      {
+        "name": "committed-source-mismatch",
+        "status": "passed",
+        "outcome": "invalid evidence refused",
+        "error": "committed_source_mismatch:desktop/case-library.cjs"
+      },
+      {
+        "name": "missing-combined-cleanup-marker",
+        "status": "passed",
+        "outcome": "invalid evidence refused",
+        "error": "requested_control_not_reached"
+      },
+      {
+        "name": "restart-verification-hash-mismatch",
+        "status": "passed",
+        "outcome": "invalid evidence refused",
+        "error": "restart_evidence_hash"
+      },
+      {
+        "name": "published-partial-bytes-despite-consistent-inventory",
+        "status": "passed",
+        "outcome": "invalid evidence refused",
+        "error": "published_export_bytes"
+      },
+      {
+        "name": "missing-execution-report",
+        "status": "passed",
+        "outcome": "invalid evidence refused",
+        "error": "campaign_counts"
+      }
+    ]
+  },
+  "policy": {
+    "status": "verified",
+    "verified_utc": "2026-10-24T05:21:06.0494612Z",
+    "required_status_checks": {
+      "url": "https://api.github.com/repos/seaboose/Surge/branches/main/protection/required_status_checks",
+      "strict": true,
+      "contexts": [
+        "test",
+        "First-use release check"
+      ],
+      "contexts_url": "https://api.github.com/repos/seaboose/Surge/branches/main/protection/required_status_checks/contexts",
+      "checks": [
+        {
+          "context": "test",
+          "app_id": 15368
+        },
+        {
+          "context": "First-use release check",
+          "app_id": 15368
+        }
+      ]
+    },
+    "enforce_admins": false,
+    "main_sha": "2b9e3c8bbfc22c7a82827f39e404fa87e7eb8fb5",
+    "draft": true,
+    "merged": false,
+    "head": "937a19b8f821a72dfc46126948394a223d88c55c",
+    "merge_checkout": null,
+    "policy_mutated": false
+  },
+  "historical_evidence_references": [
+    {
+      "path": "Surge-case-recovery-evidence.zip",
+      "bytes": 4531834,
+      "sha256": "08480337e4aaec61ca1f4ac63dcce2fbe514f5d9b030ea26f5f8facae56d650a"
+    },
+    {
+      "path": "Surge-case-recovery-evidence-manifest.json",
+      "bytes": 1312857,
+      "sha256": "ca7d9e839a192fe09dd58b7c7b5fa4445fc83933377a55bbfbd4f619c93fc11c"
+    },
+    {
+      "path": "Surge-case-recovery-results.md",
+      "bytes": 11783,
+      "sha256": "3efe0f8b113b827118adcead968abf079667bba0a6e237ca3907dfc8d602e63f"
+    },
+    {
+      "path": "Surge-case-recovery-validation.json",
+      "bytes": 25413,
+      "sha256": "e8f841610605c93108f7a3ede2bc36a02052957100e60454ceae866d154d2b53"
+    },
+    {
+      "path": "Surge-hosted-deep-qualification-artifacts.zip",
+      "bytes": 85524910,
+      "sha256": "972dc08dfdb12f554766c4257f8ee9cd18c7c68cd0f9351b4ece3be2574e87e6"
+    },
+    {
+      "path": "Surge-hosted-deep-qualification-artifact-manifest.json",
+      "bytes": 25454,
+      "sha256": "e13f17fa9918d9fa8be4e38bc58d3ef7444209572c957ff3ffc4c8ca842f01f4"
+    },
+    {
+      "path": "Surge-hosted-deep-qualification-results.md",
+      "bytes": 12362,
+      "sha256": "de7da138449e1aa8a3fed66c1dc06b8df0e348c9f481a658ea2b9d07588649df"
+    },
+    {
+      "path": "Surge-hosted-deep-qualification-evidence.json",
+      "bytes": 96627,
+      "sha256": "1b5995570521b892e6826fe9df2e811a7290f51befa64cdf4e7b57dd70c27e5c"
+    }
+  ],
+  "preserved_failures": [
+    {
+      "scope": "preceding local recovery",
+      "status": "historical failures remain failed",
+      "reference": "Surge-case-recovery-evidence.zip",
+      "detail": "Initial 70/96 campaign (26 failed executions across 13 scenarios), two invalid worker-fixture setups, sandbox rename/hard-link restrictions and UTF-8 reporting correction are preserved in the prior bundle."
+    },
+    {
+      "scope": "previous hosted deeper qualification",
+      "run_id": 40055026442,
+      "status": "failed before intended control",
+      "url": "https://github.com/seaboose/Surge/actions/runs/40055026442",
+      "detail": "HTTP403 official metadata rate limit; no planned exit-73 control executed."
+    },
+    {
+      "scope": "previous hosted deeper qualification",
+      "run_id": 40055713287,
+      "status": "intentional expected failure",
+      "url": "https://github.com/seaboose/Surge/actions/runs/40055713287",
+      "detail": "Owned build command exited73; required job failed, downstream work did not run, partial evidence uploaded and verified."
+    }
+  ],
+  "human_acceptance": "pending",
+  "broader_fuzzing": "incomplete_not_run",
+  "limitations": [
+    "Four runs of one fixed 48-scenario matrix are repeat executions, not 384 independent scenario types or broad fuzzing.",
+    "Acknowledged child-process interruption does not establish whole-Electron or power-loss durability, physical disk failure, hostile concurrent writers or broad filesystem compatibility.",
+    "Hidden staging files are retained and verified; safe recovery does not imply automatic removal of uncertain residue or immutable evidence.",
+    "Always-upload and prior supervised-command failure controls are preserved; cancellation, runner loss and artifact-service outage were not newly exercised.",
+    "Parser corpus coverage and fixed-boundary coverage are separate measurements, not a combined/full-application coverage claim.",
+    "Hashes and source comparisons establish recorded identity and consistency, not signed attestation or resistance to an equally privileged local attacker.",
+    "Main was unchanged and the PR remained draft/unmerged at readback. Required checks are enabled but adoption of this candidate awaits merge; administrator enforcement remains off.",
+    "These supplemental results were generated after937a19b and were not in its archived source. Later working-tree improvements are outside this result."
+  ],
+  "milestone_review": {
+    "security_engineer_rating": 8,
+    "internship_hiring_rating": 8.5,
+    "scale": 10,
+    "rating_change": "unchanged",
+    "assessment": "The hosted evidence strengthens repeatability, interruption handling and honest scope; it does not establish unfamiliar-user comprehension or production anti-cheat trust.",
+    "next_step": "Qualify the current UI and release-readiness candidate against its exact committed package while unfamiliar-tester acceptance remains pending."
+  }
+}

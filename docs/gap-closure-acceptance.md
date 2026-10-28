@@ -1,0 +1,11 @@
+# Release gap closure acceptance — 23 October 2026
+
+Defined before new qualification runs. Keep all work on owned Surge fixtures and bounded existing profiles. Preserve each attempt; never convert unexecuted work into a pass.
+
+1. Run the existing 21-step qualification with ASan, Hypothesis, bounded libFuzzer and retention enabled from a clean checkout of committed candidate `0200edcd34c6be047ff3aecd0fe23fdb08ec7e90`. Require all steps, zero Python skips, verified instrumentation/controls, fixed property/fuzz/retention counts, unchanged source, clean Git state before/after, and absent generated dependencies/builds at start. Retain original limits and prior T1/T2/T3 incomplete status.
+2. Add a separate bounded acceptance check for the real Start-Surge launcher. Only operate on a fresh owned/default profile; refuse existing profiles and processes. Verify a real visible app window and clean shutdown using the actual launcher, without replacing Electron's entry point. Test the check, then run on hosted Windows if local profile isolation is unavailable. Keep native dialog interaction and unfamiliar-user comprehension pending unless actually observed.
+3. Exercise failure after the real first-use runner has completed earlier steps. An isolated probe must preserve completed/failed/not_run statuses, source package/manifest and failure logs, retain human acceptance pending, and propagate a failing CI status. Retrieve and verify the uploaded partial evidence. Keep intentional failure out of the normal candidate workflow.
+4. Audit effective merge policy read-only. Changing repository policy requires an explicit decision; prepare exact required checks and preserve before/after evidence if authorized. Never merge the draft PR during this work.
+5. Commit new check code on the existing scoped candidate branch, rerun hosted Windows checks, and preserve logs/artifacts. Distinguish the existing candidate's full qualification from the new checks' later commit; do not claim identical source identities where they differ.
+
+Independent unfamiliar-tester acceptance remains pending. Existing parser pilot/property tests do not complete the original T1/T2/T3 campaign. A Windows matrix, long endurance testing, external-process scope and every infrastructure-failure mode are not implied by this milestone.

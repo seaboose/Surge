@@ -1,0 +1,168 @@
+{
+  "schema": "survive-collection-plan-v1",
+  "status": "development_pilot_executed_held_out_not_run",
+  "runtime_loader_implemented": false,
+  "movement_target": "League traditional point-and-click; exact parity unvalidated",
+  "input": {
+    "scheme": "desktop_mouse_rmb",
+    "move": "right_mouse_press_and_hold",
+    "left_or_middle_moves": false,
+    "hold_refresh_hz": 10,
+    "hold_refresh_rate_is_riot_verified": false,
+    "stop": "S",
+    "dash": "Q",
+    "blink": "E",
+    "touch_in_scored_runs": false,
+    "scheme_status": "configured_controls_not_a_measured_input_attribution",
+    "engine_injected_hold_observed_interval_s": [
+      0.1,
+      0.1167
+    ],
+    "physical_sustained_hold_verified": false,
+    "human_play_verified": false
+  },
+  "preset": {
+    "id": "survive-lucian-practice-v1",
+    "duration_simulation_s": 60,
+    "aimed_fraction": 0.5,
+    "projectile_fraction": 0.7,
+    "circle_fraction": 0.3,
+    "adaptive_difficulty": false,
+    "walk_speed_cm_s": 335,
+    "movement_values_status": "owned_survive_runtime_checked_league_equivalence_provisional",
+    "path_radius_cm": 41,
+    "hit_radius_cm": 65,
+    "visual_radius_cm": 50,
+    "dash_max_range_cm": 425,
+    "dash_speed_cm_s": 1350,
+    "blink_range_cm": 400,
+    "practice_cooldown_s": {
+      "dash": 4,
+      "blink": 12
+    },
+    "reference_cooldown_s": {
+      "dash": 16,
+      "blink": 300
+    },
+    "max_records": 10000,
+    "max_bytes": 4194304,
+    "target_trajectory_hz": 30
+  },
+  "practice": {
+    "rounds": 2,
+    "scored": false,
+    "capture_currently_written": true,
+    "status": "planned_unscored_physical_player_rounds_not_claimed_by_automated_pilot"
+  },
+  "development_seeds": [
+    1337,
+    2027,
+    4242
+  ],
+  "held_out_seeds": [
+    9001,
+    9007,
+    9011
+  ],
+  "held_out_use_requires_frozen_profile_and_policy": true,
+  "conditions": [
+    "nominal_baseline",
+    "controlled_speed_change",
+    "restoration_baseline"
+  ],
+  "strata": [
+    "aimed_or_random",
+    "projectile_or_circle",
+    "walking_dash_or_blink"
+  ],
+  "required_denominators": [
+    "all_attacks",
+    "initially_threatening_attacks",
+    "eligible_intervals",
+    "unknown_or_rejected_intervals"
+  ],
+  "ground_truth_enters_detector": false,
+  "freeze_status": "development_pilot_completed_with_retained_frozen_inputs_and_versioned_reanalysis",
+  "implemented_tools": [
+    "seeded bounded Unreal capture runners",
+    "frozen development pilot plan/journal",
+    "explicit practice/reference profiles and context binding",
+    "native automation execution",
+    "rendered CUA input review",
+    "opt-in engine-injected hold/focus probes",
+    "source/module/runtime fingerprints",
+    "exposure and clearance audit",
+    "versioned nominal walking opportunity model",
+    "offline replay and evidence bundle export",
+    "Surge saved-case reopen verification"
+  ],
+  "known_runtime_gaps": [
+    "physical sustained holding and all input edge cases",
+    "human-player and held-out collection",
+    "exact 16-second dash readiness and 300-second blink regrant",
+    "synchronized visible cue/input timing",
+    "measured camera/viewport/map/full-build context",
+    "authenticity/attestation",
+    "direct League movement and timing comparison"
+  ],
+  "runtime_loader_note": "This is a declarative collection document; bounded runners retain their own exact execution plan.",
+  "executed_development": {
+    "rounds": 9,
+    "duration_s_each": 60,
+    "seeds": [
+      1337,
+      2027,
+      4242
+    ],
+    "profile_id": "survive-lucian-practice-v1",
+    "input": "automated_game_handlers",
+    "rendering": "NullRHI",
+    "fresh_process_each_run": true,
+    "restoration_semantics": "Fresh Smoke process initializes 335; no carryover/persisted restoration claim.",
+    "held_out_executed": false,
+    "pilot_review": "telemetry/local/development-pilot-review-20261026T112755Z-88b998ed",
+    "per_seed_counts": {
+      "nominal_baseline": {
+        "Review": 0,
+        "Unknown": 45,
+        "No finding": 1805
+      },
+      "controlled_speed_change": {
+        "Review": 94,
+        "Unknown": 43,
+        "No finding": 1711
+      },
+      "restoration_baseline": {
+        "Review": 0,
+        "Unknown": 45,
+        "No finding": 1805
+      }
+    },
+    "accuracy_evaluation": false
+  },
+  "verification": {
+    "engine_build": "Saved/Verification/build-20261026-033609-142-299e6d87",
+    "native_tests_success": 2,
+    "python_final_tests_success": 66,
+    "python_log": "Saved/Verification/offline-final-20261026-044713-128/python-tests.log",
+    "rendered_click_review": "telemetry/local/rendered-input-review-20261026T101323Z-dbb35d38",
+    "engine_hold_review": "telemetry/local/input-probe-review-20261026T103748Z-9c2d227e",
+    "application_focus_review": "telemetry/local/final-focus-review-20261026T104839Z-e567dcfb",
+    "reference_cooldown_review": "telemetry/local/reference-profile-review-20261026T112658Z-f440d796"
+  },
+  "descriptive_summary": {
+    "schema": "survive-run-summary-v2",
+    "opportunity_model": "nominal-walk-v2",
+    "changes_detector_limits": false,
+    "historical_bundles_preserved": true,
+    "documentation": "docs/opportunity-model.md",
+    "reanalysis_report": "telemetry/local/opportunity-v2-reanalysis-20261026T115100Z-b6a76d5c/report.md",
+    "pilot_detector_bytes_and_surge_conclusions_unchanged": true
+  },
+  "recovery": {
+    "completion_record": "Saved/Verification/completion-20261026T115303Z/result.json",
+    "source_archive_command": "python scripts/save_source_archive.py",
+    "source_archive_includes_captures": false,
+    "pilot_frozen_archive_retains_original_module": true
+  }
+}

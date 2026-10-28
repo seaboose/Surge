@@ -1,0 +1,101 @@
+{
+  "schema": "surge-native-demo-v1",
+  "provenance": "Derived from real controlled captures of Surge's own app. Paths, process identities, timestamps, timing and sequence positions are normalized for publication; code bytes, module fingerprints, permissions and verdict inputs are preserved.",
+  "cases": [
+    {
+      "file": "approved-update.case.json",
+      "sha256": "b9d92a0d821665742ffab1585f55a008be88e5ff51d5be5ae094ae0e3cf8d75a",
+      "captured_source_sha256": "ad3dab2ab8e03503a8e1c207558a24485eb7951cc32baf1b32793de1c062382f",
+      "action": "unchanged owned build",
+      "approved": true,
+      "outcomes": [
+        "No finding",
+        "No finding",
+        "No finding",
+        "No finding"
+      ],
+      "readable_ranges": [
+        2,
+        2,
+        2,
+        2
+      ]
+    },
+    {
+      "file": "unapproved-update.case.json",
+      "sha256": "f802fb38c5d9747a2c2b9e8ff48f8269bcad32f177816bac23abafe4906fa664",
+      "captured_source_sha256": "424d4d5e2eb1c7207bfb4f602d78e387a43426075c8b5def7414a9a69d1c66ba",
+      "action": "unchanged owned build",
+      "approved": false,
+      "outcomes": [
+        "Review",
+        "Review",
+        "Review",
+        "Review"
+      ],
+      "readable_ranges": [
+        2,
+        2,
+        2,
+        2
+      ]
+    },
+    {
+      "file": "changed-code.case.json",
+      "sha256": "43cf670a910e22b639b2e183ac422e8a60964c84e18a29109ae5e04d48ad5fdb",
+      "captured_source_sha256": "aa02f9fc3be8604bd056e73db400d70ebdf26e3bc9f05325413f96755c999175",
+      "action": "change-primary",
+      "approved": true,
+      "outcomes": [
+        "No finding",
+        "No finding",
+        "Review",
+        "No finding"
+      ],
+      "readable_ranges": [
+        2,
+        2,
+        2,
+        2
+      ]
+    },
+    {
+      "file": "unreadable.case.json",
+      "sha256": "21eafd7eea008ade55aea08eaecdebe860e26dbd89afa08566d5042cc40a4d71",
+      "captured_source_sha256": "453e07336d94530ab26116f35b29517912fb7331ad72f992ff21715e458c9275",
+      "action": "unreadable",
+      "approved": true,
+      "outcomes": [
+        "No finding",
+        "No finding",
+        "Unknown",
+        "No finding"
+      ],
+      "readable_ranges": [
+        2,
+        2,
+        1,
+        1
+      ]
+    },
+    {
+      "file": "outside-coverage.case.json",
+      "sha256": "e6208f7380f76785cc74d2a9efbd950dd180156ac5055094d13ec8bd0bcc5fcf",
+      "captured_source_sha256": "e0c83b86bb07078aa0d3b80175378413bbdb75e15be48405998b57ca5ed39ef7",
+      "action": "change-outside",
+      "approved": true,
+      "outcomes": [
+        "No finding",
+        "No finding",
+        "No finding",
+        "No finding"
+      ],
+      "readable_ranges": [
+        2,
+        2,
+        2,
+        2
+      ]
+    }
+  ]
+}
