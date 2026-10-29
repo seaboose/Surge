@@ -1,0 +1,79 @@
+{
+  "version": "0.4.3",
+  "status": "Validated on the development host; clean-machine acceptance pending",
+  "summary": "597 Python tests passed (one host symlink-capability skip), 56 desktop tests and 66 telemetry tests passed. All 66 page-layout samples and both standalone acceptance journeys passed. The clean Windows VM became unresponsive during qualification, so it has not earned a clean-machine pass.",
+  "created_utc": "2026-10-28T22:38:37.248813+00:00",
+  "product_sha256": "dc135a0348a3ee85b9360b0e7151230df419d79436b0f79658134b1a9048c005",
+  "source_zip_sha256": "aafda549fe41c3df372e64d807bde9f8b33ab8f43ebe43706d29a42006d642b7",
+  "snapshot_tag": "surge-resume-v0.4.3",
+  "snapshot_commit": "3f9528846c10d53ceac5b1ee21082ce65ee9538c",
+  "git_source_note": "Git normalizes CRLF to LF in 43 files; the source ZIP preserves exact build-source bytes.",
+  "clean_machine_qualified": false,
+  "clean_machine_attempt": {
+    "status": "infrastructure_blocked",
+    "clean_machine_qualified": false,
+    "attempt": "Linked clone of the pre-product clean Windows snapshot; five-vCPU cold boot and read-only virtual DVD transfer.",
+    "observed": [
+      "Ordinary logged-in desktop reported before qualification.",
+      "Exact offline kit staged and interactive qualification task registered.",
+      "Subsequent guest status and small-file retrieval timed out; no completed guest acceptance receipt was obtained."
+    ],
+    "host_security_changed": false,
+    "original_vm_modified": false,
+    "clone_final_state": "poweroff",
+    "failed_clone_preserved": true,
+    "qualification_run_intervened_before_abort": false,
+    "required_next_environment": "A stable clean Windows x64 desktop/VM with graphics support.",
+    "created_utc": "2026-10-28T22:38:37.247812+00:00"
+  },
+  "checks": {
+    "python": {
+      "run": 598,
+      "passed": 597,
+      "skipped": 1
+    },
+    "desktop_unit": 56,
+    "recovery_executions": 96,
+    "telemetry": 66,
+    "native_ctest": 3,
+    "desktop_workflow_suites": 10,
+    "page_states": 22,
+    "viewport_samples": 66,
+    "layout_issues": 0,
+    "historical_trials_unchanged": 9,
+    "packaged_game_rounds": 3,
+    "packaged_gameplay_checks": 9,
+    "packaged_reopen_checks": 3,
+    "packaged_native_steps": 10
+  },
+  "initial_diagnostic_failure": {
+    "scope": "Developer first-use report writer",
+    "observation": "A Windows access-denied error occurred while replacing a temporary diagnostic report.",
+    "resolution": "The focused 11-test suite and the complete 598-test rerun passed; no product code or assertions were changed.",
+    "retained_in_local_audit": true
+  },
+  "limits": [
+    "Unsigned Windows package.",
+    "Clean-machine acceptance is pending after an infrastructure-blocked VM attempt.",
+    "Controlled recordings do not establish human-baseline accuracy or real-world false-positive rates."
+  ],
+  "resume_demonstration_readiness": {
+    "rating": 8.5,
+    "out_of": 10,
+    "subjective": true,
+    "remaining_technical_gate": "Clean-machine acceptance"
+  },
+  "reviewer_interface": {
+    "checks": 12,
+    "tested_widths": [
+      1360,
+      1048,
+      720,
+      360
+    ],
+    "offline": true,
+    "renderer_errors": 0,
+    "network_requests": 0,
+    "tour": "Five captured application screens; optional two-minute autoplay."
+  }
+}

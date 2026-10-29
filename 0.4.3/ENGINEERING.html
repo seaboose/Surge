@@ -1,0 +1,16 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta http-equiv="Content-Security-Policy" content="default-src 'none'; img-src 'self'; style-src 'self'; script-src 'self'; base-uri 'none'; form-action 'none'"><link rel="stylesheet" href="assets/reviewer.css"><title>Surge · Engineering guide</title></head><body><main><header><h1>Inside Surge</h1><a href="index.html">Back to overview</a></header>
+<p class="lead">Follow a single recording through the system.</p>
+<p>Game events → validated capture → movement constraints → selected evidence → revisioned report.</p>
+<div class="table"><table><thead><tr><th>Responsibility</th><th>Start in the source archive</th><th>Key decision</th></tr></thead><tbody>
+<tr><td>Gameplay</td><td><code>unreal/SurgeMovementLab/Source/SurgeMovementLab/LabPlayerController.cpp</code></td><td>Record requests and acceptance separately; requested movement is not necessarily executed movement.</td></tr>
+<tr><td>Capture</td><td><code>survive_workspace.py</code> → <code>survive_capture.py</code></td><td>Arm recording before launch; preserve partial captures and exact source bytes.</td></tr>
+<tr><td>Analysis</td><td><code>unreal/SurgeMovementLab/telemetry/prepare_v3.py</code> → <code>engine.py</code></td><td>Derive explicit constraints from a versioned profile. Keep Review, Unknown and No finding distinct.</td></tr>
+<tr><td>Review</td><td><code>desktop/src/SurviveWorkspace.jsx</code> → <code>desktop/src/survive/</code></td><td>One controller owns recording and replay selection; focused views render that state.</td></tr>
+<tr><td>Report</td><td><code>survive_investigations.py</code></td><td>Bind citations to recording, sequence, constraint and fingerprints; retain previous revisions.</td></tr>
+</tbody></table></div>
+<h2>Tradeoffs</h2><ul><li>A controlled game gives reproducible experiments; it does not establish commercial anti-cheat effectiveness.</li><li>Explicit constraints are explainable; they do not classify every scripted behavior.</li><li>Hashes detect inconsistent retained evidence; they do not prove an untrusted producer reported reality truthfully.</li><li>Electron, Python and Unreal simplify distinct parts of the workflow but increase package size and integration work.</li></ul>
+<h2>Read two tests, then trace the implementation</h2><p>Start with <code>test_survive_capture.py</code> for complete versus incomplete input, and <code>test_survive_investigations.py</code> for citations, revisions and changed sources. Build and test instructions remain in the source README.</p>
+<h2>Explore the code</h2><p><a href="https://github.com/seaboose/Surge">Open the repository</a> for setup, tests, and the source map. The <a href="https://github.com/seaboose/Surge/tree/surge-resume-v0.4.3">0.4.3 tag</a> preserves the exact release snapshot; its original downloads and checksums are unchanged.</p>
+<pre><code>git clone https://github.com/seaboose/Surge.git
+cd Surge</code></pre>
+<footer><a href="index.html">Overview</a> · <a href="validation.json">Validation</a> · <a href="https://github.com/seaboose/Surge/releases/download/surge-resume-v0.4.3/source-manifest.json">Source fingerprints</a></footer></main></body></html>
