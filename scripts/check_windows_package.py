@@ -290,7 +290,7 @@ def run_owned(command, folder, env, deadline, gate=None, application=None):
         write_json(folder / "supervisor.json", {"status": "failed" if failure else "passed", "error": failure, "forced_cleanup": running, "exit_code": process.returncode if process else None, "elapsed_seconds": round(time.monotonic() - started, 3)})
 
 
-def dialog_for(pid):
+def dialog_for(pid, observed=None):
     user = ctypes.WinDLL("user32", use_last_error=True)
     callback = ctypes.WINFUNCTYPE(wintypes.BOOL, wintypes.HWND, wintypes.LPARAM)
     user.GetWindowThreadProcessId.argtypes = [wintypes.HWND, ctypes.POINTER(wintypes.DWORD)]
@@ -307,7 +307,14 @@ def dialog_for(pid):
     def window(handle, _):
         actual = wintypes.DWORD()
         user.GetWindowThreadProcessId(handle, ctypes.byref(actual))
-        if actual.value == pid and text(handle) == "Surge could not start":
+        if actual.value != pid:
+            return True
+        title = text(handle)
+        if observed is not None:
+            item = {"pid": pid, "handle": int(handle), "title": title[:256]}
+            if item not in observed and len(observed) < 32:
+                observed.append(item)
+        if title == "Surge could not start":
             children = []
 
             def child(item, _):
@@ -332,6 +339,23 @@ def dialog_accessible_text(handle, remaining):
     return names if isinstance(names, list) else [names]
 
 
+def retain_startup_diagnostic(profile, folder):
+    """Keep the owned failure log even when no actionable dialog was observed."""
+    source = profile / "logs/startup.jsonl"
+    try:
+        with source.open("rb") as stream:
+            raw = stream.read(65537)
+        if len(raw) > 65536:
+            return {"inspection": "over_read_bound", "copied": False}
+        (folder / "startup.jsonl").write_bytes(raw)
+        return {"inspection": "read", "copied": True, "bytes": len(raw)}
+    except FileNotFoundError:
+        return {"inspection": "absent", "copied": False}
+    except OSError as error:
+        return {"inspection": "unavailable", "copied": False,
+                "error_type": type(error).__name__}
+
+
 def startup_control(application, profile, folder, env, error_code, deadline):
     began = time.monotonic()
     deadline = min(deadline, began + LIMITS["startup_failure_seconds"])
@@ -343,6 +367,8 @@ def startup_control(application, profile, folder, env, error_code, deadline):
     command = [sys.executable, "-I", "-B", "-c", helper, str(gate), str(application / "Surge.exe"), str(profile)]
     job, process, dialog = OwnedJob(), None, None
     result = {"status": "failed", "expected_error_code": error_code}
+    observations = {"polls": 0, "owned_process_ids": [], "windows": [],
+                    "max_processes": 32, "max_windows": 32}
     try:
         with (folder / "console.log").open("wb") as log:
             process = subprocess.Popen(command, cwd=folder, env=launcher_env, stdout=log, stderr=subprocess.STDOUT, creationflags=subprocess.CREATE_NO_WINDOW)
@@ -353,9 +379,13 @@ def startup_control(application, profile, folder, env, error_code, deadline):
                 raise
             gate.write_text("assigned", encoding="utf-8")
             while time.monotonic() < deadline:
+                observations["polls"] += 1
                 candidates = owned_processes(application)
                 for candidate in candidates:
-                    dialogs = dialog_for(candidate["ProcessId"])
+                    pid = candidate["ProcessId"]
+                    if pid not in observations["owned_process_ids"] and len(observations["owned_process_ids"]) < 32:
+                        observations["owned_process_ids"].append(pid)
+                    dialogs = dialog_for(pid, observations["windows"])
                     if dialogs:
                         dialog = dialogs[0]
                         result["process"] = token_identity(candidate["ProcessId"])
@@ -402,6 +432,9 @@ def startup_control(application, profile, folder, env, error_code, deadline):
         job.close()
         if process:
             process.wait(timeout=5)
+        if result["status"] != "passed":
+            observations["startup_diagnostic"] = retain_startup_diagnostic(profile, folder)
+        write_json(folder / "startup-observations.json", observations)
         result["seconds"] = round(time.monotonic() - began, 3)
         if result["seconds"] > LIMITS["startup_failure_seconds"]:
             result["status"] = "failed"

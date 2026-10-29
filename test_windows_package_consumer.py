@@ -172,6 +172,49 @@ class ConsumerContracts(unittest.TestCase):
                 with self.assertRaises(ValueError):
                     consumer.owned_processes(self.root)
 
+    def test_startup_timeout_retains_owned_diagnostics_without_passing(self):
+        folder, profile = self.root / "attempt", self.root / "profile"
+        folder.mkdir()
+        (profile / "logs").mkdir(parents=True)
+        raw = b'{"status":"failed","code":"SURGE_BUNDLED_PYTHON_MISSING"}\n'
+        (profile / "logs/startup.jsonl").write_bytes(raw)
+        process = mock.Mock()
+        process.poll.return_value = None
+        job = mock.Mock()
+        def no_dialog(pid, observed):
+            observed.append({"pid": pid, "handle": 7, "title": "Owned startup window"})
+            return []
+        with mock.patch.object(consumer, "OwnedJob", return_value=job), \
+                mock.patch.object(consumer.subprocess, "Popen", return_value=process), \
+                mock.patch.object(consumer, "owned_processes", return_value=[{"ProcessId": 42}]), \
+                mock.patch.object(consumer, "dialog_for", side_effect=no_dialog), \
+                mock.patch.object(consumer.time, "monotonic", side_effect=[0, 0.1, 10.1, 10.1]), \
+                mock.patch.object(consumer.time, "sleep"):
+            with self.assertRaisesRegex(TimeoutError, "Startup error dialog exceeded 10 seconds"):
+                consumer.startup_control(self.root, profile, folder, {},
+                                         "SURGE_BUNDLED_PYTHON_MISSING", 600)
+        job.close.assert_called_once()
+        result = json.loads((folder / "results.json").read_text())
+        self.assertEqual(result["status"], "failed")
+        self.assertEqual(result["seconds"], 10.1)
+        observed = json.loads((folder / "startup-observations.json").read_text())
+        self.assertEqual(observed["polls"], 1)
+        self.assertEqual(observed["owned_process_ids"], [42])
+        self.assertEqual(observed["windows"][0]["title"], "Owned startup window")
+        self.assertTrue(observed["startup_diagnostic"]["copied"])
+        self.assertEqual((folder / "startup.jsonl").read_bytes(), raw)
+
+    def test_failure_diagnostics_are_bounded_and_absence_is_explicit(self):
+        folder, profile = self.root / "attempt", self.root / "profile"
+        folder.mkdir()
+        self.assertEqual(consumer.retain_startup_diagnostic(profile, folder),
+                         {"inspection": "absent", "copied": False})
+        (profile / "logs").mkdir(parents=True)
+        (profile / "logs/startup.jsonl").write_bytes(b"x" * 65537)
+        self.assertEqual(consumer.retain_startup_diagnostic(profile, folder),
+                         {"inspection": "over_read_bound", "copied": False})
+        self.assertFalse((folder / "startup.jsonl").exists())
+
     def failure_evidence(self):
         _, manifest = self.package()
         base = self.root / "probe"

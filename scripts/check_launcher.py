@@ -22,6 +22,9 @@ except ImportError:
 TOTAL_SECONDS = 90
 STARTUP_SECONDS = 30
 SHUTDOWN_SECONDS = 15
+# Start-Surge.cmd opens the source application. Product and --surge-test windows
+# have different titles and must not satisfy this ordinary-launcher check.
+WINDOW_TITLE = "Surge — Development"
 
 
 def utc():
@@ -159,7 +162,7 @@ def owned_window(pid):
         if actual.value == pid and user.IsWindowVisible(handle):
             title = ctypes.create_unicode_buffer(256)
             user.GetWindowTextW(handle, title, len(title))
-            if title.value == "Surge":
+            if title.value == WINDOW_TITLE:
                 found.append({"handle": int(handle), "pid": pid, "title": title.value})
         return True
 
@@ -212,6 +215,7 @@ def main(argv=None):
         "status": "failed", "started": utc(), "application_root": str(root),
         "criteria": {f"L{i}": "not_run" for i in range(1, 6)},
         "human_acceptance": "pending", "native_dialogs": "not_run",
+        "expected_window_title": WINDOW_TITLE,
         "limitations": [
             "Window/process liveness only; no rendered-screen or native-dialog assertions.",
             "Same automated operator, not unfamiliar-tester acceptance.",
