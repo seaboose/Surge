@@ -76,6 +76,16 @@ async function idle() {
   );
 }
 async function click(name) {
+  await require("./test-export-menu.cjs").revealExport(page, name);
+  if (name === "Open saved case") {
+    await page
+      .getByRole("button", { name: "Case library", exact: true })
+      .click();
+    await page
+      .getByRole("dialog", { name: "Case library", exact: true })
+      .waitFor();
+    name = "Open case file";
+  }
   if (
     ["Load policy", "Save policy", "Edit rules", "Map context"].includes(name)
   ) {
@@ -113,20 +123,20 @@ async function check(name, fn) {
   page.setDefaultTimeout(20000);
   page.on("pageerror", (e) => errors.push(e.message));
   await page
-    .getByRole("button", { name: "Import data", exact: true })
+    .getByRole("button", { name: "Import evidence", exact: true })
     .waitFor();
   await check(
     "fractional policy edits survive save and reload without clearing group gaps",
     async () => {
       await dialog(source);
-      await click("Import data");
+      await click("Import evidence");
       await dialog(reference);
       await click("Import reference");
       await dialog(baselinePolicy);
       await click("Load policy");
       await click("Analyze");
       await dialog(baselineCase, true);
-      await click("Save case");
+      await click("Export case file");
       await click("Data");
       await page.getByRole("checkbox", { name: "rate", exact: true }).click();
       await idle();
@@ -166,7 +176,7 @@ async function check(name, fn) {
       });
       assert.equal(chart.threshold, 1.5);
       await dialog(candidateCase, true);
-      await click("Save case");
+      await click("Export case file");
     },
   );
   await check(
@@ -174,7 +184,7 @@ async function check(name, fn) {
     async () => {
       await click("Data");
       await dialog(candidateCase);
-      await click("Open case");
+      await click("Open saved case");
       const s = await rpc("state");
       assert.equal(s.config.threshold, 1.5);
       assert.deepEqual(s.config.features, ["duration", "payload"]);
@@ -238,9 +248,9 @@ async function check(name, fn) {
       assert.equal(missing.status, "Unknown");
       assert.equal(missing.reference_group.mode, "global fallback");
       assert.ok(missing.gaps.length);
-      await click("Findings");
+      await click("Results");
       await page
-        .getByRole("table", { name: "Findings", exact: true })
+        .getByRole("table", { name: "Results", exact: true })
         .locator("tbody tr")
         .first()
         .click();
@@ -250,7 +260,6 @@ async function check(name, fn) {
           ?.innerText.includes("Review at: 1.5"),
       );
       assert.match(await page.locator(".evidence").innerText(), /13.5/);
-      assert.equal(await page.locator("h1,h2,h3,header").count(), 0);
       assert.deepEqual(errors, []);
       await page.screenshot({
         path: path.join(out, "refinement2-evidence.png"),

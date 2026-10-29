@@ -1,0 +1,1591 @@
+{
+  "schema": "surge-supported-limits-summary-v1",
+  "passed": true,
+  "scope": "Local uncommitted working tree at recorded source hashes; not a hosted rerun or unfamiliar-user acceptance.",
+  "head": "937a19b8f821a72dfc46126948394a223d88c55c",
+  "attempt": "supported-limits-661e84cd4276",
+  "seconds": 59.95299999999406,
+  "environment": {
+    "windows": "Windows-11-10.0.26200-SP0",
+    "python": "3.12.14",
+    "logical_processors": 32,
+    "node": "v24.19.0",
+    "cpu": "AMD64 Family 25 Model 33 Stepping 0, AuthenticAMD"
+  },
+  "electron": "44.9.1",
+  "scenarios": [
+    {
+      "name": "representative-1",
+      "operations": [
+        {
+          "name": "fresh_startup",
+          "budgetMs": 5000,
+          "passed": true,
+          "ms": 697.5112
+        },
+        {
+          "name": "import",
+          "budgetMs": 3000,
+          "passed": true,
+          "ms": 131.07809999999995
+        },
+        {
+          "name": "analyze",
+          "budgetMs": 3000,
+          "passed": true,
+          "ms": 161.35400000000004
+        },
+        {
+          "name": "search",
+          "budgetMs": 1000,
+          "passed": true,
+          "ms": 265.32989999999995
+        },
+        {
+          "name": "clear_search",
+          "budgetMs": 1000,
+          "passed": true,
+          "ms": 249.9912999999999
+        },
+        {
+          "name": "save_library",
+          "budgetMs": 3000,
+          "passed": true,
+          "ms": 139.70270000000028
+        },
+        {
+          "name": "saved_library_startup",
+          "budgetMs": 5000,
+          "passed": true,
+          "ms": 649.4119000000001
+        },
+        {
+          "name": "reopen",
+          "budgetMs": 3000,
+          "passed": true,
+          "ms": 114.58820000000014
+        }
+      ],
+      "passed": true,
+      "fixture": {
+        "records": 100,
+        "fields": 8,
+        "rules": 2,
+        "bytes": 9601,
+        "sha256": "71fc4a3069a8b866437d7a65e61c8aa7b1212d0bac76d79c6f132ee8514141fd"
+      },
+      "before": {
+        "source": "71fc4a3069a8b866437d7a65e61c8aa7b1212d0bac76d79c6f132ee8514141fd",
+        "settings": {
+          "features": [],
+          "event_id": "id",
+          "session": "session",
+          "time": null,
+          "time_format": "milliseconds",
+          "threshold": 6,
+          "rules": [
+            {
+              "name": "Owned rule 0",
+              "field": "f00",
+              "op": "gt",
+              "value": 50,
+              "priority": "Notice"
+            },
+            {
+              "name": "Owned rule 1",
+              "field": "f01",
+              "op": "gt",
+              "value": 1000000,
+              "priority": "Notice"
+            }
+          ]
+        },
+        "summary": {
+          "total": 100,
+          "Review": 50,
+          "Unknown": 0,
+          "No finding": 50,
+          "rows_with_gaps": 0
+        },
+        "resultRowsSha256": "35cff7d653ee0a3b179fe1aeeb25b3ffac8f2d95bf062a5df0a88c65216c3db8"
+      },
+      "caseBytes": 52443,
+      "after": {
+        "source": "71fc4a3069a8b866437d7a65e61c8aa7b1212d0bac76d79c6f132ee8514141fd",
+        "settings": {
+          "features": [],
+          "event_id": "id",
+          "session": "session",
+          "time": null,
+          "time_format": "milliseconds",
+          "threshold": 6,
+          "rules": [
+            {
+              "name": "Owned rule 0",
+              "field": "f00",
+              "op": "gt",
+              "value": 50,
+              "priority": "Notice"
+            },
+            {
+              "name": "Owned rule 1",
+              "field": "f01",
+              "op": "gt",
+              "value": 1000000,
+              "priority": "Notice"
+            }
+          ]
+        },
+        "summary": {
+          "total": 100,
+          "Review": 50,
+          "Unknown": 0,
+          "No finding": 50,
+          "rows_with_gaps": 0
+        },
+        "resultRowsSha256": "35cff7d653ee0a3b179fe1aeeb25b3ffac8f2d95bf062a5df0a88c65216c3db8"
+      },
+      "heartbeat": {
+        "count": 35,
+        "maximumMs": 70.70000000298023,
+        "p95Ms": 63.70000000298023
+      },
+      "sampleCount": 8,
+      "peakSampledPrivateBytes": 346763264,
+      "maximumSampleGapMs": 952.560791015625
+    },
+    {
+      "name": "combined-limits-1",
+      "operations": [
+        {
+          "name": "fresh_startup",
+          "budgetMs": 5000,
+          "passed": true,
+          "ms": 658.0989999999993
+        },
+        {
+          "name": "import",
+          "budgetMs": 15000,
+          "passed": true,
+          "ms": 1397.357
+        },
+        {
+          "name": "analyze",
+          "budgetMs": 15000,
+          "passed": true,
+          "ms": 595.3066999999992
+        },
+        {
+          "name": "search",
+          "budgetMs": 1000,
+          "passed": true,
+          "ms": 263.65560000000005
+        },
+        {
+          "name": "clear_search",
+          "budgetMs": 1000,
+          "passed": true,
+          "ms": 264.52090000000044
+        },
+        {
+          "name": "save_library",
+          "budgetMs": 15000,
+          "passed": true,
+          "ms": 879.5634000000027
+        },
+        {
+          "name": "saved_library_startup",
+          "budgetMs": 5000,
+          "passed": true,
+          "ms": 685.2900999999983
+        },
+        {
+          "name": "reopen",
+          "budgetMs": 15000,
+          "passed": true,
+          "ms": 2378.8774999999987
+        }
+      ],
+      "passed": true,
+      "fixture": {
+        "records": 10000,
+        "fields": 64,
+        "rules": 32,
+        "bytes": 16777216,
+        "sha256": "d7e819b8305b4c887b082c140e48bf0579a45351275bc8006c632eedf123b605"
+      },
+      "before": {
+        "source": "d7e819b8305b4c887b082c140e48bf0579a45351275bc8006c632eedf123b605",
+        "settings": {
+          "features": [],
+          "event_id": "id",
+          "session": "session",
+          "time": null,
+          "time_format": "milliseconds",
+          "threshold": 6,
+          "rules": [
+            {
+              "name": "Owned rule 0",
+              "field": "f00",
+              "op": "gt",
+              "value": 50,
+              "priority": "Notice"
+            },
+            {
+              "name": "Owned rule 1",
+              "field": "f01",
+              "op": "gt",
+              "value": 1000000,
+              "priority": "Notice"
+            },
+            {
+              "name": "Owned rule 2",
+              "field": "f02",
+              "op": "gt",
+              "value": 1000000,
+              "priority": "Notice"
+            },
+            {
+              "name": "Owned rule 3",
+              "field": "f03",
+              "op": "gt",
+              "value": 1000000,
+              "priority": "Notice"
+            },
+            {
+              "name": "Owned rule 4",
+              "field": "f04",
+              "op": "gt",
+              "value": 1000000,
+              "priority": "Notice"
+            },
+            {
+              "name": "Owned rule 5",
+              "field": "f05",
+              "op": "gt",
+              "value": 1000000,
+              "priority": "Notice"
+            },
+            {
+              "name": "Owned rule 6",
+              "field": "f06",
+              "op": "gt",
+              "value": 1000000,
+              "priority": "Notice"
+            },
+            {
+              "name": "Owned rule 7",
+              "field": "f07",
+              "op": "gt",
+              "value": 1000000,
+              "priority": "Notice"
+            },
+            {
+              "name": "Owned rule 8",
+              "field": "f08",
+              "op": "gt",
+              "value": 1000000,
+              "priority": "Notice"
+            },
+            {
+              "name": "Owned rule 9",
+              "field": "f09",
+              "op": "gt",
+              "value": 1000000,
+              "priority": "Notice"
+            },
+            {
+              "name": "Owned rule 10",
+              "field": "f10",
+              "op": "gt",
+              "value": 1000000,
+              "priority": "Notice"
+            },
+            {
+              "name": "Owned rule 11",
+              "field": "f11",
+              "op": "gt",
+              "value": 1000000,
+              "priority": "Notice"
+            },
+            {
+              "name": "Owned rule 12",
+              "field": "f12",
+              "op": "gt",
+              "value": 1000000,
+              "priority": "Notice"
+            },
+            {
+              "name": "Owned rule 13",
+              "field": "f13",
+              "op": "gt",
+              "value": 1000000,
+              "priority": "Notice"
+            },
+            {
+              "name": "Owned rule 14",
+              "field": "f14",
+              "op": "gt",
+              "value": 1000000,
+              "priority": "Notice"
+            },
+            {
+              "name": "Owned rule 15",
+              "field": "f15",
+              "op": "gt",
+              "value": 1000000,
+              "priority": "Notice"
+            },
+            {
+              "name": "Owned rule 16",
+              "field": "f16",
+              "op": "gt",
+              "value": 1000000,
+              "priority": "Notice"
+            },
+            {
+              "name": "Owned rule 17",
+              "field": "f17",
+              "op": "gt",
+              "value": 1000000,
+              "priority": "Notice"
+            },
+            {
+              "name": "Owned rule 18",
+              "field": "f18",
+              "op": "gt",
+              "value": 1000000,
+              "priority": "Notice"
+            },
+            {
+              "name": "Owned rule 19",
+              "field": "f19",
+              "op": "gt",
+              "value": 1000000,
+              "priority": "Notice"
+            },
+            {
+              "name": "Owned rule 20",
+              "field": "f20",
+              "op": "gt",
+              "value": 1000000,
+              "priority": "Notice"
+            },
+            {
+              "name": "Owned rule 21",
+              "field": "f21",
+              "op": "gt",
+              "value": 1000000,
+              "priority": "Notice"
+            },
+            {
+              "name": "Owned rule 22",
+              "field": "f22",
+              "op": "gt",
+              "value": 1000000,
+              "priority": "Notice"
+            },
+            {
+              "name": "Owned rule 23",
+              "field": "f23",
+              "op": "gt",
+              "value": 1000000,
+              "priority": "Notice"
+            },
+            {
+              "name": "Owned rule 24",
+              "field": "f24",
+              "op": "gt",
+              "value": 1000000,
+              "priority": "Notice"
+            },
+            {
+              "name": "Owned rule 25",
+              "field": "f25",
+              "op": "gt",
+              "value": 1000000,
+              "priority": "Notice"
+            },
+            {
+              "name": "Owned rule 26",
+              "field": "f26",
+              "op": "gt",
+              "value": 1000000,
+              "priority": "Notice"
+            },
+            {
+              "name": "Owned rule 27",
+              "field": "f27",
+              "op": "gt",
+              "value": 1000000,
+              "priority": "Notice"
+            },
+            {
+              "name": "Owned rule 28",
+              "field": "f28",
+              "op": "gt",
+              "value": 1000000,
+              "priority": "Notice"
+            },
+            {
+              "name": "Owned rule 29",
+              "field": "f29",
+              "op": "gt",
+              "value": 1000000,
+              "priority": "Notice"
+            },
+            {
+              "name": "Owned rule 30",
+              "field": "f30",
+              "op": "gt",
+              "value": 1000000,
+              "priority": "Notice"
+            },
+            {
+              "name": "Owned rule 31",
+              "field": "f31",
+              "op": "gt",
+              "value": 1000000,
+              "priority": "Notice"
+            }
+          ]
+        },
+        "summary": {
+          "total": 10000,
+          "Review": 5000,
+          "Unknown": 0,
+          "No finding": 5000,
+          "rows_with_gaps": 0
+        },
+        "resultRowsSha256": "4ba55c8e889be92738c3a7b8047fe269658bc928e2fed9f62303d5d5c26614b8"
+      },
+      "caseBytes": 22053390,
+      "after": {
+        "source": "d7e819b8305b4c887b082c140e48bf0579a45351275bc8006c632eedf123b605",
+        "settings": {
+          "features": [],
+          "event_id": "id",
+          "session": "session",
+          "time": null,
+          "time_format": "milliseconds",
+          "threshold": 6,
+          "rules": [
+            {
+              "name": "Owned rule 0",
+              "field": "f00",
+              "op": "gt",
+              "value": 50,
+              "priority": "Notice"
+            },
+            {
+              "name": "Owned rule 1",
+              "field": "f01",
+              "op": "gt",
+              "value": 1000000,
+              "priority": "Notice"
+            },
+            {
+              "name": "Owned rule 2",
+              "field": "f02",
+              "op": "gt",
+              "value": 1000000,
+              "priority": "Notice"
+            },
+            {
+              "name": "Owned rule 3",
+              "field": "f03",
+              "op": "gt",
+              "value": 1000000,
+              "priority": "Notice"
+            },
+            {
+              "name": "Owned rule 4",
+              "field": "f04",
+              "op": "gt",
+              "value": 1000000,
+              "priority": "Notice"
+            },
+            {
+              "name": "Owned rule 5",
+              "field": "f05",
+              "op": "gt",
+              "value": 1000000,
+              "priority": "Notice"
+            },
+            {
+              "name": "Owned rule 6",
+              "field": "f06",
+              "op": "gt",
+              "value": 1000000,
+              "priority": "Notice"
+            },
+            {
+              "name": "Owned rule 7",
+              "field": "f07",
+              "op": "gt",
+              "value": 1000000,
+              "priority": "Notice"
+            },
+            {
+              "name": "Owned rule 8",
+              "field": "f08",
+              "op": "gt",
+              "value": 1000000,
+              "priority": "Notice"
+            },
+            {
+              "name": "Owned rule 9",
+              "field": "f09",
+              "op": "gt",
+              "value": 1000000,
+              "priority": "Notice"
+            },
+            {
+              "name": "Owned rule 10",
+              "field": "f10",
+              "op": "gt",
+              "value": 1000000,
+              "priority": "Notice"
+            },
+            {
+              "name": "Owned rule 11",
+              "field": "f11",
+              "op": "gt",
+              "value": 1000000,
+              "priority": "Notice"
+            },
+            {
+              "name": "Owned rule 12",
+              "field": "f12",
+              "op": "gt",
+              "value": 1000000,
+              "priority": "Notice"
+            },
+            {
+              "name": "Owned rule 13",
+              "field": "f13",
+              "op": "gt",
+              "value": 1000000,
+              "priority": "Notice"
+            },
+            {
+              "name": "Owned rule 14",
+              "field": "f14",
+              "op": "gt",
+              "value": 1000000,
+              "priority": "Notice"
+            },
+            {
+              "name": "Owned rule 15",
+              "field": "f15",
+              "op": "gt",
+              "value": 1000000,
+              "priority": "Notice"
+            },
+            {
+              "name": "Owned rule 16",
+              "field": "f16",
+              "op": "gt",
+              "value": 1000000,
+              "priority": "Notice"
+            },
+            {
+              "name": "Owned rule 17",
+              "field": "f17",
+              "op": "gt",
+              "value": 1000000,
+              "priority": "Notice"
+            },
+            {
+              "name": "Owned rule 18",
+              "field": "f18",
+              "op": "gt",
+              "value": 1000000,
+              "priority": "Notice"
+            },
+            {
+              "name": "Owned rule 19",
+              "field": "f19",
+              "op": "gt",
+              "value": 1000000,
+              "priority": "Notice"
+            },
+            {
+              "name": "Owned rule 20",
+              "field": "f20",
+              "op": "gt",
+              "value": 1000000,
+              "priority": "Notice"
+            },
+            {
+              "name": "Owned rule 21",
+              "field": "f21",
+              "op": "gt",
+              "value": 1000000,
+              "priority": "Notice"
+            },
+            {
+              "name": "Owned rule 22",
+              "field": "f22",
+              "op": "gt",
+              "value": 1000000,
+              "priority": "Notice"
+            },
+            {
+              "name": "Owned rule 23",
+              "field": "f23",
+              "op": "gt",
+              "value": 1000000,
+              "priority": "Notice"
+            },
+            {
+              "name": "Owned rule 24",
+              "field": "f24",
+              "op": "gt",
+              "value": 1000000,
+              "priority": "Notice"
+            },
+            {
+              "name": "Owned rule 25",
+              "field": "f25",
+              "op": "gt",
+              "value": 1000000,
+              "priority": "Notice"
+            },
+            {
+              "name": "Owned rule 26",
+              "field": "f26",
+              "op": "gt",
+              "value": 1000000,
+              "priority": "Notice"
+            },
+            {
+              "name": "Owned rule 27",
+              "field": "f27",
+              "op": "gt",
+              "value": 1000000,
+              "priority": "Notice"
+            },
+            {
+              "name": "Owned rule 28",
+              "field": "f28",
+              "op": "gt",
+              "value": 1000000,
+              "priority": "Notice"
+            },
+            {
+              "name": "Owned rule 29",
+              "field": "f29",
+              "op": "gt",
+              "value": 1000000,
+              "priority": "Notice"
+            },
+            {
+              "name": "Owned rule 30",
+              "field": "f30",
+              "op": "gt",
+              "value": 1000000,
+              "priority": "Notice"
+            },
+            {
+              "name": "Owned rule 31",
+              "field": "f31",
+              "op": "gt",
+              "value": 1000000,
+              "priority": "Notice"
+            }
+          ]
+        },
+        "summary": {
+          "total": 10000,
+          "Review": 5000,
+          "Unknown": 0,
+          "No finding": 5000,
+          "rows_with_gaps": 0
+        },
+        "resultRowsSha256": "4ba55c8e889be92738c3a7b8047fe269658bc928e2fed9f62303d5d5c26614b8"
+      },
+      "heartbeat": {
+        "count": 481,
+        "maximumMs": 87.1000000089407,
+        "p95Ms": 63.1000000089407
+      },
+      "sampleCount": 97,
+      "peakSampledPrivateBytes": 394174464,
+      "maximumSampleGapMs": 871.966064453125
+    },
+    {
+      "name": "representative-2",
+      "operations": [
+        {
+          "name": "fresh_startup",
+          "budgetMs": 5000,
+          "passed": true,
+          "ms": 676.9372000000003
+        },
+        {
+          "name": "import",
+          "budgetMs": 3000,
+          "passed": true,
+          "ms": 142.36639999999898
+        },
+        {
+          "name": "analyze",
+          "budgetMs": 3000,
+          "passed": true,
+          "ms": 177.96440000000075
+        },
+        {
+          "name": "search",
+          "budgetMs": 1000,
+          "passed": true,
+          "ms": 274.3107999999993
+        },
+        {
+          "name": "clear_search",
+          "budgetMs": 1000,
+          "passed": true,
+          "ms": 248.3960999999981
+        },
+        {
+          "name": "save_library",
+          "budgetMs": 3000,
+          "passed": true,
+          "ms": 153.03290000000197
+        },
+        {
+          "name": "saved_library_startup",
+          "budgetMs": 5000,
+          "passed": true,
+          "ms": 665.0606999999982
+        },
+        {
+          "name": "reopen",
+          "budgetMs": 3000,
+          "passed": true,
+          "ms": 101.3156999999992
+        }
+      ],
+      "passed": true,
+      "fixture": {
+        "records": 100,
+        "fields": 8,
+        "rules": 2,
+        "bytes": 9601,
+        "sha256": "71fc4a3069a8b866437d7a65e61c8aa7b1212d0bac76d79c6f132ee8514141fd"
+      },
+      "before": {
+        "source": "71fc4a3069a8b866437d7a65e61c8aa7b1212d0bac76d79c6f132ee8514141fd",
+        "settings": {
+          "features": [],
+          "event_id": "id",
+          "session": "session",
+          "time": null,
+          "time_format": "milliseconds",
+          "threshold": 6,
+          "rules": [
+            {
+              "name": "Owned rule 0",
+              "field": "f00",
+              "op": "gt",
+              "value": 50,
+              "priority": "Notice"
+            },
+            {
+              "name": "Owned rule 1",
+              "field": "f01",
+              "op": "gt",
+              "value": 1000000,
+              "priority": "Notice"
+            }
+          ]
+        },
+        "summary": {
+          "total": 100,
+          "Review": 50,
+          "Unknown": 0,
+          "No finding": 50,
+          "rows_with_gaps": 0
+        },
+        "resultRowsSha256": "35cff7d653ee0a3b179fe1aeeb25b3ffac8f2d95bf062a5df0a88c65216c3db8"
+      },
+      "caseBytes": 52443,
+      "after": {
+        "source": "71fc4a3069a8b866437d7a65e61c8aa7b1212d0bac76d79c6f132ee8514141fd",
+        "settings": {
+          "features": [],
+          "event_id": "id",
+          "session": "session",
+          "time": null,
+          "time_format": "milliseconds",
+          "threshold": 6,
+          "rules": [
+            {
+              "name": "Owned rule 0",
+              "field": "f00",
+              "op": "gt",
+              "value": 50,
+              "priority": "Notice"
+            },
+            {
+              "name": "Owned rule 1",
+              "field": "f01",
+              "op": "gt",
+              "value": 1000000,
+              "priority": "Notice"
+            }
+          ]
+        },
+        "summary": {
+          "total": 100,
+          "Review": 50,
+          "Unknown": 0,
+          "No finding": 50,
+          "rows_with_gaps": 0
+        },
+        "resultRowsSha256": "35cff7d653ee0a3b179fe1aeeb25b3ffac8f2d95bf062a5df0a88c65216c3db8"
+      },
+      "heartbeat": {
+        "count": 36,
+        "maximumMs": 84.79999999701977,
+        "p95Ms": 82
+      },
+      "sampleCount": 8,
+      "peakSampledPrivateBytes": 368918528,
+      "maximumSampleGapMs": 1012.74755859375
+    },
+    {
+      "name": "combined-limits-2",
+      "operations": [
+        {
+          "name": "fresh_startup",
+          "budgetMs": 5000,
+          "passed": true,
+          "ms": 689.2726000000039
+        },
+        {
+          "name": "import",
+          "budgetMs": 15000,
+          "passed": true,
+          "ms": 1419.6068000000014
+        },
+        {
+          "name": "analyze",
+          "budgetMs": 15000,
+          "passed": true,
+          "ms": 624.4979000000021
+        },
+        {
+          "name": "search",
+          "budgetMs": 1000,
+          "passed": true,
+          "ms": 277.7130000000034
+        },
+        {
+          "name": "clear_search",
+          "budgetMs": 1000,
+          "passed": true,
+          "ms": 273.998599999999
+        },
+        {
+          "name": "save_library",
+          "budgetMs": 15000,
+          "passed": true,
+          "ms": 871.3630000000048
+        },
+        {
+          "name": "saved_library_startup",
+          "budgetMs": 5000,
+          "passed": true,
+          "ms": 649.5512000000017
+        },
+        {
+          "name": "reopen",
+          "budgetMs": 15000,
+          "passed": true,
+          "ms": 2347.080799999996
+        }
+      ],
+      "passed": true,
+      "fixture": {
+        "records": 10000,
+        "fields": 64,
+        "rules": 32,
+        "bytes": 16777216,
+        "sha256": "d7e819b8305b4c887b082c140e48bf0579a45351275bc8006c632eedf123b605"
+      },
+      "before": {
+        "source": "d7e819b8305b4c887b082c140e48bf0579a45351275bc8006c632eedf123b605",
+        "settings": {
+          "features": [],
+          "event_id": "id",
+          "session": "session",
+          "time": null,
+          "time_format": "milliseconds",
+          "threshold": 6,
+          "rules": [
+            {
+              "name": "Owned rule 0",
+              "field": "f00",
+              "op": "gt",
+              "value": 50,
+              "priority": "Notice"
+            },
+            {
+              "name": "Owned rule 1",
+              "field": "f01",
+              "op": "gt",
+              "value": 1000000,
+              "priority": "Notice"
+            },
+            {
+              "name": "Owned rule 2",
+              "field": "f02",
+              "op": "gt",
+              "value": 1000000,
+              "priority": "Notice"
+            },
+            {
+              "name": "Owned rule 3",
+              "field": "f03",
+              "op": "gt",
+              "value": 1000000,
+              "priority": "Notice"
+            },
+            {
+              "name": "Owned rule 4",
+              "field": "f04",
+              "op": "gt",
+              "value": 1000000,
+              "priority": "Notice"
+            },
+            {
+              "name": "Owned rule 5",
+              "field": "f05",
+              "op": "gt",
+              "value": 1000000,
+              "priority": "Notice"
+            },
+            {
+              "name": "Owned rule 6",
+              "field": "f06",
+              "op": "gt",
+              "value": 1000000,
+              "priority": "Notice"
+            },
+            {
+              "name": "Owned rule 7",
+              "field": "f07",
+              "op": "gt",
+              "value": 1000000,
+              "priority": "Notice"
+            },
+            {
+              "name": "Owned rule 8",
+              "field": "f08",
+              "op": "gt",
+              "value": 1000000,
+              "priority": "Notice"
+            },
+            {
+              "name": "Owned rule 9",
+              "field": "f09",
+              "op": "gt",
+              "value": 1000000,
+              "priority": "Notice"
+            },
+            {
+              "name": "Owned rule 10",
+              "field": "f10",
+              "op": "gt",
+              "value": 1000000,
+              "priority": "Notice"
+            },
+            {
+              "name": "Owned rule 11",
+              "field": "f11",
+              "op": "gt",
+              "value": 1000000,
+              "priority": "Notice"
+            },
+            {
+              "name": "Owned rule 12",
+              "field": "f12",
+              "op": "gt",
+              "value": 1000000,
+              "priority": "Notice"
+            },
+            {
+              "name": "Owned rule 13",
+              "field": "f13",
+              "op": "gt",
+              "value": 1000000,
+              "priority": "Notice"
+            },
+            {
+              "name": "Owned rule 14",
+              "field": "f14",
+              "op": "gt",
+              "value": 1000000,
+              "priority": "Notice"
+            },
+            {
+              "name": "Owned rule 15",
+              "field": "f15",
+              "op": "gt",
+              "value": 1000000,
+              "priority": "Notice"
+            },
+            {
+              "name": "Owned rule 16",
+              "field": "f16",
+              "op": "gt",
+              "value": 1000000,
+              "priority": "Notice"
+            },
+            {
+              "name": "Owned rule 17",
+              "field": "f17",
+              "op": "gt",
+              "value": 1000000,
+              "priority": "Notice"
+            },
+            {
+              "name": "Owned rule 18",
+              "field": "f18",
+              "op": "gt",
+              "value": 1000000,
+              "priority": "Notice"
+            },
+            {
+              "name": "Owned rule 19",
+              "field": "f19",
+              "op": "gt",
+              "value": 1000000,
+              "priority": "Notice"
+            },
+            {
+              "name": "Owned rule 20",
+              "field": "f20",
+              "op": "gt",
+              "value": 1000000,
+              "priority": "Notice"
+            },
+            {
+              "name": "Owned rule 21",
+              "field": "f21",
+              "op": "gt",
+              "value": 1000000,
+              "priority": "Notice"
+            },
+            {
+              "name": "Owned rule 22",
+              "field": "f22",
+              "op": "gt",
+              "value": 1000000,
+              "priority": "Notice"
+            },
+            {
+              "name": "Owned rule 23",
+              "field": "f23",
+              "op": "gt",
+              "value": 1000000,
+              "priority": "Notice"
+            },
+            {
+              "name": "Owned rule 24",
+              "field": "f24",
+              "op": "gt",
+              "value": 1000000,
+              "priority": "Notice"
+            },
+            {
+              "name": "Owned rule 25",
+              "field": "f25",
+              "op": "gt",
+              "value": 1000000,
+              "priority": "Notice"
+            },
+            {
+              "name": "Owned rule 26",
+              "field": "f26",
+              "op": "gt",
+              "value": 1000000,
+              "priority": "Notice"
+            },
+            {
+              "name": "Owned rule 27",
+              "field": "f27",
+              "op": "gt",
+              "value": 1000000,
+              "priority": "Notice"
+            },
+            {
+              "name": "Owned rule 28",
+              "field": "f28",
+              "op": "gt",
+              "value": 1000000,
+              "priority": "Notice"
+            },
+            {
+              "name": "Owned rule 29",
+              "field": "f29",
+              "op": "gt",
+              "value": 1000000,
+              "priority": "Notice"
+            },
+            {
+              "name": "Owned rule 30",
+              "field": "f30",
+              "op": "gt",
+              "value": 1000000,
+              "priority": "Notice"
+            },
+            {
+              "name": "Owned rule 31",
+              "field": "f31",
+              "op": "gt",
+              "value": 1000000,
+              "priority": "Notice"
+            }
+          ]
+        },
+        "summary": {
+          "total": 10000,
+          "Review": 5000,
+          "Unknown": 0,
+          "No finding": 5000,
+          "rows_with_gaps": 0
+        },
+        "resultRowsSha256": "4ba55c8e889be92738c3a7b8047fe269658bc928e2fed9f62303d5d5c26614b8"
+      },
+      "caseBytes": 22053390,
+      "after": {
+        "source": "d7e819b8305b4c887b082c140e48bf0579a45351275bc8006c632eedf123b605",
+        "settings": {
+          "features": [],
+          "event_id": "id",
+          "session": "session",
+          "time": null,
+          "time_format": "milliseconds",
+          "threshold": 6,
+          "rules": [
+            {
+              "name": "Owned rule 0",
+              "field": "f00",
+              "op": "gt",
+              "value": 50,
+              "priority": "Notice"
+            },
+            {
+              "name": "Owned rule 1",
+              "field": "f01",
+              "op": "gt",
+              "value": 1000000,
+              "priority": "Notice"
+            },
+            {
+              "name": "Owned rule 2",
+              "field": "f02",
+              "op": "gt",
+              "value": 1000000,
+              "priority": "Notice"
+            },
+            {
+              "name": "Owned rule 3",
+              "field": "f03",
+              "op": "gt",
+              "value": 1000000,
+              "priority": "Notice"
+            },
+            {
+              "name": "Owned rule 4",
+              "field": "f04",
+              "op": "gt",
+              "value": 1000000,
+              "priority": "Notice"
+            },
+            {
+              "name": "Owned rule 5",
+              "field": "f05",
+              "op": "gt",
+              "value": 1000000,
+              "priority": "Notice"
+            },
+            {
+              "name": "Owned rule 6",
+              "field": "f06",
+              "op": "gt",
+              "value": 1000000,
+              "priority": "Notice"
+            },
+            {
+              "name": "Owned rule 7",
+              "field": "f07",
+              "op": "gt",
+              "value": 1000000,
+              "priority": "Notice"
+            },
+            {
+              "name": "Owned rule 8",
+              "field": "f08",
+              "op": "gt",
+              "value": 1000000,
+              "priority": "Notice"
+            },
+            {
+              "name": "Owned rule 9",
+              "field": "f09",
+              "op": "gt",
+              "value": 1000000,
+              "priority": "Notice"
+            },
+            {
+              "name": "Owned rule 10",
+              "field": "f10",
+              "op": "gt",
+              "value": 1000000,
+              "priority": "Notice"
+            },
+            {
+              "name": "Owned rule 11",
+              "field": "f11",
+              "op": "gt",
+              "value": 1000000,
+              "priority": "Notice"
+            },
+            {
+              "name": "Owned rule 12",
+              "field": "f12",
+              "op": "gt",
+              "value": 1000000,
+              "priority": "Notice"
+            },
+            {
+              "name": "Owned rule 13",
+              "field": "f13",
+              "op": "gt",
+              "value": 1000000,
+              "priority": "Notice"
+            },
+            {
+              "name": "Owned rule 14",
+              "field": "f14",
+              "op": "gt",
+              "value": 1000000,
+              "priority": "Notice"
+            },
+            {
+              "name": "Owned rule 15",
+              "field": "f15",
+              "op": "gt",
+              "value": 1000000,
+              "priority": "Notice"
+            },
+            {
+              "name": "Owned rule 16",
+              "field": "f16",
+              "op": "gt",
+              "value": 1000000,
+              "priority": "Notice"
+            },
+            {
+              "name": "Owned rule 17",
+              "field": "f17",
+              "op": "gt",
+              "value": 1000000,
+              "priority": "Notice"
+            },
+            {
+              "name": "Owned rule 18",
+              "field": "f18",
+              "op": "gt",
+              "value": 1000000,
+              "priority": "Notice"
+            },
+            {
+              "name": "Owned rule 19",
+              "field": "f19",
+              "op": "gt",
+              "value": 1000000,
+              "priority": "Notice"
+            },
+            {
+              "name": "Owned rule 20",
+              "field": "f20",
+              "op": "gt",
+              "value": 1000000,
+              "priority": "Notice"
+            },
+            {
+              "name": "Owned rule 21",
+              "field": "f21",
+              "op": "gt",
+              "value": 1000000,
+              "priority": "Notice"
+            },
+            {
+              "name": "Owned rule 22",
+              "field": "f22",
+              "op": "gt",
+              "value": 1000000,
+              "priority": "Notice"
+            },
+            {
+              "name": "Owned rule 23",
+              "field": "f23",
+              "op": "gt",
+              "value": 1000000,
+              "priority": "Notice"
+            },
+            {
+              "name": "Owned rule 24",
+              "field": "f24",
+              "op": "gt",
+              "value": 1000000,
+              "priority": "Notice"
+            },
+            {
+              "name": "Owned rule 25",
+              "field": "f25",
+              "op": "gt",
+              "value": 1000000,
+              "priority": "Notice"
+            },
+            {
+              "name": "Owned rule 26",
+              "field": "f26",
+              "op": "gt",
+              "value": 1000000,
+              "priority": "Notice"
+            },
+            {
+              "name": "Owned rule 27",
+              "field": "f27",
+              "op": "gt",
+              "value": 1000000,
+              "priority": "Notice"
+            },
+            {
+              "name": "Owned rule 28",
+              "field": "f28",
+              "op": "gt",
+              "value": 1000000,
+              "priority": "Notice"
+            },
+            {
+              "name": "Owned rule 29",
+              "field": "f29",
+              "op": "gt",
+              "value": 1000000,
+              "priority": "Notice"
+            },
+            {
+              "name": "Owned rule 30",
+              "field": "f30",
+              "op": "gt",
+              "value": 1000000,
+              "priority": "Notice"
+            },
+            {
+              "name": "Owned rule 31",
+              "field": "f31",
+              "op": "gt",
+              "value": 1000000,
+              "priority": "Notice"
+            }
+          ]
+        },
+        "summary": {
+          "total": 10000,
+          "Review": 5000,
+          "Unknown": 0,
+          "No finding": 5000,
+          "rows_with_gaps": 0
+        },
+        "resultRowsSha256": "4ba55c8e889be92738c3a7b8047fe269658bc928e2fed9f62303d5d5c26614b8"
+      },
+      "heartbeat": {
+        "count": 485,
+        "maximumMs": 90.09999999403954,
+        "p95Ms": 63.099999994039536
+      },
+      "sampleCount": 97,
+      "peakSampledPrivateBytes": 391815168,
+      "maximumSampleGapMs": 840.27001953125
+    }
+  ],
+  "peak_sampled_private_bytes": 394174464,
+  "resource_samples": 210,
+  "sources": {
+    "app.py": "79e4f934750103bbe0aed02057fafd858184d35d8c37bf4f3bccd9ae208a5342",
+    "benchmarks/evaluate_refinement.py": "ce9642ce98d2b8c9faa9d53230ab6e4beac843a23e0d96b1f508c7ff5c4dda9e",
+    "benchmarks/evaluate_refinement2.py": "249cdb601bce3c1246b200d348fe729a4404b2f4055ed97ee9f2759363caa58d",
+    "benchmarks/evaluate_refinement3.py": "c2281c2536ccaecf3ca8632da1eabb7c2da7f998d455090fbd3a467014401348",
+    "benchmarks/evaluate_refinement4.py": "1904aaf8edcbbc48b7b990930151c0aabf369149979d9e6bb5bb160808a5928a",
+    "benchmarks/prepare_refinement.py": "59a9f54e014a90ab81bfc795a2fe98d6c250caf2b1b7e687ffbb8c597f9b9b95",
+    "benchmarks/prepare_refinement2.py": "efd88a7cd2eafba20972302760cbe6a0b89b51ec4638b1586bb809b7dfcbdf19",
+    "benchmarks/prepare_refinement3.py": "f3ea0df850362078644bc87a319af37088a1b57b46fd1492a73efd9a6080c354",
+    "benchmarks/prepare_refinement4.py": "a608a1fd1900acd39388e6105717e66a8b022933fa70876e129131fbc663a8dc",
+    "benchmarks/prepare_rt_iot2022.py": "41ea164c4b0149a429d52004d16302c2c9ef497c66d1c96fbb198b95543d0c5c",
+    "benchmarks/probe_profiles_development.py": "e6d45f7db177874b2b195c8953f37841c9118de84f0d71a46660564ba81b20e7",
+    "benchmarks/probe_refinement2_development.py": "6c96dc5e36b33ae94b98959a5c631420a9b3b65e8cb0dd2fc21ae03fcb5ec3ca",
+    "benchmarks/probe_refinement3_development.py": "407ac9d013dbae43e7d687ae2615ab16134373800dffbd79bc1589db17b79709",
+    "benchmarks/probe_refinement4_development.py": "9f78405a9620ed4151145a83361e2c52f4b0e4380101d2edf2f117a486d5bd69",
+    "benchmarks/probe_refinement4_hybrid.py": "f6aa506e15a8faca0bc839344f2e1f4f6540a05795af5fe83c51dbeab30c4ed3",
+    "benchmarks/probe_refinement4_interval.py": "563384558fab909f1b7011cbf20e5eaa7799f4741f362d0f5b93fef7a31ad641",
+    "benchmarks/select_refinement.py": "cc8648f98a97eb8e48ec6b000e1f6c9a2aea32a585b9650023c295888dbb3bac",
+    "benchmarks/select_refinement2_development.py": "8619f22e255ef67a7cca4f6b61c5e808feae5f1e61736f562328b68ba854731c",
+    "benchmarks/select_refinement3_development.py": "5e9f9792b5c3ae5911dffbb276157fd47b69fa7ee8a6ea5e3fc0f25c5db77d78",
+    "benchmarks/select_refinement4_development.py": "4f1aef50584a516837999f7717914c420b1a6d30882e244b28ea1ac0753e49ea",
+    "benchmarks/test_refinement2_protocol.py": "34971604b814cfd78b8fdcf4f68ec520e072cfad48a30b027ac2576c3f4c1f60",
+    "benchmarks/test_refinement3_protocol.py": "5627564e8568aa4cbb50b2d6a2406309707c964d9b9711984aee3be5fb073d37",
+    "benchmarks/test_refinement4_protocol.py": "eb594eedd13c4930a07a9c122ff10bd3abdbcb94cc56227c780ca3ca02f65f8e",
+    "chart.py": "9c11f9ff5fb27bba92314bf64f24cad1c2fc35fd1b2f53873be3811735e55f5f",
+    "comparison.py": "356a05ad7d80bad637cc50993ddfbb36a54416b036cbc7019de9a05424c30a65",
+    "comparison_view.py": "69f1e090593081c8174a3ca717bd7b600bca2da00461fb9cb0a3e76c3eb64d1f",
+    "desktop/accessibility.test.cjs": "020c2ba8aa1a0ebbcac83ee2d0609c3de5dae9565c0cfffff4ae9ad49b48cabb",
+    "desktop/benchmark.test.cjs": "49c02c33e0cae83102cf2a382be479f7717e39f4046b542aa5ce0fd64d921a46",
+    "desktop/boundary.cjs": "5ccb99ccb5032537323ee692726063c03cfaf3333867b25174ca27eef6f9aede",
+    "desktop/build.cjs": "b8a8dc05d798ce88b7727ffaf94c7593a48a87caf08eefa49e815341a4a62552",
+    "desktop/case-library.cjs": "b85ca646e282dc8160a335f0b6b002f1926f06b09f3ccf8c3478d517d64cbb7b",
+    "desktop/case-library.test.cjs": "49e91ac2f32fdf109e4278d3ea59792dc10ccd6ed1754572c9ea86e9b1520be7",
+    "desktop/case-recovery-child.cjs": "e8ba0f642621d2d22215577d5196fcf1a3a2f6609cd1eab7f3722453ce713653",
+    "desktop/case-recovery.test.cjs": "977993db40b2909307e29da227c6f953e1c3f3b31487ecdc0f1972210247903b",
+    "desktop/demo-clarity.test.cjs": "e70a84c32acd8d23e95f3edd7c982641bfeaffc6c46668014000403427dff5c5",
+    "desktop/demo-flow.test.cjs": "850fa89cc651e2ea4c21e064ec72f8b25ae98fea3ad37161ad8b5f3243f08eb9",
+    "desktop/demo-polish.test.cjs": "0e2d94a60c4a096db3ef3bab153c9a83ae1818c222cb78e529e7afc09de225ef",
+    "desktop/demo.test.cjs": "f3889ad77b023c356da8b44861fa95b29e4c6920a9eb07b24a459e751b7fc003",
+    "desktop/dist/app.js": "529d3b2b5ad5a3aedec4b222000849ad78943eb0b7b912171c1b1c1b2d39e828",
+    "desktop/dist/index.html": "cbfe843ee3bac1c13eab39ad9b6b5bb3d519ba34575480d49e5eb5f18c76686b",
+    "desktop/dist/style.css": "95856b9179ed23b356072e58d7c2ff3fc506317f0a138ca19bf9f80c959858e5",
+    "desktop/evaluation.test.cjs": "2fd5c770f2609c75ec316f74160b48fbcb1de2992bb52dbd498bcb3a4968aaea",
+    "desktop/first-use.test.cjs": "47d1f9a205b964440886446dccd6778fe2f958b700a804a3a18be014d7470493",
+    "desktop/library-deletion.test.cjs": "28187b3f9244f134f6c51117e61a45760b608e628f55867e44effa04ec3e105b",
+    "desktop/library-ui.test.cjs": "5458e16b9ee48ae540a3040d576c9701750eae3ac3d4b2ae95d67ea126b38a61",
+    "desktop/main.cjs": "50fd1e8e6aa8181fafecb5cdcdf7b6a786c53166449fa996a306ae7e3c086b2a",
+    "desktop/memory.cjs": "9b9537ae54ac7c4af9776d763c44152423dccd4e2cbd428afcaa7398e277662c",
+    "desktop/native.test.cjs": "bcde22f0a05368391236866941b721cf997f9a477c73d710baac3209ff0f1bee",
+    "desktop/parity.cjs": "393f65a2bd33df5f43bb3bca687de29dffc738a25f76b86735fd0fbf9ec6534b",
+    "desktop/performance-limits.cjs": "52257397803f6d05b91d853163c044c7241759ddbf39f15aa949f47599cf8ecd",
+    "desktop/preload.cjs": "dab72bd21fe5f57a0d27b59e71bfc9f97d14350ca212f3f2088581a81cc056a2",
+    "desktop/refinement.test.cjs": "df1eec422b53c91cb5f54c6b6b9e11a13cc8a482aa2d506733ad2f36fc70d018",
+    "desktop/refinement2.test.cjs": "2bedeaf9306ad79c9a1c8c69fa2953fe347d2d7ce6ba1d387e66a3c33a736487",
+    "desktop/refinement3.test.cjs": "2831a71211ff89543939002f45a27425491543a1094cd537c0704c89aac5b174",
+    "desktop/refinement4.test.cjs": "3c32ff60ba431ce3c9088d4afc2b9b0c933b59fbe542b2b7c7dd51cc0febece2",
+    "desktop/reliability.cjs": "d5e1beccbc63889b60f2a53435cc2eae1bff56918d30e68e6e897997852bac79",
+    "desktop/results-flow.test.cjs": "0433ac82badc9bdf2cd8cd81293b6dfcebba774cd5e8ae3017111843ca6b2e31",
+    "desktop/runtime.cjs": "e33d96930292c8170adbf032398a9a7e3c42d2b78783aaf17c752e32bcaecd77",
+    "desktop/runtime.test.cjs": "d2ba67a40df3bc49e9dd8a35087965743d2fc66ba61bf9df4a22e3fa2a7b6449",
+    "desktop/saved-context.test.cjs": "641f8001925824dfa4485cf61aa4b69d8e6ee451057b1ad084a0eee9782e09ee",
+    "desktop/saved-flow.test.cjs": "d9b5cc114458f7c52e8b929247cab997c861dda164c89c7e62a81916670ee7dd",
+    "desktop/security.test.cjs": "a0c9f692f04c7677d1c62714072860e52fe1a77c450df991c197b2ceb3936b7a",
+    "desktop/src/main.jsx": "f52b6bd1eb5e2aa166568351aeb302a845b222c569c7747a31a600ce0b0a186f",
+    "desktop/src/style.css": "95856b9179ed23b356072e58d7c2ff3fc506317f0a138ca19bf9f80c959858e5",
+    "desktop/stream.test.cjs": "69555367fe2b15b7816b7ba91dc4368870ec9eb2be95675e7a5eb233cf07ede5",
+    "desktop/test-export-menu.cjs": "588d10a1925e84581ac4d010997ccc0716cd6c95f9c2381cd0a2efe2f67b7b80",
+    "desktop/usability.test.cjs": "91b17c708466938062940119bd011ab89c7640dd8ae53e1befdc455a6b36b18a",
+    "desktop_worker.py": "6eb0fbbd912f6a60173f484db3f3522d22cb0f3d985753469e4743f1474eabd5",
+    "docs/supported-limits-performance.md": "f392e5d807b0994a6c1a5220d58189221fb83425cdc54d96d7dd7b7c5e470a03",
+    "engine.py": "6355ce177ce225b25bf276c8f9a4329b31bda47f37792cce7e0e39a17a81e850",
+    "evaluation.py": "370e0efffc6841c6ffd974a16d9a22d83683d62f627e2da1679dfe8a861b87cb",
+    "evidence_labels.py": "d671325f3e95ad5aeef7b3815e5ff5b077392b7e5a7b2c3ca6a9b6670adca1a6",
+    "import_errors.py": "c36e47da5705f5e8c9d55a2e219d09c9cba3ca7940b08620ffe9a5e490645796",
+    "integrity_manifest.py": "753e0ddaa6d65e5af0c57f1b124f52b200a5fc9d88b7188e15101f3052d1e8a6",
+    "investigation.py": "6c8f340b57f137a795376cc0d14e12fdaf2b4e06f693fc3476c5a53dc4366d3a",
+    "mapping_checks.py": "47099e57cb76f5d5e66ebc9acd79a4d0139e4dc5655b2140e50d4652553d2e55",
+    "native_integrity.py": "83b66adac52977303d8822f7897d7b417797b44de05c8a40186670a1d30ca117",
+    "native_stream.py": "d3f281409f879d8be3415d8d279912cd477636af1e4d530e94fb6108da0a8915",
+    "record_search.py": "4f314a453abdc475d5b31c75a951e6475f4a3a034e0a57dd2584aeecc49ce9b8",
+    "scripts/build_native_demo.py": "e4bd6130dd0fa71e80534467582d2599c9517f136015376db56cd82f1a621a86",
+    "scripts/check_deep_qualification.py": "dbd384be70e9eeaf2308f626efb3b2ad2d81279564af06678e70331fd81536c3",
+    "scripts/check_first_use.py": "121563d0d1c0e79feed28ff68c0d011342932110c8a5b0ff94130c23ed3e25dc",
+    "scripts/check_launcher.py": "201563613354fa21b0f28624ea8213dfb20ed49bd369f1f9339c1ddc86f90695",
+    "scripts/check_libfuzzer.py": "e5df886ca3e4c9359e31a59f5484924a5b68f9e7a853476c88f63dd61ebb6d91",
+    "scripts/check_properties.py": "5e0c1c909d2efd3973a568f911600ea2264cc95afb77faeb747abea6028c9654",
+    "scripts/check_release.py": "6d0fb4a7d326ca579eccb98596e086592010f88d28ca94bfe47da755a1111512",
+    "scripts/check_retention.py": "2dd69e741ad1ef6b8095d5d56fbc1f85d005634abd8eaf6738855dc56343bc7f",
+    "scripts/measure_reliability.py": "b6bde88dcb89ee94db5826e25ef5974afd4f995375c85abfa8b288037ab7c8bc",
+    "scripts/measure_supported_limits.py": "9e250b93d46ca9cba04ec786e2eb481e86bef585d96829acfc37cb57c9fd3ce1",
+    "scripts/native_capture.py": "af7e273f0afa420b20f5f0de72a8ea0f10b2b90720ca31dd6e0c511329e1babd",
+    "scripts/package_source.py": "8b7a48ee41f16fbe81f98d1a39fdbc1462fea7e289c18ccc88f7c9e6d472b6fa",
+    "scripts/parser_boundary_contract.py": "aa320a66ea9dac25c123501f40b79004710d3fa3b5c588b0e8c75c611804c22b",
+    "scripts/probe_deep_qualification_failure.py": "f8ae8bce0fbc82405529ad51830fafc38cdd128004f7d90502465523d789c46e",
+    "scripts/probe_first_use_failure.py": "c241253be95258b5fbb68a52b5e971c5f4adf4b569ebd3ee598b4f5ba2a2d25f",
+    "scripts/qualify.py": "3ec37a3aa385a3c0487aceeebee6eadb791add6f4c536188e25727cdc7704ff8",
+    "scripts/release_files.py": "2e462676c66960c7e93f2f76aa2318aface44251b2107238128032255ceeeeea",
+    "scripts/retention_contract.py": "74268e7ce0fb301f597bf3681fffd9150db705f7a91d30009a1e053cba2fe62e",
+    "scripts/test.py": "eca00660a78ac10a77df161c9c5145ff39544c22b53f75f403df2d64ff74e836",
+    "scripts/test_native_compatibility.py": "fa61b26b76aa0078dddf85d20625308d93abc874c99856d23a89eb7bb2f10fba",
+    "scripts/test_native_live.py": "15cdd322e5be4d55908e89114adec092d7b6952312bdeffbaebfaf6d76eeb25d",
+    "scripts/test_native_stream.py": "0e4f12d609cf7ee16a5619345cdd0fe8d21d3c063979ec812052f14a286bc894",
+    "scripts/verify_evidence.py": "b9226ad9fafa191b0140a838d6eafd52e8e2adc3a7feef2eae9cc7350efccbc5",
+    "scripts/verify_native_demo.py": "641cdb30a7e8b1c7c7be6088feb4a2c28508acae3137e09276094a491fa6ff3f",
+    "scripts/windows_toolchain.py": "8838e6796bfadd86ef43ee5ed94b087b375b909aee852c6c7d4cadd986967ed7",
+    "test_case_recovery.py": "ee7760710d69005dcceffcbc9b75f2b465ad00b8b9f4d087b64929565a219e1a",
+    "test_chart.py": "b983c660bf842886272a1eff63f80a7553b31cb0f48d9f6b0ab5268dd620131e",
+    "test_deep_failure_probe.py": "1f9cba5d19e00f31cd96d2ddead665182e68256e676aadcf0d86c2e6d25b6a11",
+    "test_deep_qualification.py": "0e9314968fca9a3e01ad22fd8ddf988233a7e09d332f7ef787c9861c62afddfa",
+    "test_demo_clarity.py": "4af220c4e5964a1e2a2cc0c2383243d9c1dfa9f5f2d138e234570d3601d23e40",
+    "test_demo_polish.py": "6f03ea9f470fb59ef7fb1c6f40d2d440329ec00b67d9d12f6e430f9e0038be9a",
+    "test_demo_summary.py": "b74d8c35e835b5991038e387cd9ade16eb6b1fdc3164eb3b34224b6e4090508f",
+    "test_desktop_capture_provenance.py": "02189014eba0713a51211e80bd4ce34fdcc736ab5d34ad399d4dc66a284ffcb0",
+    "test_desktop_worker.py": "e54267dff03261b37c0dccfe711e3d873e478a4d5473b6362aa48dbeeb5bdd00",
+    "test_evaluation.py": "28bd550d86864d62ed666495b244c5d848755823ea3a8e70b108a262adee41bd",
+    "test_first_use_failure_probe.py": "aa4f0a91be5194f588f482abf2a490c27869d8ec0405b01604b4235d583f91dc",
+    "test_first_use_runner.py": "dd4296fb974ba38d2ee417d1f11137e638073d42140b0fefaa66193ec02af4f7",
+    "test_import_errors.py": "31649975ce21fc1f7750d2c25e5294f2dc3eafa7a392e92bfea6da0ab3c2aff6",
+    "test_investigation.py": "b359198b842cf286792a65b058f30c8b92577ca9e6bbbcda89c0a767c35912a7",
+    "test_investigation_completion.py": "fa06c9ec9434a93a7f3e3ea2650820efdef678d93ac8613ffd8abbc7e0c40153",
+    "test_launcher_runner.py": "f8314c445ab1645d29122cc9db3a16f28f464e0372ec8e930fc7ced2cae5802b",
+    "test_mapping.py": "acb388b3a76bce16088d7c933b03f97f19c74e2501c5a2d7e4139a97e19b3b47",
+    "test_mapping_links.py": "b296e673279ad7f5eff3af933fcbd3124378052b461917433d695471a9f58551",
+    "test_memory_regressions.py": "d2207ab142494ff321d2a7bed66a8d06b5723228dd5f14ee0f946419def892b0",
+    "test_native_integrity.py": "35e988e68af5ef5e1e833ba85af0f1ffc9b882a5c00eb7ebd0623d442e3244fd",
+    "test_native_manifest_security.py": "e4572a3a284bddc37c197dfca90b1806ad9a711ad523c6f485947a731fb3e4a0",
+    "test_native_replay_contract.py": "4012a4db9a3546867310746da4b56ecbb0394ba59e69cf1ffa16858c94bead60",
+    "test_native_session.py": "c23601ff7803fd5e552bb0a56c930c555cfa6287a41b2e4ae8cfb028b065e96b",
+    "test_native_stream.py": "c39654704a1d177b272c21c82017c4588e3ea6ddef89a4ee370374c0ff32b1c4",
+    "test_native_window.py": "b4ecaaff3333a446e96114a12bf20ee9b19b5ef621fb912c61caffecf82d588b",
+    "test_policy_refinement.py": "fe9788239bd18f5effefc6270bdff0d10c3967277f0795fda0682644eca8fde5",
+    "test_presentation.py": "2177d88dfaf968fa7578c71e609abf931c83ec8467d901800ad63c674020cda5",
+    "test_preview_values.py": "891e8733cd4cd4dbb25ea14cea3ce9f30ee6acbd7a1999d03a49b3e7569f8b14",
+    "test_qualification.py": "5285a1f498fb8d5edf4e91ad784c2d6a55892b62c7ff720fcad6b7a5010ab3a0",
+    "test_qualification_llvm.py": "201dbf13b7a529357a23d6a832d756a6ac120f8d900de1870c52feb2a08ae6fd",
+    "test_record_search.py": "12aafa6f2ba546131903b018d33bf1e5f34a7212cd24417e0bada9d576f359b0",
+    "test_reference_groups.py": "a6b97499d42839023781c9d2e95649e9c888c61db89b218e35671c61176bc0fe",
+    "test_refinement3_security.py": "031562eed780996b2e3393aa74a99c2e3b9aa6ee14c75f2ebbf780afeb7efa83",
+    "test_refinement4_security.py": "6e1fc835dd6222b18cd736bcebaf0498294a028c2ec1a4e9e6f97e3a2defdf78",
+    "test_refinement_security.py": "ba9f9e2236a72c3ae9c452a64aa9bd1df925a6f5dbff5d32bfc87a3e9bc2257f",
+    "test_retention_qualification.py": "edc8b71bbd62df392a2b4cee9d90585d09505769e9a31b7cd95f515da34757a0",
+    "test_saved_case_summary.py": "a5d9c54ed98b53c3d71cce40cdefe2825ce121a4d195223051bd8a497b4ad7b1",
+    "test_start.py": "a64949c766a51fcc1083e4ba71be8b78e022c42db69a20f23f1b72f5fb035591",
+    "test_windows_toolchain.py": "98a66a86725d4938eb094f01637070a484b3c80de2e97be472a7d75bd9ccd0c1",
+    "test_workbench.py": "06c47408d2c21cd48c9be0d723501bca725303b15fa4ed2a2927607deb6331fd",
+    "test_workflow.py": "43ddf71d282066e8b84f32f8eeb054928bb6844959c9239ae648fba7e977cd30",
+    "verification/memory-baseline-engine.py": "f6de33af70ea55481b02a793cc08e7064f9b8d2d8fdd060a3656d720875c07d3",
+    "verification/sample_memory.py": "64b141774e9cc4bd1a9abcac07bb9df064a58368dc7e18df0f7b1a680f937309",
+    "verification/summarize_memory.py": "c00acdcf9db23a5d08e7cf51a09d42eaee0869ad829b9d0cc375ce5a3570f358",
+    "verification/summarize_retention.py": "a0fb123356bdd227d211f36ba59b8a92a979a9ec05578f29a168fb437f8e4252",
+    "workflow.py": "269d6c038f789ee8cdf382ce2a58114273d1d00dca512a20dc9088396e94dbf3"
+  },
+  "verified_manifest_files": 276,
+  "verified_manifest_bytes": 112458920,
+  "manifest_sha256": "63d7287da8018a8475e01f3b50d3cc70a4ef5c4154c0fcc4ef05884edb6f9883",
+  "raw_report_sha256": "fe42d6e5248d940b7e0fb77dae88ad62e967a407c4862f44d824e8478e5a55f6",
+  "preparation_attempts": [
+    {
+      "status": "failed-tool-availability",
+      "detail": "Candidate venv did not contain Black. Original configured Black formatted the runner; Python syntax and Prettier checks passed. Product dependencies unchanged."
+    }
+  ],
+  "failed_campaign_attempts": 0,
+  "limitations": [
+    "One local Windows host and two repetitions per fixture; no statistical percentile claim across hosts.",
+    "Memory sampled after each window became ready. Startup memory and transient peaks can be missed. Sampling pauses across full desktop restart.",
+    "Renderer heartbeat is a timer responsiveness proxy; it is not exhaustive interaction or paint latency.",
+    "Source-byte maximum uses whitespace padding. Other import formats, worst-case strings, numeric reference analysis, comparison and evaluation remain unmeasured here.",
+    "Actual combined-limit saved cases were 22053390 bytes; 64 MiB case ceiling, large libraries, unsupported disks and multi-hour stability were not measured.",
+    "Broader fuzzing and unfamiliar-tester acceptance remain unfinished."
+  ]
+}

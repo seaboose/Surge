@@ -1,0 +1,1652 @@
+{
+  "schema": "surge-visual-clarity-validation-v1",
+  "recorded_at_utc": "2026-10-24T05:22:27.520020+00:00",
+  "status": "passed_for_recorded_local_snapshot",
+  "final_attempt": "visual-clarity-Xb96Cs",
+  "final_checks": 24,
+  "unfamiliar_tester_acceptance": "pending",
+  "broader_fuzzing": "unfinished",
+  "hosted_ui_candidate": "not_claimed_by_this_report",
+  "attempts": [
+    {
+      "id": "visual-clarity-RK8qNX",
+      "location": "verification/electron/visual-clarity-RK8qNX",
+      "mode": "sample",
+      "status": "passed",
+      "started": "2026-10-24T05:12:22.985Z",
+      "finished": "2026-10-24T05:12:25.504Z",
+      "passed": 7,
+      "failed": 0,
+      "source": {
+        "src/main.jsx": "fd5cc1ba9a7493ffe5832ef8bc0f9ff21b95f9e9a5c1ce4fed143f26c2135f7c",
+        "src/style.css": "a02f7b90f05e28e76e7fc23c0f643972eda089d275392a0c2091f1fa2d810a10",
+        "dist/app.js": "fe81cc20df539876cf6cba18c0028079c69171b2f41a0899f9702c6c70af229c",
+        "dist/style.css": "a02f7b90f05e28e76e7fc23c0f643972eda089d275392a0c2091f1fa2d810a10"
+      },
+      "explanation": "Sample checks passed. Enlarged screenshots were cropped by Playwright; preserved, superseded by Electron capturePage screenshots.",
+      "checks": [
+        {
+          "name": "Visible sample counts match verified saved evidence",
+          "passed": true
+        },
+        {
+          "name": "sample-counts starts collapsed",
+          "passed": true
+        },
+        {
+          "name": "sample-counts fits at zoom 1",
+          "passed": true
+        },
+        {
+          "name": "sample-counts fits at zoom 1.25",
+          "passed": true
+        },
+        {
+          "name": "sample-counts fits at zoom 1.5",
+          "passed": true
+        },
+        {
+          "name": "sample-counts supports keyboard and outside dismissal",
+          "passed": true
+        },
+        {
+          "name": "Original evidence and renderer remain intact",
+          "passed": true
+        }
+      ]
+    },
+    {
+      "id": "visual-clarity-JvqktA",
+      "location": "verification/electron/visual-clarity-JvqktA",
+      "mode": "sample",
+      "status": "failed",
+      "started": "2026-10-24T05:13:03.216Z",
+      "finished": "2026-10-24T05:13:05.455Z",
+      "passed": 6,
+      "failed": 1,
+      "source": {
+        "src/main.jsx": "fd5cc1ba9a7493ffe5832ef8bc0f9ff21b95f9e9a5c1ce4fed143f26c2135f7c",
+        "src/style.css": "a02f7b90f05e28e76e7fc23c0f643972eda089d275392a0c2091f1fa2d810a10",
+        "dist/app.js": "fe81cc20df539876cf6cba18c0028079c69171b2f41a0899f9702c6c70af229c",
+        "dist/style.css": "a02f7b90f05e28e76e7fc23c0f643972eda089d275392a0c2091f1fa2d810a10"
+      },
+      "explanation": "Interactions passed; overall failed because main.jsx changed concurrently during the source-stability check.",
+      "checks": [
+        {
+          "name": "Visible sample counts match verified saved evidence",
+          "passed": true
+        },
+        {
+          "name": "sample-counts starts collapsed",
+          "passed": true
+        },
+        {
+          "name": "sample-counts fits at zoom 1",
+          "passed": true
+        },
+        {
+          "name": "sample-counts fits at zoom 1.25",
+          "passed": true
+        },
+        {
+          "name": "sample-counts fits at zoom 1.5",
+          "passed": true
+        },
+        {
+          "name": "sample-counts supports keyboard and outside dismissal",
+          "passed": true
+        },
+        {
+          "name": "Original evidence and renderer remain intact",
+          "passed": false
+        }
+      ]
+    },
+    {
+      "id": "visual-clarity-Uip54n",
+      "location": "verification/electron/visual-clarity-Uip54n",
+      "mode": "library",
+      "status": "passed",
+      "started": "2026-10-24T05:13:20.244Z",
+      "finished": "2026-10-24T05:13:22.780Z",
+      "passed": 12,
+      "failed": 0,
+      "source": {
+        "src/main.jsx": "d951d59e8055739ba3e6a63291da1604a331b4dd3e613974a3e39d6abe58fd46",
+        "src/style.css": "a02f7b90f05e28e76e7fc23c0f643972eda089d275392a0c2091f1fa2d810a10",
+        "dist/app.js": "a83cff500b6caec38bc0748d546ed2b8947fdb9ad85c3ffa13f4de2c4b5b90a9",
+        "dist/style.css": "a02f7b90f05e28e76e7fc23c0f643972eda089d275392a0c2091f1fa2d810a10"
+      },
+      "explanation": "Library and sample help checks passed; full-surface screenshots retained.",
+      "checks": [
+        {
+          "name": "case-files starts collapsed",
+          "passed": true
+        },
+        {
+          "name": "case-files fits at zoom 1",
+          "passed": true
+        },
+        {
+          "name": "case-files fits at zoom 1.25",
+          "passed": true
+        },
+        {
+          "name": "case-files fits at zoom 1.5",
+          "passed": true
+        },
+        {
+          "name": "case-files supports keyboard and outside dismissal",
+          "passed": true
+        },
+        {
+          "name": "Visible sample counts match verified saved evidence",
+          "passed": true
+        },
+        {
+          "name": "sample-counts starts collapsed",
+          "passed": true
+        },
+        {
+          "name": "sample-counts fits at zoom 1",
+          "passed": true
+        },
+        {
+          "name": "sample-counts fits at zoom 1.25",
+          "passed": true
+        },
+        {
+          "name": "sample-counts fits at zoom 1.5",
+          "passed": true
+        },
+        {
+          "name": "sample-counts supports keyboard and outside dismissal",
+          "passed": true
+        },
+        {
+          "name": "Original evidence and renderer remain intact",
+          "passed": true
+        }
+      ]
+    },
+    {
+      "id": "visual-clarity-5S7AH8",
+      "location": "verification/electron/visual-clarity-5S7AH8",
+      "mode": "evaluate",
+      "status": "passed",
+      "started": "2026-10-24T05:14:15.450Z",
+      "finished": "2026-10-24T05:14:18.059Z",
+      "passed": 12,
+      "failed": 0,
+      "source": {
+        "src/main.jsx": "a421c783ac1b62d512d486537c117fbc61ad15e0041956715e223496203d5114",
+        "src/style.css": "95856b9179ed23b356072e58d7c2ff3fc506317f0a138ca19bf9f80c959858e5",
+        "dist/app.js": "24a51b78c5bd429b66fd51a6a60906586f1fe8ace109fd0cd200e6250a8a1182",
+        "dist/style.css": "95856b9179ed23b356072e58d7c2ff3fc506317f0a138ca19bf9f80c959858e5"
+      },
+      "explanation": "Evaluation and sample help checks passed. Visual review identified missing keyboard focus for long scrolling help; fixed afterward.",
+      "checks": [
+        {
+          "name": "Visible sample counts match verified saved evidence",
+          "passed": true
+        },
+        {
+          "name": "sample-counts starts collapsed",
+          "passed": true
+        },
+        {
+          "name": "sample-counts fits at zoom 1",
+          "passed": true
+        },
+        {
+          "name": "sample-counts fits at zoom 1.25",
+          "passed": true
+        },
+        {
+          "name": "sample-counts fits at zoom 1.5",
+          "passed": true
+        },
+        {
+          "name": "sample-counts supports keyboard and outside dismissal",
+          "passed": true
+        },
+        {
+          "name": "labeling starts collapsed",
+          "passed": true
+        },
+        {
+          "name": "labeling fits at zoom 1",
+          "passed": true
+        },
+        {
+          "name": "labeling fits at zoom 1.25",
+          "passed": true
+        },
+        {
+          "name": "labeling fits at zoom 1.5",
+          "passed": true
+        },
+        {
+          "name": "labeling supports keyboard and outside dismissal",
+          "passed": true
+        },
+        {
+          "name": "Original evidence and renderer remain intact",
+          "passed": true
+        }
+      ]
+    },
+    {
+      "id": "visual-clarity-tYcdq6",
+      "location": "verification/electron/visual-clarity-tYcdq6",
+      "mode": "evaluate",
+      "status": "passed",
+      "started": "2026-10-24T05:15:05.755Z",
+      "finished": "2026-10-24T05:15:08.480Z",
+      "passed": 12,
+      "failed": 0,
+      "source": {
+        "src/main.jsx": "aff11730c75d8fa2dc88c4f4bd4f46b9b04f6ad6e8713b646449b80eb08cac95",
+        "src/style.css": "95856b9179ed23b356072e58d7c2ff3fc506317f0a138ca19bf9f80c959858e5",
+        "dist/app.js": "422c36a1a3162b556b527cf60f1f88bb28e0c1ca48fd63637ef0307727a0bd8b",
+        "dist/style.css": "95856b9179ed23b356072e58d7c2ff3fc506317f0a138ca19bf9f80c959858e5"
+      },
+      "explanation": "Root's short evaluation rerun after the help panel became keyboard-focusable passed.",
+      "checks": [
+        {
+          "name": "Visible sample counts match verified saved evidence",
+          "passed": true
+        },
+        {
+          "name": "sample-counts starts collapsed",
+          "passed": true
+        },
+        {
+          "name": "sample-counts fits at zoom 1",
+          "passed": true
+        },
+        {
+          "name": "sample-counts fits at zoom 1.25",
+          "passed": true
+        },
+        {
+          "name": "sample-counts fits at zoom 1.5",
+          "passed": true
+        },
+        {
+          "name": "sample-counts supports keyboard and outside dismissal",
+          "passed": true
+        },
+        {
+          "name": "labeling starts collapsed",
+          "passed": true
+        },
+        {
+          "name": "labeling fits at zoom 1",
+          "passed": true
+        },
+        {
+          "name": "labeling fits at zoom 1.25",
+          "passed": true
+        },
+        {
+          "name": "labeling fits at zoom 1.5",
+          "passed": true
+        },
+        {
+          "name": "labeling supports keyboard and outside dismissal",
+          "passed": true
+        },
+        {
+          "name": "Original evidence and renderer remain intact",
+          "passed": true
+        }
+      ]
+    },
+    {
+      "id": "visual-clarity-SbKb0N",
+      "location": "verification/electron/visual-clarity-SbKb0N",
+      "mode": "all",
+      "status": "failed",
+      "started": "2026-10-24T05:16:17.592Z",
+      "finished": "2026-10-24T05:16:20.595Z",
+      "passed": 19,
+      "failed": 1,
+      "source": {
+        "src/main.jsx": "f52b6bd1eb5e2aa166568351aeb302a845b222c569c7747a31a600ce0b0a186f",
+        "src/style.css": "95856b9179ed23b356072e58d7c2ff3fc506317f0a138ca19bf9f80c959858e5",
+        "dist/app.js": "529d3b2b5ad5a3aedec4b222000849ad78943eb0b7b912171c1b1c1b2d39e828",
+        "dist/style.css": "95856b9179ed23b356072e58d7c2ff3fc506317f0a138ca19bf9f80c959858e5"
+      },
+      "explanation": "First expanded all-mode attempt failed because the test's read-only details request omitted the required workspace revision. Product correctly rejected it.",
+      "checks": [
+        {
+          "name": "case-files starts collapsed",
+          "passed": true
+        },
+        {
+          "name": "case-files fits at zoom 1",
+          "passed": true
+        },
+        {
+          "name": "case-files fits at zoom 1.25",
+          "passed": true
+        },
+        {
+          "name": "case-files fits at zoom 1.5",
+          "passed": true
+        },
+        {
+          "name": "case-files supports keyboard and outside dismissal",
+          "passed": true
+        },
+        {
+          "name": "case-files supports keyboard access to full help text",
+          "passed": true
+        },
+        {
+          "name": "Visible sample counts match verified saved evidence",
+          "passed": true
+        },
+        {
+          "name": "sample-counts starts collapsed",
+          "passed": true
+        },
+        {
+          "name": "sample-counts fits at zoom 1",
+          "passed": true
+        },
+        {
+          "name": "sample-counts fits at zoom 1.25",
+          "passed": true
+        },
+        {
+          "name": "sample-counts fits at zoom 1.5",
+          "passed": true
+        },
+        {
+          "name": "sample-counts supports keyboard and outside dismissal",
+          "passed": true
+        },
+        {
+          "name": "sample-counts supports keyboard access to full help text",
+          "passed": true
+        },
+        {
+          "name": "labeling starts collapsed",
+          "passed": true
+        },
+        {
+          "name": "labeling fits at zoom 1",
+          "passed": true
+        },
+        {
+          "name": "labeling fits at zoom 1.25",
+          "passed": true
+        },
+        {
+          "name": "labeling fits at zoom 1.5",
+          "passed": true
+        },
+        {
+          "name": "labeling supports keyboard and outside dismissal",
+          "passed": true
+        },
+        {
+          "name": "labeling supports keyboard access to full help text",
+          "passed": true
+        },
+        {
+          "name": "Case details start concise and preserve exact reader fields",
+          "passed": false
+        }
+      ]
+    },
+    {
+      "id": "visual-clarity-j14Sfd",
+      "location": "verification/electron/visual-clarity-j14Sfd",
+      "mode": "all",
+      "status": "passed",
+      "started": "2026-10-24T05:16:40.773Z",
+      "finished": "2026-10-24T05:16:43.829Z",
+      "passed": 21,
+      "failed": 0,
+      "source": {
+        "src/main.jsx": "f52b6bd1eb5e2aa166568351aeb302a845b222c569c7747a31a600ce0b0a186f",
+        "src/style.css": "95856b9179ed23b356072e58d7c2ff3fc506317f0a138ca19bf9f80c959858e5",
+        "dist/app.js": "529d3b2b5ad5a3aedec4b222000849ad78943eb0b7b912171c1b1c1b2d39e828",
+        "dist/style.css": "95856b9179ed23b356072e58d7c2ff3fc506317f0a138ca19bf9f80c959858e5"
+      },
+      "explanation": "Final expanded all-mode attempt passed all 21 checks after the test-only revision fix.",
+      "checks": [
+        {
+          "name": "case-files starts collapsed",
+          "passed": true
+        },
+        {
+          "name": "case-files fits at zoom 1",
+          "passed": true
+        },
+        {
+          "name": "case-files fits at zoom 1.25",
+          "passed": true
+        },
+        {
+          "name": "case-files fits at zoom 1.5",
+          "passed": true
+        },
+        {
+          "name": "case-files supports keyboard and outside dismissal",
+          "passed": true
+        },
+        {
+          "name": "case-files supports keyboard access to full help text",
+          "passed": true
+        },
+        {
+          "name": "Visible sample counts match verified saved evidence",
+          "passed": true
+        },
+        {
+          "name": "sample-counts starts collapsed",
+          "passed": true
+        },
+        {
+          "name": "sample-counts fits at zoom 1",
+          "passed": true
+        },
+        {
+          "name": "sample-counts fits at zoom 1.25",
+          "passed": true
+        },
+        {
+          "name": "sample-counts fits at zoom 1.5",
+          "passed": true
+        },
+        {
+          "name": "sample-counts supports keyboard and outside dismissal",
+          "passed": true
+        },
+        {
+          "name": "sample-counts supports keyboard access to full help text",
+          "passed": true
+        },
+        {
+          "name": "labeling starts collapsed",
+          "passed": true
+        },
+        {
+          "name": "labeling fits at zoom 1",
+          "passed": true
+        },
+        {
+          "name": "labeling fits at zoom 1.25",
+          "passed": true
+        },
+        {
+          "name": "labeling fits at zoom 1.5",
+          "passed": true
+        },
+        {
+          "name": "labeling supports keyboard and outside dismissal",
+          "passed": true
+        },
+        {
+          "name": "labeling supports keyboard access to full help text",
+          "passed": true
+        },
+        {
+          "name": "Case details start concise and preserve exact reader fields",
+          "passed": true
+        },
+        {
+          "name": "Original evidence and renderer remain intact",
+          "passed": true
+        }
+      ]
+    },
+    {
+      "id": "visual-clarity-KXOjfh",
+      "location": "verification/electron/visual-clarity-KXOjfh",
+      "mode": "all",
+      "status": "passed",
+      "started": "2026-10-24T05:21:28.088Z",
+      "finished": "2026-10-24T05:21:31.565Z",
+      "passed": 24,
+      "failed": 0,
+      "source": {
+        "src/main.jsx": "b822df28306df29f605fac2ae05da91c38fe6064db6f160197a72846587b37f6",
+        "src/style.css": "95856b9179ed23b356072e58d7c2ff3fc506317f0a138ca19bf9f80c959858e5",
+        "dist/app.js": "f9bcd65a70740ecc7507352e8100c02e97c66bef3ee01c646de5c6bae49152cc",
+        "dist/style.css": "95856b9179ed23b356072e58d7c2ff3fc506317f0a138ca19bf9f80c959858e5"
+      },
+      "explanation": "Expanded all-mode attempt passed 24 checks, including dismissal after resizing/zooming an already-open help bubble.",
+      "checks": [
+        {
+          "name": "case-files starts collapsed",
+          "passed": true
+        },
+        {
+          "name": "case-files fits at zoom 1",
+          "passed": true
+        },
+        {
+          "name": "case-files fits at zoom 1.25",
+          "passed": true
+        },
+        {
+          "name": "case-files fits at zoom 1.5",
+          "passed": true
+        },
+        {
+          "name": "case-files supports keyboard and outside dismissal",
+          "passed": true
+        },
+        {
+          "name": "case-files supports keyboard access to full help text",
+          "passed": true
+        },
+        {
+          "name": "case-files dismisses safely when window size or zoom changes",
+          "passed": true
+        },
+        {
+          "name": "Visible sample counts match verified saved evidence",
+          "passed": true
+        },
+        {
+          "name": "sample-counts starts collapsed",
+          "passed": true
+        },
+        {
+          "name": "sample-counts fits at zoom 1",
+          "passed": true
+        },
+        {
+          "name": "sample-counts fits at zoom 1.25",
+          "passed": true
+        },
+        {
+          "name": "sample-counts fits at zoom 1.5",
+          "passed": true
+        },
+        {
+          "name": "sample-counts supports keyboard and outside dismissal",
+          "passed": true
+        },
+        {
+          "name": "sample-counts supports keyboard access to full help text",
+          "passed": true
+        },
+        {
+          "name": "sample-counts dismisses safely when window size or zoom changes",
+          "passed": true
+        },
+        {
+          "name": "labeling starts collapsed",
+          "passed": true
+        },
+        {
+          "name": "labeling fits at zoom 1",
+          "passed": true
+        },
+        {
+          "name": "labeling fits at zoom 1.25",
+          "passed": true
+        },
+        {
+          "name": "labeling fits at zoom 1.5",
+          "passed": true
+        },
+        {
+          "name": "labeling supports keyboard and outside dismissal",
+          "passed": true
+        },
+        {
+          "name": "labeling supports keyboard access to full help text",
+          "passed": true
+        },
+        {
+          "name": "labeling dismisses safely when window size or zoom changes",
+          "passed": true
+        },
+        {
+          "name": "Case details start concise and preserve exact reader fields",
+          "passed": true
+        },
+        {
+          "name": "Original evidence and renderer remain intact",
+          "passed": true
+        }
+      ]
+    },
+    {
+      "id": "visual-clarity-Xb96Cs",
+      "location": "verification/qualification/visual-clarity-Xb96Cs",
+      "mode": "all",
+      "status": "passed",
+      "started": "2026-10-24T05:21:43.221Z",
+      "finished": "2026-10-24T05:21:46.548Z",
+      "passed": 24,
+      "failed": 0,
+      "source": {
+        "src/main.jsx": "b822df28306df29f605fac2ae05da91c38fe6064db6f160197a72846587b37f6",
+        "src/style.css": "95856b9179ed23b356072e58d7c2ff3fc506317f0a138ca19bf9f80c959858e5",
+        "dist/app.js": "f9bcd65a70740ecc7507352e8100c02e97c66bef3ee01c646de5c6bae49152cc",
+        "dist/style.css": "95856b9179ed23b356072e58d7c2ff3fc506317f0a138ca19bf9f80c959858e5"
+      },
+      "explanation": "Final 24-check all-mode pass verified the new qualification artifact location used by CI. Previous attempts retain their original locations.",
+      "checks": [
+        {
+          "name": "case-files starts collapsed",
+          "passed": true
+        },
+        {
+          "name": "case-files fits at zoom 1",
+          "passed": true
+        },
+        {
+          "name": "case-files fits at zoom 1.25",
+          "passed": true
+        },
+        {
+          "name": "case-files fits at zoom 1.5",
+          "passed": true
+        },
+        {
+          "name": "case-files supports keyboard and outside dismissal",
+          "passed": true
+        },
+        {
+          "name": "case-files supports keyboard access to full help text",
+          "passed": true
+        },
+        {
+          "name": "case-files dismisses safely when window size or zoom changes",
+          "passed": true
+        },
+        {
+          "name": "Visible sample counts match verified saved evidence",
+          "passed": true
+        },
+        {
+          "name": "sample-counts starts collapsed",
+          "passed": true
+        },
+        {
+          "name": "sample-counts fits at zoom 1",
+          "passed": true
+        },
+        {
+          "name": "sample-counts fits at zoom 1.25",
+          "passed": true
+        },
+        {
+          "name": "sample-counts fits at zoom 1.5",
+          "passed": true
+        },
+        {
+          "name": "sample-counts supports keyboard and outside dismissal",
+          "passed": true
+        },
+        {
+          "name": "sample-counts supports keyboard access to full help text",
+          "passed": true
+        },
+        {
+          "name": "sample-counts dismisses safely when window size or zoom changes",
+          "passed": true
+        },
+        {
+          "name": "labeling starts collapsed",
+          "passed": true
+        },
+        {
+          "name": "labeling fits at zoom 1",
+          "passed": true
+        },
+        {
+          "name": "labeling fits at zoom 1.25",
+          "passed": true
+        },
+        {
+          "name": "labeling fits at zoom 1.5",
+          "passed": true
+        },
+        {
+          "name": "labeling supports keyboard and outside dismissal",
+          "passed": true
+        },
+        {
+          "name": "labeling supports keyboard access to full help text",
+          "passed": true
+        },
+        {
+          "name": "labeling dismisses safely when window size or zoom changes",
+          "passed": true
+        },
+        {
+          "name": "Case details start concise and preserve exact reader fields",
+          "passed": true
+        },
+        {
+          "name": "Original evidence and renderer remain intact",
+          "passed": true
+        }
+      ]
+    }
+  ],
+  "artifact_manifest": [
+    {
+      "path": "verification/electron/visual-clarity-RK8qNX/command.log",
+      "bytes": 462,
+      "sha256": "7796d84ad925762ca37bc979ca05410726ee0d96e27090c328903e304ef29e8d",
+      "kind": "raw_evidence"
+    },
+    {
+      "path": "verification/electron/visual-clarity-RK8qNX/opening.png",
+      "bytes": 178700,
+      "sha256": "cc6c63665d10fc98ffc7263511a67a675b07ea0de0c2f23ddb9ab71307c8d204",
+      "kind": "screenshot"
+    },
+    {
+      "path": "verification/electron/visual-clarity-RK8qNX/results.json",
+      "bytes": 3179,
+      "sha256": "29a52eee609cef92fe14aaede48cfae167880de2801112778c0f61bd3c502c54",
+      "kind": "raw_evidence"
+    },
+    {
+      "path": "verification/electron/visual-clarity-RK8qNX/sample-counts-zoom-1.25.png",
+      "bytes": 39066,
+      "sha256": "c73f9d16688fa697874dc9e4cda8be9acac8d47b981429209f845aaac3844714",
+      "kind": "screenshot"
+    },
+    {
+      "path": "verification/electron/visual-clarity-RK8qNX/sample-counts-zoom-1.5.png",
+      "bytes": 47702,
+      "sha256": "9a20fbac31ee062790188b2a650098d93f0bb8fa8a0b4957c3438b5d9def27cd",
+      "kind": "screenshot"
+    },
+    {
+      "path": "verification/electron/visual-clarity-RK8qNX/sample-counts-zoom-1.png",
+      "bytes": 44714,
+      "sha256": "1a51af1d740712baa9673f5de748602dd1632ead913e407ba4ce1d31d6b19da2",
+      "kind": "screenshot"
+    },
+    {
+      "path": "verification/electron/visual-clarity-RK8qNX/saved-evidence-counts.png",
+      "bytes": 136619,
+      "sha256": "f1f2133376a4671bfe79df397ba9db1c79bdb5d783cc204e030535089c3df756",
+      "kind": "screenshot"
+    },
+    {
+      "path": "verification/electron/visual-clarity-JvqktA/failure.png",
+      "bytes": 38106,
+      "sha256": "1fc49b9d42fc34ed17c945c3b38219ad8a73de357c13e2fa349ae29144a684c3",
+      "kind": "screenshot"
+    },
+    {
+      "path": "verification/electron/visual-clarity-JvqktA/failure.txt",
+      "bytes": 833,
+      "sha256": "b8609c99c4d9d27b57539737754c6fc4e3c8fe3186a3a63b5e7e0387b395730e",
+      "kind": "raw_evidence"
+    },
+    {
+      "path": "verification/electron/visual-clarity-JvqktA/opening.png",
+      "bytes": 178700,
+      "sha256": "cc6c63665d10fc98ffc7263511a67a675b07ea0de0c2f23ddb9ab71307c8d204",
+      "kind": "screenshot"
+    },
+    {
+      "path": "verification/electron/visual-clarity-JvqktA/results.json",
+      "bytes": 4066,
+      "sha256": "dd163f357159c690782ed848662a227fc6669bd9e5af9790189efc2c37fa65af",
+      "kind": "raw_evidence"
+    },
+    {
+      "path": "verification/electron/visual-clarity-JvqktA/sample-counts-zoom-1.25.png",
+      "bytes": 47809,
+      "sha256": "8aa273949f6bbd8163ad76db2c852f21ceb597892d76dcaa76b19763af365985",
+      "kind": "screenshot"
+    },
+    {
+      "path": "verification/electron/visual-clarity-JvqktA/sample-counts-zoom-1.5.png",
+      "bytes": 74802,
+      "sha256": "a2e0f29abd4eaacc812a7c1d06d74871af5bdbeade4d2b606397afde94994748",
+      "kind": "screenshot"
+    },
+    {
+      "path": "verification/electron/visual-clarity-JvqktA/sample-counts-zoom-1.png",
+      "bytes": 44721,
+      "sha256": "1c92e4ea9c2d14eaa86e9296ad23da7dad2d9e66dfcda0e24ef7f95e525ee22e",
+      "kind": "screenshot"
+    },
+    {
+      "path": "verification/electron/visual-clarity-JvqktA/saved-evidence-counts.png",
+      "bytes": 136619,
+      "sha256": "f1f2133376a4671bfe79df397ba9db1c79bdb5d783cc204e030535089c3df756",
+      "kind": "screenshot"
+    },
+    {
+      "path": "verification/electron/visual-clarity-Uip54n/case-files-zoom-1.25.png",
+      "bytes": 65424,
+      "sha256": "289e8ea1c0d61e697e2f894105ec1c72921c9915cfe157f8bcac40db0ccaacdc",
+      "kind": "screenshot"
+    },
+    {
+      "path": "verification/electron/visual-clarity-Uip54n/case-files-zoom-1.5.png",
+      "bytes": 90102,
+      "sha256": "0fc697290d8511ef7573aebffb6b0f6dcd8443c825203155d5e38ab7811d6a2d",
+      "kind": "screenshot"
+    },
+    {
+      "path": "verification/electron/visual-clarity-Uip54n/case-files-zoom-1.png",
+      "bytes": 67745,
+      "sha256": "0edbac735231da7944c6e963f8c822ed82ce940223acaf813907a9e93b64ab5f",
+      "kind": "screenshot"
+    },
+    {
+      "path": "verification/electron/visual-clarity-Uip54n/opening.png",
+      "bytes": 178700,
+      "sha256": "cc6c63665d10fc98ffc7263511a67a675b07ea0de0c2f23ddb9ab71307c8d204",
+      "kind": "screenshot"
+    },
+    {
+      "path": "verification/electron/visual-clarity-Uip54n/results.json",
+      "bytes": 5187,
+      "sha256": "4953228ab97f112446bbf3903a10e4de2105b797a376c4c1da0c1dedd53190ba",
+      "kind": "raw_evidence"
+    },
+    {
+      "path": "verification/electron/visual-clarity-Uip54n/sample-counts-zoom-1.25.png",
+      "bytes": 47849,
+      "sha256": "2bf7c52f0073fe875f351d769a8c42944ebc99b8c8478e4833c6f503b70fc62e",
+      "kind": "screenshot"
+    },
+    {
+      "path": "verification/electron/visual-clarity-Uip54n/sample-counts-zoom-1.5.png",
+      "bytes": 74817,
+      "sha256": "58a1c6e8bb5acdd1174b19ff8fcef43e8f878cf837d9e436cbdd81a1bb50e912",
+      "kind": "screenshot"
+    },
+    {
+      "path": "verification/electron/visual-clarity-Uip54n/sample-counts-zoom-1.png",
+      "bytes": 44725,
+      "sha256": "2a7b19751d6ab547bbf224dd693912bb04fad715b0213d4916f850d68411e155",
+      "kind": "screenshot"
+    },
+    {
+      "path": "verification/electron/visual-clarity-Uip54n/saved-evidence-counts.png",
+      "bytes": 38146,
+      "sha256": "e58989b37a95db5466f7f21dcf7f4fa790d5aabde40f07b5779222c4ab417061",
+      "kind": "screenshot"
+    },
+    {
+      "path": "verification/electron/visual-clarity-5S7AH8/labeling-zoom-1.25.png",
+      "bytes": 61089,
+      "sha256": "575ff8fc8325604d080480f1e9692cfac06cb2ef55c944b4015eb3e20140ee9b",
+      "kind": "screenshot"
+    },
+    {
+      "path": "verification/electron/visual-clarity-5S7AH8/labeling-zoom-1.5.png",
+      "bytes": 95330,
+      "sha256": "826a82497a5ed0eb698f1ffc5dacb2392949756a7b16e90b918a4e3f146231a9",
+      "kind": "screenshot"
+    },
+    {
+      "path": "verification/electron/visual-clarity-5S7AH8/labeling-zoom-1.png",
+      "bytes": 51887,
+      "sha256": "b2581a0655f5f2e709f073b1a41c8d2f3272350eaf82ec2f194bca3848f71f5b",
+      "kind": "screenshot"
+    },
+    {
+      "path": "verification/electron/visual-clarity-5S7AH8/opening.png",
+      "bytes": 178700,
+      "sha256": "cc6c63665d10fc98ffc7263511a67a675b07ea0de0c2f23ddb9ab71307c8d204",
+      "kind": "screenshot"
+    },
+    {
+      "path": "verification/electron/visual-clarity-5S7AH8/results.json",
+      "bytes": 5720,
+      "sha256": "d9ff735bfb80e9d1bbb5cc1d2c36ca66e23c31486b46eeeeb966388e44f093a3",
+      "kind": "raw_evidence"
+    },
+    {
+      "path": "verification/electron/visual-clarity-5S7AH8/sample-counts-zoom-1.25.png",
+      "bytes": 47845,
+      "sha256": "83d11bdf7279c023e37588148aa3cc72a36ef5a16312c5baaccadcf40134b34a",
+      "kind": "screenshot"
+    },
+    {
+      "path": "verification/electron/visual-clarity-5S7AH8/sample-counts-zoom-1.5.png",
+      "bytes": 74822,
+      "sha256": "945260d9ee73aa9c571c075f398da32c91caabf8f71b25444a8ea77624fb2f85",
+      "kind": "screenshot"
+    },
+    {
+      "path": "verification/electron/visual-clarity-5S7AH8/sample-counts-zoom-1.png",
+      "bytes": 44721,
+      "sha256": "1c92e4ea9c2d14eaa86e9296ad23da7dad2d9e66dfcda0e24ef7f95e525ee22e",
+      "kind": "screenshot"
+    },
+    {
+      "path": "verification/electron/visual-clarity-5S7AH8/saved-evidence-counts.png",
+      "bytes": 136619,
+      "sha256": "f1f2133376a4671bfe79df397ba9db1c79bdb5d783cc204e030535089c3df756",
+      "kind": "screenshot"
+    },
+    {
+      "path": "verification/electron/visual-clarity-tYcdq6/labeling-zoom-1.25.png",
+      "bytes": 61070,
+      "sha256": "6cd0b5e138b2b91a60f54dedacfcb9e1f8e144e563b63e7604865ebf76ef909f",
+      "kind": "screenshot"
+    },
+    {
+      "path": "verification/electron/visual-clarity-tYcdq6/labeling-zoom-1.5.png",
+      "bytes": 95364,
+      "sha256": "566f6787cdb8081350067bf7db0e7476378b1d0fb78f5e78e90c822a99900389",
+      "kind": "screenshot"
+    },
+    {
+      "path": "verification/electron/visual-clarity-tYcdq6/labeling-zoom-1.png",
+      "bytes": 51887,
+      "sha256": "b2581a0655f5f2e709f073b1a41c8d2f3272350eaf82ec2f194bca3848f71f5b",
+      "kind": "screenshot"
+    },
+    {
+      "path": "verification/electron/visual-clarity-tYcdq6/opening.png",
+      "bytes": 178700,
+      "sha256": "cc6c63665d10fc98ffc7263511a67a675b07ea0de0c2f23ddb9ab71307c8d204",
+      "kind": "screenshot"
+    },
+    {
+      "path": "verification/electron/visual-clarity-tYcdq6/results.json",
+      "bytes": 5720,
+      "sha256": "f5883135e00eed291732d19cd47d9701e852185617424f2f7ac8ad9622f81518",
+      "kind": "raw_evidence"
+    },
+    {
+      "path": "verification/electron/visual-clarity-tYcdq6/sample-counts-zoom-1.25.png",
+      "bytes": 47851,
+      "sha256": "dcebc07818a4558ff7c8edda408b1319633ba2b29beeb69f8406785ee7dd92a9",
+      "kind": "screenshot"
+    },
+    {
+      "path": "verification/electron/visual-clarity-tYcdq6/sample-counts-zoom-1.5.png",
+      "bytes": 74839,
+      "sha256": "4ff10d8e9eb534baadb5cfbdced996517051fc79b82d3865af2d54e6d9bc8cb0",
+      "kind": "screenshot"
+    },
+    {
+      "path": "verification/electron/visual-clarity-tYcdq6/sample-counts-zoom-1.png",
+      "bytes": 44721,
+      "sha256": "1c92e4ea9c2d14eaa86e9296ad23da7dad2d9e66dfcda0e24ef7f95e525ee22e",
+      "kind": "screenshot"
+    },
+    {
+      "path": "verification/electron/visual-clarity-tYcdq6/saved-evidence-counts.png",
+      "bytes": 136619,
+      "sha256": "f1f2133376a4671bfe79df397ba9db1c79bdb5d783cc204e030535089c3df756",
+      "kind": "screenshot"
+    },
+    {
+      "path": "verification/electron/visual-clarity-SbKb0N/case-files-zoom-1.25.png",
+      "bytes": 65430,
+      "sha256": "d173d053b696513b5f2cf7e91a178d311c95cb132e805efd1466260aab6aafd6",
+      "kind": "screenshot"
+    },
+    {
+      "path": "verification/electron/visual-clarity-SbKb0N/case-files-zoom-1.5.png",
+      "bytes": 90107,
+      "sha256": "ff83242cb7825c3dd77f148b8cf93e834cfff6fc5abf90a425a48bf270e69f2e",
+      "kind": "screenshot"
+    },
+    {
+      "path": "verification/electron/visual-clarity-SbKb0N/case-files-zoom-1.png",
+      "bytes": 75888,
+      "sha256": "5b435f3f2d9499c281b081d1fbfc9e46437719fe0407acc8cf90e9abd941b6e9",
+      "kind": "screenshot"
+    },
+    {
+      "path": "verification/electron/visual-clarity-SbKb0N/failure.png",
+      "bytes": 44668,
+      "sha256": "12109fcb7d9641356bb6a7509bd03b64db3d09be9388052f83f9fe5242b5f316",
+      "kind": "screenshot"
+    },
+    {
+      "path": "verification/electron/visual-clarity-SbKb0N/failure.txt",
+      "bytes": 502,
+      "sha256": "d994864d8e806042f6923b28513b498a2c313f6533eb3b8b80fd60dfc0972d4d",
+      "kind": "raw_evidence"
+    },
+    {
+      "path": "verification/electron/visual-clarity-SbKb0N/labeling-keyboard-scroll.png",
+      "bytes": 95128,
+      "sha256": "da29df57ab1ec5194c26e2cf52ab33fc47cacd7b8c18267c3715469da1083d35",
+      "kind": "screenshot"
+    },
+    {
+      "path": "verification/electron/visual-clarity-SbKb0N/labeling-zoom-1.25.png",
+      "bytes": 61126,
+      "sha256": "20b6e2b61609806a31efe50e97476b2740352337dec589f1972a542c460a546b",
+      "kind": "screenshot"
+    },
+    {
+      "path": "verification/electron/visual-clarity-SbKb0N/labeling-zoom-1.5.png",
+      "bytes": 95341,
+      "sha256": "5b236d5042c205b80f7769b549f835bf46c24ea7d013d9baf14c8d74c9368505",
+      "kind": "screenshot"
+    },
+    {
+      "path": "verification/electron/visual-clarity-SbKb0N/labeling-zoom-1.png",
+      "bytes": 51859,
+      "sha256": "4e2f83ab3c18cf356fdae991a60a9880f314b3d0d89c174e06b48512af1e7fdd",
+      "kind": "screenshot"
+    },
+    {
+      "path": "verification/electron/visual-clarity-SbKb0N/opening.png",
+      "bytes": 178700,
+      "sha256": "cc6c63665d10fc98ffc7263511a67a675b07ea0de0c2f23ddb9ab71307c8d204",
+      "kind": "screenshot"
+    },
+    {
+      "path": "verification/electron/visual-clarity-SbKb0N/results.json",
+      "bytes": 8884,
+      "sha256": "fa60fc4cc4d27e83bea159b6c0b0a3fb1217c10a2f87d5a6082f5ae6fda6fe0d",
+      "kind": "raw_evidence"
+    },
+    {
+      "path": "verification/electron/visual-clarity-SbKb0N/sample-counts-zoom-1.25.png",
+      "bytes": 47852,
+      "sha256": "e0d5bc07d241715c15b472713eb177d49cc01100740c8402fe1fb269ab40fda6",
+      "kind": "screenshot"
+    },
+    {
+      "path": "verification/electron/visual-clarity-SbKb0N/sample-counts-zoom-1.5.png",
+      "bytes": 74825,
+      "sha256": "d15cbad5eb8b781fccaa363ed3804282780e60f4845a69c9d2959e9621dc0569",
+      "kind": "screenshot"
+    },
+    {
+      "path": "verification/electron/visual-clarity-SbKb0N/sample-counts-zoom-1.png",
+      "bytes": 44717,
+      "sha256": "0b5967e527dcffb5ff190e5ffe50781ab2b84ddf71404819b4e384ddd4a0707a",
+      "kind": "screenshot"
+    },
+    {
+      "path": "verification/electron/visual-clarity-SbKb0N/saved-evidence-counts.png",
+      "bytes": 38092,
+      "sha256": "447e6e24e1fc2e3ec0b4d90a64a84dc4d533e8829b6c039bcc14f5c5e5a86edd",
+      "kind": "screenshot"
+    },
+    {
+      "path": "verification/electron/visual-clarity-j14Sfd/case-details-collapsed.png",
+      "bytes": 44716,
+      "sha256": "c30080b09b5cba2fe0baf81b60580a64833a14776eb901255a656909075fe0ba",
+      "kind": "screenshot"
+    },
+    {
+      "path": "verification/electron/visual-clarity-j14Sfd/case-details-expanded.png",
+      "bytes": 39032,
+      "sha256": "95040b728cefed113208efb7d8b9a18bab5fa196437a216047291b64be3eed10",
+      "kind": "screenshot"
+    },
+    {
+      "path": "verification/electron/visual-clarity-j14Sfd/case-files-zoom-1.25.png",
+      "bytes": 65452,
+      "sha256": "6c2b7d32a944a1e2b13abf179b6be9c0fda97eab7f5a9a9dd47a12c4b3df8215",
+      "kind": "screenshot"
+    },
+    {
+      "path": "verification/electron/visual-clarity-j14Sfd/case-files-zoom-1.5.png",
+      "bytes": 90120,
+      "sha256": "28137250997fe5fe38bb49ef4e517fe24bee65192bfa3cd88caf9ce1cbdeb7ee",
+      "kind": "screenshot"
+    },
+    {
+      "path": "verification/electron/visual-clarity-j14Sfd/case-files-zoom-1.png",
+      "bytes": 75888,
+      "sha256": "5b435f3f2d9499c281b081d1fbfc9e46437719fe0407acc8cf90e9abd941b6e9",
+      "kind": "screenshot"
+    },
+    {
+      "path": "verification/electron/visual-clarity-j14Sfd/labeling-keyboard-scroll.png",
+      "bytes": 95128,
+      "sha256": "da29df57ab1ec5194c26e2cf52ab33fc47cacd7b8c18267c3715469da1083d35",
+      "kind": "screenshot"
+    },
+    {
+      "path": "verification/electron/visual-clarity-j14Sfd/labeling-zoom-1.25.png",
+      "bytes": 61106,
+      "sha256": "a2c239bcaaac8f54e234e195710ca55f8b3ee15bad5fb68b441cfa9a81b1dec4",
+      "kind": "screenshot"
+    },
+    {
+      "path": "verification/electron/visual-clarity-j14Sfd/labeling-zoom-1.5.png",
+      "bytes": 95341,
+      "sha256": "5b236d5042c205b80f7769b549f835bf46c24ea7d013d9baf14c8d74c9368505",
+      "kind": "screenshot"
+    },
+    {
+      "path": "verification/electron/visual-clarity-j14Sfd/labeling-zoom-1.png",
+      "bytes": 51863,
+      "sha256": "cf99c3d3a9844b4d3f52e96d9589f1e21da06e6cc12a585ea01e775ca5a83df6",
+      "kind": "screenshot"
+    },
+    {
+      "path": "verification/electron/visual-clarity-j14Sfd/opening.png",
+      "bytes": 178700,
+      "sha256": "cc6c63665d10fc98ffc7263511a67a675b07ea0de0c2f23ddb9ab71307c8d204",
+      "kind": "screenshot"
+    },
+    {
+      "path": "verification/electron/visual-clarity-j14Sfd/results.json",
+      "bytes": 8762,
+      "sha256": "c74219bef5c72cb9c839bab3c4667d90178a52cc5323b9579205f9e6b00f94ff",
+      "kind": "raw_evidence"
+    },
+    {
+      "path": "verification/electron/visual-clarity-j14Sfd/sample-counts-zoom-1.25.png",
+      "bytes": 47852,
+      "sha256": "e0d5bc07d241715c15b472713eb177d49cc01100740c8402fe1fb269ab40fda6",
+      "kind": "screenshot"
+    },
+    {
+      "path": "verification/electron/visual-clarity-j14Sfd/sample-counts-zoom-1.5.png",
+      "bytes": 74850,
+      "sha256": "1f8e3261acc675bf31c71e911b4b888491d273fb484ea5849ed5fc80d1fe1811",
+      "kind": "screenshot"
+    },
+    {
+      "path": "verification/electron/visual-clarity-j14Sfd/sample-counts-zoom-1.png",
+      "bytes": 44723,
+      "sha256": "d96ff823aec9337479b0b73a5a95462ed0dfcb690d8ac99fb1a1e96f33ac05cd",
+      "kind": "screenshot"
+    },
+    {
+      "path": "verification/electron/visual-clarity-j14Sfd/saved-evidence-counts.png",
+      "bytes": 38092,
+      "sha256": "447e6e24e1fc2e3ec0b4d90a64a84dc4d533e8829b6c039bcc14f5c5e5a86edd",
+      "kind": "screenshot"
+    },
+    {
+      "path": "verification/electron/visual-clarity-KXOjfh/case-details-collapsed.png",
+      "bytes": 44710,
+      "sha256": "774230caa118396c37a60c2156656265b90b0753864925dd565245653dc27a88",
+      "kind": "screenshot"
+    },
+    {
+      "path": "verification/electron/visual-clarity-KXOjfh/case-details-expanded.png",
+      "bytes": 39045,
+      "sha256": "77b5cca6a6382b592dc1a04e1ec5581bfcd7a2193b0844b3be2cfc7657863acd",
+      "kind": "screenshot"
+    },
+    {
+      "path": "verification/electron/visual-clarity-KXOjfh/case-files-zoom-1.25.png",
+      "bytes": 65428,
+      "sha256": "be336194559466cf34f9a6808161f3c4a52a5f90938edba9cd2cb5688e00017c",
+      "kind": "screenshot"
+    },
+    {
+      "path": "verification/electron/visual-clarity-KXOjfh/case-files-zoom-1.5.png",
+      "bytes": 90111,
+      "sha256": "94d6ee5fab0a27a710edd357e548a027ffbf3f0e8bc4a4adca6721e30d16b650",
+      "kind": "screenshot"
+    },
+    {
+      "path": "verification/electron/visual-clarity-KXOjfh/case-files-zoom-1.png",
+      "bytes": 75888,
+      "sha256": "5b435f3f2d9499c281b081d1fbfc9e46437719fe0407acc8cf90e9abd941b6e9",
+      "kind": "screenshot"
+    },
+    {
+      "path": "verification/electron/visual-clarity-KXOjfh/labeling-keyboard-scroll.png",
+      "bytes": 94736,
+      "sha256": "e094e2f8c5427f53548251e4c1c1c78ef488020595b8008a55ad0054012ae3e7",
+      "kind": "screenshot"
+    },
+    {
+      "path": "verification/electron/visual-clarity-KXOjfh/labeling-zoom-1.25.png",
+      "bytes": 61126,
+      "sha256": "d4a2603550ab1e8f26e7c8037357bbbd186d97bfb3416044aa8e45c0174f060a",
+      "kind": "screenshot"
+    },
+    {
+      "path": "verification/electron/visual-clarity-KXOjfh/labeling-zoom-1.5.png",
+      "bytes": 95341,
+      "sha256": "5b236d5042c205b80f7769b549f835bf46c24ea7d013d9baf14c8d74c9368505",
+      "kind": "screenshot"
+    },
+    {
+      "path": "verification/electron/visual-clarity-KXOjfh/labeling-zoom-1.png",
+      "bytes": 51865,
+      "sha256": "c579045fd7c43b4f7cc72e251f8c5bc09c6fc4ff1c4498817731b2512f077cc6",
+      "kind": "screenshot"
+    },
+    {
+      "path": "verification/electron/visual-clarity-KXOjfh/opening.png",
+      "bytes": 178700,
+      "sha256": "cc6c63665d10fc98ffc7263511a67a675b07ea0de0c2f23ddb9ab71307c8d204",
+      "kind": "screenshot"
+    },
+    {
+      "path": "verification/electron/visual-clarity-KXOjfh/results.json",
+      "bytes": 9099,
+      "sha256": "df530bbbdf81543c4467f6f461a3b2988298361ae43188272b231ced25cb1831",
+      "kind": "raw_evidence"
+    },
+    {
+      "path": "verification/electron/visual-clarity-KXOjfh/sample-counts-zoom-1.25.png",
+      "bytes": 47848,
+      "sha256": "237ef17912a6fcdde474d94db6e487a2d4ac2a24c964468069a5304e936f83d1",
+      "kind": "screenshot"
+    },
+    {
+      "path": "verification/electron/visual-clarity-KXOjfh/sample-counts-zoom-1.5.png",
+      "bytes": 74820,
+      "sha256": "41a48f9d4723ba0e5589f81fcee3c51e31765d128ac950ef34939d9442bb0f07",
+      "kind": "screenshot"
+    },
+    {
+      "path": "verification/electron/visual-clarity-KXOjfh/sample-counts-zoom-1.png",
+      "bytes": 44717,
+      "sha256": "0b5967e527dcffb5ff190e5ffe50781ab2b84ddf71404819b4e384ddd4a0707a",
+      "kind": "screenshot"
+    },
+    {
+      "path": "verification/electron/visual-clarity-KXOjfh/saved-evidence-counts.png",
+      "bytes": 38092,
+      "sha256": "447e6e24e1fc2e3ec0b4d90a64a84dc4d533e8829b6c039bcc14f5c5e5a86edd",
+      "kind": "screenshot"
+    },
+    {
+      "path": "verification/qualification/visual-clarity-Xb96Cs/case-details-collapsed.png",
+      "bytes": 44711,
+      "sha256": "4fb0387a26106946d7c9fa4934547ee74413b77517f2eb5b2018ee8e3cc3e964",
+      "kind": "screenshot"
+    },
+    {
+      "path": "verification/qualification/visual-clarity-Xb96Cs/case-details-expanded.png",
+      "bytes": 38997,
+      "sha256": "6668f59d5233741e1e32a29dcb089304ece470e7d84c560d1fc9f2012d4547f0",
+      "kind": "screenshot"
+    },
+    {
+      "path": "verification/qualification/visual-clarity-Xb96Cs/case-files-zoom-1.25.png",
+      "bytes": 55392,
+      "sha256": "a9ee48f17276a1f47a1959b7e7c35fe9d1d6e8990b7eb0501cad7e089f3724b1",
+      "kind": "screenshot"
+    },
+    {
+      "path": "verification/qualification/visual-clarity-Xb96Cs/case-files-zoom-1.5.png",
+      "bytes": 90105,
+      "sha256": "cd1cb7c313645a1f45d35d49e3545a070ab9f1a640ffd94044994f1048e789cd",
+      "kind": "screenshot"
+    },
+    {
+      "path": "verification/qualification/visual-clarity-Xb96Cs/case-files-zoom-1.png",
+      "bytes": 67745,
+      "sha256": "0edbac735231da7944c6e963f8c822ed82ce940223acaf813907a9e93b64ab5f",
+      "kind": "screenshot"
+    },
+    {
+      "path": "verification/qualification/visual-clarity-Xb96Cs/labeling-keyboard-scroll.png",
+      "bytes": 94844,
+      "sha256": "c2bd79f6ca85229d3f6ccb5acc2a03ad0436ec0ebc98ed3c35093fc59e2b5b4f",
+      "kind": "screenshot"
+    },
+    {
+      "path": "verification/qualification/visual-clarity-Xb96Cs/labeling-zoom-1.25.png",
+      "bytes": 61131,
+      "sha256": "658ab67d3605a0c40c6102f03615123796dbdf2838077d6f7e9c9ee01473b818",
+      "kind": "screenshot"
+    },
+    {
+      "path": "verification/qualification/visual-clarity-Xb96Cs/labeling-zoom-1.5.png",
+      "bytes": 95350,
+      "sha256": "ed3e296ff3034daeeecbb64d4dfa8222c8b7dc1e8a3d36b24d1c71f4024a2beb",
+      "kind": "screenshot"
+    },
+    {
+      "path": "verification/qualification/visual-clarity-Xb96Cs/labeling-zoom-1.png",
+      "bytes": 51861,
+      "sha256": "58de22ef66fb82509c28d540549a7c5226fdc5fa45079f12d30061f963730188",
+      "kind": "screenshot"
+    },
+    {
+      "path": "verification/qualification/visual-clarity-Xb96Cs/opening.png",
+      "bytes": 178700,
+      "sha256": "cc6c63665d10fc98ffc7263511a67a675b07ea0de0c2f23ddb9ab71307c8d204",
+      "kind": "screenshot"
+    },
+    {
+      "path": "verification/qualification/visual-clarity-Xb96Cs/results.json",
+      "bytes": 9099,
+      "sha256": "34ea757baf985f01cde462689f966e0c76d14cee46e010fb31c843925e0c28ca",
+      "kind": "raw_evidence"
+    },
+    {
+      "path": "verification/qualification/visual-clarity-Xb96Cs/sample-counts-zoom-1.25.png",
+      "bytes": 47858,
+      "sha256": "232a2564ab95c0b0a10ee8a48932b23b64c296c19a1384137879056ad3b5772d",
+      "kind": "screenshot"
+    },
+    {
+      "path": "verification/qualification/visual-clarity-Xb96Cs/sample-counts-zoom-1.5.png",
+      "bytes": 74809,
+      "sha256": "c0f90f40f38a61fe7e4ac864580859a5a6edf46b5aca1bc1e75225b98d7fc073",
+      "kind": "screenshot"
+    },
+    {
+      "path": "verification/qualification/visual-clarity-Xb96Cs/sample-counts-zoom-1.png",
+      "bytes": 44717,
+      "sha256": "0b5967e527dcffb5ff190e5ffe50781ab2b84ddf71404819b4e384ddd4a0707a",
+      "kind": "screenshot"
+    },
+    {
+      "path": "verification/qualification/visual-clarity-Xb96Cs/saved-evidence-counts.png",
+      "bytes": 38092,
+      "sha256": "447e6e24e1fc2e3ec0b4d90a64a84dc4d533e8829b6c039bcc14f5c5e5a86edd",
+      "kind": "screenshot"
+    },
+    {
+      "path": "verification/qualification/visual-all-ci-path-attempt1.log",
+      "bytes": 1295,
+      "sha256": "921b719185167a01eb74691f74e99ea7a4c5dc88821260fd81f73fdb0d9c7269",
+      "kind": "command_log"
+    },
+    {
+      "path": "verification/qualification/visual-all-resize-attempt1.log",
+      "bytes": 1290,
+      "sha256": "23ea972958d43e2fc4d0f71290361c6186a2434cf36e72931556200fe4c37ed1",
+      "kind": "command_log"
+    },
+    {
+      "path": "verification/qualification/visual-all-short-attempt1.log",
+      "bytes": 1495,
+      "sha256": "61fe33943789aaf7589e7e1f6f125feeb3d2f2ed767ccf7bc17eb0d89f6ee7ee",
+      "kind": "command_log"
+    },
+    {
+      "path": "verification/qualification/visual-all-short-attempt2.log",
+      "bytes": 1088,
+      "sha256": "93392b15a1c3c2556b80a4d6c8f952177aade5826d098b57eba593d86d3726a6",
+      "kind": "command_log"
+    },
+    {
+      "path": "verification/qualification/visual-evaluate-focus-short.log",
+      "bytes": 654,
+      "sha256": "64c79443f2800a96cf93c0a8c5d34fe9e1ce280f2a47af73618c826c5f2e8fe6",
+      "kind": "command_log"
+    },
+    {
+      "path": "verification/qualification/visual-evaluate-short-attempt1.log",
+      "bytes": 654,
+      "sha256": "f90a46bdb4fdaec1efea0330d199b32ee359fb4d4c972c66da45a23b0f846700",
+      "kind": "command_log"
+    },
+    {
+      "path": "verification/qualification/visual-library-short-attempt1.log",
+      "bytes": 663,
+      "sha256": "1fac4ba88098d744e7551f8dc8a828da61e452cb272b09d6c5de50560da04ffd",
+      "kind": "command_log"
+    },
+    {
+      "path": "verification/qualification/visual-report-generation-first-attempt.log",
+      "bytes": 442,
+      "sha256": "0713b3b9121b00a5162ce972924061f91e7d2178936587590ba3ff0feec0d784",
+      "kind": "command_log"
+    },
+    {
+      "path": "verification/qualification/visual-test-format-check.log",
+      "bytes": 68,
+      "sha256": "f20510a9da4717c51c4cffee6d0dd88d6c9a723d0a83711d01216f5b48961283",
+      "kind": "command_log"
+    },
+    {
+      "path": "verification/qualification/visual-test-format-correction.log",
+      "bytes": 39,
+      "sha256": "e64317af942c73e8712b1f10b7bf4965671767d09b841be091a42b3654896311",
+      "kind": "command_log"
+    },
+    {
+      "path": "verification/qualification/visual-test-format-first-attempt.log",
+      "bytes": 333,
+      "sha256": "79beef488337e22baab10d522bd82df0b40e94ccccba0c3faf51d6d2dfbde484",
+      "kind": "command_log"
+    },
+    {
+      "path": "verification/qualification/visual-release/launch-attempt2.log",
+      "bytes": 140,
+      "sha256": "0dde8e1e57ca7ebe09826b8fea8766e5c331d0c3d889e47c14f461a505ee33d5",
+      "kind": "supplementary_log"
+    },
+    {
+      "path": "verification/qualification/visual-release/export-guidance-short.log",
+      "bytes": 621,
+      "sha256": "da2fbfd69c2993e2e61fe6c5f3bc21fd6ca900e448f0875e5f3cabdd83bcfb01",
+      "kind": "supplementary_log"
+    },
+    {
+      "path": "verification/qualification/hosted-recovery/setup-local.log",
+      "bytes": 126,
+      "sha256": "2a5ba75fd43193be8773fa9fbbbce6739cb14577cdfcecee932fc0def6416a41",
+      "kind": "setup_log"
+    },
+    {
+      "path": "verification/qualification/hosted-recovery/setup-local-explicit-python.log",
+      "bytes": 741,
+      "sha256": "f8b53e7b7ba813c47b3e29eba908f1a9db0eb190ffb021ef1cea70fcd0d5a67d",
+      "kind": "setup_log"
+    },
+    {
+      "path": "verification/qualification/release-affected-0243383cf1/accessibility.log",
+      "bytes": 112,
+      "sha256": "c03a0e4ecc253b9df45645951a953f43739657aa817677d626c6098cafab315b",
+      "kind": "affected_journey_evidence"
+    },
+    {
+      "path": "verification/qualification/release-affected-0243383cf1/desktop.log",
+      "bytes": 5641,
+      "sha256": "3c048f47bfa2cfea9ed1291be02dc5fc772431f7d1cfb25bcd4d4d3c4e017bbe",
+      "kind": "affected_journey_evidence"
+    },
+    {
+      "path": "verification/qualification/release-affected-0243383cf1/evaluation.log",
+      "bytes": 562,
+      "sha256": "1514c2ecdfbf376deac4ef94bf697ece21f096966291ba3c12d4bd7a6a866791",
+      "kind": "affected_journey_evidence"
+    },
+    {
+      "path": "verification/qualification/release-affected-0243383cf1/format.log",
+      "bytes": 66,
+      "sha256": "17aa973d3f004560237d9a95171210b0671deff23d61628eecf7322ff5938f20",
+      "kind": "affected_journey_evidence"
+    },
+    {
+      "path": "verification/qualification/release-affected-0243383cf1/library.log",
+      "bytes": 488,
+      "sha256": "adf1654e7e1e4e8f582f6b2407b6a271b82857cccbaf2b73160971da1a8f500b",
+      "kind": "affected_journey_evidence"
+    },
+    {
+      "path": "verification/qualification/release-affected-0243383cf1/parity.log",
+      "bytes": 1107,
+      "sha256": "c74b5097baf7ec7a0bed71e2eb775db45a1596ae596759a2fa2590f36d379441",
+      "kind": "affected_journey_evidence"
+    },
+    {
+      "path": "verification/qualification/release-affected-0243383cf1/results.json",
+      "bytes": 863,
+      "sha256": "33a2d735636ce90aee25fb71110b83ba14eead3236576444a49abd4733280132",
+      "kind": "affected_journey_evidence"
+    },
+    {
+      "path": "verification/qualification/release-affected-0243383cf1/saved-context.log",
+      "bytes": 530,
+      "sha256": "2d4d066e2f52876a2a8e158ed71d2c19296dc6a3452139de9ef068503cee2050",
+      "kind": "affected_journey_evidence"
+    },
+    {
+      "path": "verification/qualification/release-affected-0243383cf1/saved-flow.log",
+      "bytes": 874,
+      "sha256": "f69cdad38f8d9046ea5d4bad5464e3633bbd428057806fdc28c97aaa67d2ed85",
+      "kind": "affected_journey_evidence"
+    },
+    {
+      "path": "verification/qualification/visual-release/evaluation-after-help-fix.log",
+      "bytes": 312,
+      "sha256": "4c0d342920ad9326796280200f96844d7be8050353d89c05d853a8d1018932fe",
+      "kind": "affected_journey_evidence"
+    }
+  ],
+  "screenshot_count": 90,
+  "final_evidence_counts": {
+    "counts": {
+      "samples": 2,
+      "observations": 4,
+      "notices": 0,
+      "ranges_per_sample": 2
+    },
+    "summary": {
+      "total": 4,
+      "Review": 0,
+      "Unknown": 0,
+      "No finding": 4,
+      "rows_with_gaps": 0
+    },
+    "saved_not_live": true
+  },
+  "limitations": [
+    "Automated owned-fixture checks, not unfamiliar-human acceptance.",
+    "Native file dialog is substituted to select the published owned case; real controls perform all actions.",
+    "Same Windows host, Electron zoom and a small window; no OS display/account matrix or screen-reader certification.",
+    "No live-capture behavior, performance, full qualification, hosted result or unfamiliar-user comprehension is established by this short check.",
+    "Resize/zoom dismissal was added after focused code review; it was verified after the fix, without a recorded failing pre-fix UI execution.",
+    "Recorded source/build hashes identify the tested local snapshot. Earlier hosted recovery candidate 937a19b predates these UI changes."
+  ],
+  "reported_setup_incidents": [
+    {
+      "source": "root observation; text-only incident, not raw log",
+      "kind": "computer_use_minimized_window",
+      "detail": "Initial computer-use state request reported that the window was minimized and required activation plus a refreshed window reference. A later owned candidate window was used."
+    },
+    {
+      "source": "root observation; raw tool output truncated and not saved to file",
+      "kind": "initial_helper_profile_cache_failure",
+      "detail": "First helper launch against a prior profile closed before completion with cache Access denied 0x5 / unable to move cache. A fresh owned walkthrough profile succeeded; launch-attempt2.log is retained."
+    },
+    {
+      "source": "retained setup logs included in artifact manifest",
+      "kind": "windows_python_alias",
+      "detail": "Default setup resolved the WindowsApps Python alias and failed; explicit interpreter setup passed."
+    }
+  ],
+  "review": {
+    "scope": "Focused review of the small UI diff and recorded evidence; not a full security audit or a new independent user study.",
+    "security_engineer_rating": 8,
+    "internship_portfolio_rating": 8.5,
+    "rating_max": 10,
+    "unchanged_reason": "Less repetition and better keyboard access improve usability, but independent comprehension and broader fuzzing are still unverified.",
+    "findings": [
+      {
+        "issue": "Long help lacked keyboard focus",
+        "resolution": "Focusable note panel; Tab/PageDown/Escape verified."
+      },
+      {
+        "issue": "Open help could retain stale position after window/zoom changes",
+        "resolution": "Dismiss on resize with effect cleanup; all three help panels verified after fix."
+      }
+    ],
+    "remaining_material_bug_found": false
+  },
+  "affected_journey_followup": {
+    "order": [
+      "original_batch",
+      "test_expectation_update",
+      "evaluation_rerun"
+    ],
+    "original_batch": [
+      {
+        "id": "desktop",
+        "exit_code": 0,
+        "seconds": 29.516,
+        "log": "desktop.log"
+      },
+      {
+        "id": "library",
+        "exit_code": 0,
+        "seconds": 3.609,
+        "log": "library.log"
+      },
+      {
+        "id": "saved-flow",
+        "exit_code": 0,
+        "seconds": 5.172,
+        "log": "saved-flow.log"
+      },
+      {
+        "id": "saved-context",
+        "exit_code": 0,
+        "seconds": 4.891,
+        "log": "saved-context.log"
+      },
+      {
+        "id": "evaluation",
+        "exit_code": 1,
+        "seconds": 16.719,
+        "log": "evaluation.log"
+      },
+      {
+        "id": "parity",
+        "exit_code": 0,
+        "seconds": 27.047,
+        "log": "parity.log"
+      },
+      {
+        "id": "accessibility",
+        "exit_code": 0,
+        "seconds": 14.969,
+        "log": "accessibility.log"
+      },
+      {
+        "id": "format",
+        "exit_code": 0,
+        "seconds": 1.547,
+        "log": "format.log"
+      }
+    ],
+    "failure": {
+      "step": "evaluation",
+      "seconds": 16.719,
+      "reason": "Existing test expected the supporting current-source explanation at its former always-visible location. The explanation intentionally moved to the Labeling guidance bubble.",
+      "application_defect_claimed": false
+    },
+    "narrow_test_update": {
+      "path": "desktop/evaluation.test.cjs",
+      "sha256": "facbffbf04c5d4b675482eb0ce5eefe35f28c0363bc87b0aef41f61bdf722a28",
+      "behavior": "Open Labeling guidance through its button, assert the visible note retains current-source and labels-never-enter-detection explanations, press Escape, then continue unchanged existing workflows.",
+      "timeout_relaxed": false
+    },
+    "rerun": {
+      "status": "passed",
+      "journeys": 4,
+      "log": "verification/qualification/visual-release/evaluation-after-help-fix.log"
+    },
+    "limitations": [
+      "This follow-up has not itself established a final hosted or clean-commit result. The original batch remains failed for its evaluation step."
+    ]
+  },
+  "published_screenshots": [
+    {
+      "path": "docs/surge-opening.png",
+      "source": "verification/qualification/visual-clarity-Xb96Cs/opening.png",
+      "sha256": "cc6c63665d10fc98ffc7263511a67a675b07ea0de0c2f23ddb9ab71307c8d204"
+    },
+    {
+      "path": "docs/surge-saved-results.png",
+      "source": "verification/qualification/visual-clarity-Xb96Cs/saved-evidence-counts.png",
+      "sha256": "447e6e24e1fc2e3ec0b4d90a64a84dc4d533e8829b6c039bcc14f5c5e5a86edd"
+    }
+  ]
+}

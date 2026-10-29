@@ -1,0 +1,694 @@
+{
+  "schema": "surge-case-recovery-validation-v1",
+  "generated_utc": "2026-10-24T03:29:43.111821+00:00",
+  "status": "passed_local_bounded_milestone",
+  "source_scope": "Existing dirty working tree; selected final sources and patch against previous hosted candidate preserved. No new clean-checkout or hosted execution.",
+  "previous_hosted_commit": "064c6a1bf62892329585e7666a65ee7919e8a140",
+  "hosted_requalification": "not_run_for_new_source",
+  "human_acceptance": "pending",
+  "broader_fuzzing": {
+    "status": "incomplete",
+    "targets": {
+      "T1": "not_run",
+      "T2": "not_run",
+      "T3": "not_run"
+    }
+  },
+  "sources": [
+    {
+      "path": "desktop/case-library.cjs",
+      "bytes": 7941,
+      "sha256": "a425b17b13e19a67ac5c8730f05b5bef78edc4a4b8d969ccbe22102c2f459084"
+    },
+    {
+      "path": "desktop/case-library.test.cjs",
+      "bytes": 5720,
+      "sha256": "7fbd8d373e78f04dce7effa49237767230c5107b29f2ea3bc0a97438e49938b4"
+    },
+    {
+      "path": "desktop/case-recovery.test.cjs",
+      "bytes": 30743,
+      "sha256": "977993db40b2909307e29da227c6f953e1c3f3b31487ecdc0f1972210247903b"
+    },
+    {
+      "path": "desktop/case-recovery-child.cjs",
+      "bytes": 9672,
+      "sha256": "e8ba0f642621d2d22215577d5196fcf1a3a2f6609cd1eab7f3722453ce713653"
+    },
+    {
+      "path": "test_case_recovery.py",
+      "bytes": 4182,
+      "sha256": "ee7760710d69005dcceffcbc9b75f2b465ad00b8b9f4d087b64929565a219e1a"
+    },
+    {
+      "path": "desktop/package.json",
+      "bytes": 1107,
+      "sha256": "bcde4972439b477c1f369382f8f74f225962cad04d1a19cc0e41c65f6f949b52"
+    },
+    {
+      "path": "scripts/qualify.py",
+      "bytes": 29567,
+      "sha256": "3ec37a3aa385a3c0487aceeebee6eadb791add6f4c536188e25727cdc7704ff8"
+    },
+    {
+      "path": ".github/workflows/ci.yml",
+      "bytes": 7860,
+      "sha256": "dad1ca0b40d3e3e8aa3911cde80797f140c058d47e6d7d911174946bee8db782"
+    },
+    {
+      "path": "docs/case-recovery-acceptance.md",
+      "bytes": 4936,
+      "sha256": "5533f78ad2b2c6c88da9271d27186fc322ac0c5bbe0b94ea2930c538435a189a"
+    },
+    {
+      "path": "docs/case-recovery-results.md",
+      "bytes": 11783,
+      "sha256": "3efe0f8b113b827118adcead968abf079667bba0a6e237ca3907dfc8d602e63f"
+    },
+    {
+      "path": "docs/qualification.md",
+      "bytes": 13100,
+      "sha256": "83b80ba5a9fa5ef9acfa380c1fb914c89c6fab839e46ca08781e598d0ba0bb0a"
+    }
+  ],
+  "criteria": [
+    {
+      "id": "R1",
+      "status": "passed_locally",
+      "scope": "Save/import publication and original/unrelated evidence preservation."
+    },
+    {
+      "id": "R2",
+      "status": "passed_locally",
+      "scope": "New rename interruptions preserve complete metadata and allow recovery; old unexpected residue untouched."
+    },
+    {
+      "id": "R3",
+      "status": "passed_locally",
+      "scope": "Verified no-overwrite export publication on tested local filesystem; unsupported link behavior simulated separately."
+    },
+    {
+      "id": "R4",
+      "status": "passed_locally",
+      "scope": "Fresh-process recovery, bad metadata classification and actual worker invalid-open state preservation."
+    },
+    {
+      "id": "R5",
+      "status": "passed_locally",
+      "scope": "Exact injected faults and primary errors; accurate post-publication cleanup warning."
+    },
+    {
+      "id": "R6",
+      "status": "passed_locally",
+      "scope": "Fixed48 scenarios repeated twice; source/evidence hashes and repeatability verified."
+    },
+    {
+      "id": "R7",
+      "status": "passed_locally",
+      "scope": "Local Python/desktop/UI integration passed; required CI upload configured but new hosted execution not run."
+    }
+  ],
+  "campaigns": [
+    {
+      "attempt": "case-recovery-2026-10-24T03-16-15-558Z-a02581a8",
+      "report_file": {
+        "path": "verification/qualification/case-recovery-2026-10-24T03-16-15-558Z-a02581a8/report.json",
+        "bytes": 21273,
+        "sha256": "759bd9c9385f664de0c1ad40234d5ad1cb6e8a96bc58af6c7a4ff1fbb7efe26c"
+      },
+      "manifest": {
+        "path": "verification/qualification/case-recovery-2026-10-24T03-16-15-558Z-a02581a8/evidence-manifest.json",
+        "bytes": 284738,
+        "sha256": "848340097b1b38828e44b434ff5fa3b097d02cbbdb44d8ebf1e91927f9f7356f"
+      },
+      "metrics": {
+        "schema": 1,
+        "status": "failed",
+        "started_utc": "2026-10-24T03:16:15.558Z",
+        "finished_utc": "2026-10-24T03:17:06.509Z",
+        "elapsed_ms": 50951,
+        "bounds": {
+          "scenarios": 48,
+          "repeats": 2,
+          "child_ms": 5000,
+          "campaign_ms": 300000,
+          "logs_bytes": 10485760,
+          "fixtures_bytes": 67108864,
+          "input_bytes": 262144
+        },
+        "named_scenarios": 48,
+        "expected_executions": 96,
+        "completed_executions": 96,
+        "passed_executions": 70,
+        "failed_executions": 26,
+        "unexecuted": 0,
+        "log_bytes": 0,
+        "retained_bytes_before_final_report": 40489906,
+        "budget_error": null,
+        "sources": [
+          {
+            "path": "desktop/case-library.cjs",
+            "bytes": 6347,
+            "sha256": "07ecde910ba51e8cfbc03009bfa8db25d84d32126c54f5ab9521ca4c44ca5951"
+          },
+          {
+            "path": "desktop/case-recovery.test.cjs",
+            "bytes": 26467,
+            "sha256": "070ed6a8bfd177d383ed684dd45572ee32f74b1979e86839920dbf8f3d0b39dd"
+          },
+          {
+            "path": "desktop/case-recovery-child.cjs",
+            "bytes": 9672,
+            "sha256": "e8ba0f642621d2d22215577d5196fcf1a3a2f6609cd1eab7f3722453ce713653"
+          },
+          {
+            "path": "docs/case-recovery-acceptance.md",
+            "bytes": 4936,
+            "sha256": "5533f78ad2b2c6c88da9271d27186fc322ac0c5bbe0b94ea2930c538435a189a"
+          }
+        ],
+        "sources_unchanged": [
+          {
+            "path": "desktop/case-library.cjs",
+            "unchanged": true
+          },
+          {
+            "path": "desktop/case-recovery.test.cjs",
+            "unchanged": true
+          },
+          {
+            "path": "desktop/case-recovery-child.cjs",
+            "unchanged": true
+          },
+          {
+            "path": "docs/case-recovery-acceptance.md",
+            "unchanged": true
+          }
+        ],
+        "limitations": [
+          "Owned simple exact-byte verifier; actual portable-case reader is a separate integration check.",
+          "Process termination is not a power-loss or filesystem durability test.",
+          "No real disk exhaustion, permission changes, external applications, network shares, or hostile concurrent writers.",
+          "Unfamiliar-tester acceptance remains pending; broader T1/T2/T3 fuzzing remains unfinished.",
+          "This local run does not qualify later changes on hosted Windows CI."
+        ]
+      }
+    },
+    {
+      "attempt": "case-recovery-2026-10-24T03-20-56-371Z-c72b2c09",
+      "report_file": {
+        "path": "verification/qualification/case-recovery-2026-10-24T03-20-56-371Z-c72b2c09/report.json",
+        "bytes": 7681,
+        "sha256": "c13999d6d3001dd4a00664f39f0266a5f8fd572dcffab038541d9e26ce75d623"
+      },
+      "manifest": {
+        "path": "verification/qualification/case-recovery-2026-10-24T03-20-56-371Z-c72b2c09/evidence-manifest.json",
+        "bytes": 282759,
+        "sha256": "9f6f7432403f82e7cb65c0ea9a66491b01ecf299942c10c120b34b7247d3b5d8"
+      },
+      "metrics": {
+        "schema": 1,
+        "status": "passed",
+        "started_utc": "2026-10-24T03:20:56.371Z",
+        "finished_utc": "2026-10-24T03:21:25.409Z",
+        "elapsed_ms": 29038,
+        "bounds": {
+          "scenarios": 48,
+          "repeats": 2,
+          "child_ms": 5000,
+          "campaign_ms": 300000,
+          "logs_bytes": 10485760,
+          "fixtures_bytes": 67108864,
+          "input_bytes": 262144
+        },
+        "named_scenarios": 48,
+        "expected_executions": 96,
+        "completed_executions": 96,
+        "passed_executions": 96,
+        "failed_executions": 0,
+        "unexecuted": 0,
+        "log_bytes": 0,
+        "ipc_log_bytes": 101036,
+        "combined_log_bytes": 101036,
+        "retained_bytes_before_final_report": 40342009,
+        "retained_bytes_including_report_and_manifest": 40632449,
+        "budget_error": null,
+        "sources": [
+          {
+            "path": "desktop/case-library.cjs",
+            "bytes": 7941,
+            "sha256": "a425b17b13e19a67ac5c8730f05b5bef78edc4a4b8d969ccbe22102c2f459084"
+          },
+          {
+            "path": "desktop/case-recovery.test.cjs",
+            "bytes": 30743,
+            "sha256": "977993db40b2909307e29da227c6f953e1c3f3b31487ecdc0f1972210247903b"
+          },
+          {
+            "path": "desktop/case-recovery-child.cjs",
+            "bytes": 9672,
+            "sha256": "e8ba0f642621d2d22215577d5196fcf1a3a2f6609cd1eab7f3722453ce713653"
+          },
+          {
+            "path": "docs/case-recovery-acceptance.md",
+            "bytes": 4936,
+            "sha256": "5533f78ad2b2c6c88da9271d27186fc322ac0c5bbe0b94ea2930c538435a189a"
+          }
+        ],
+        "sources_unchanged": [
+          {
+            "path": "desktop/case-library.cjs",
+            "unchanged": true
+          },
+          {
+            "path": "desktop/case-recovery.test.cjs",
+            "unchanged": true
+          },
+          {
+            "path": "desktop/case-recovery-child.cjs",
+            "unchanged": true
+          },
+          {
+            "path": "docs/case-recovery-acceptance.md",
+            "unchanged": true
+          }
+        ],
+        "limitations": [
+          "Owned simple exact-byte verifier; actual portable-case reader is a separate integration check.",
+          "Process termination is not a power-loss or filesystem durability test.",
+          "No real disk exhaustion, permission changes, external applications, network shares, or hostile concurrent writers.",
+          "Unfamiliar-tester acceptance remains pending; broader T1/T2/T3 fuzzing remains unfinished.",
+          "This local run does not qualify later changes on hosted Windows CI."
+        ]
+      }
+    },
+    {
+      "attempt": "case-recovery-2026-10-24T03-22-16-965Z-7c5b0a5c",
+      "report_file": {
+        "path": "verification/qualification/case-recovery-2026-10-24T03-22-16-965Z-7c5b0a5c/report.json",
+        "bytes": 7681,
+        "sha256": "1d6f45aaeabcd60f7ba0746953e78faad016ff8602a7f72ccd93d1b7196deed4"
+      },
+      "manifest": {
+        "path": "verification/qualification/case-recovery-2026-10-24T03-22-16-965Z-7c5b0a5c/evidence-manifest.json",
+        "bytes": 282759,
+        "sha256": "22aeed396e0f24332bda452e5e8a7c8089ca5af9d8daaecf482dca96b3573a8b"
+      },
+      "metrics": {
+        "schema": 1,
+        "status": "passed",
+        "started_utc": "2026-10-24T03:22:16.965Z",
+        "finished_utc": "2026-10-24T03:22:44.732Z",
+        "elapsed_ms": 27767,
+        "bounds": {
+          "scenarios": 48,
+          "repeats": 2,
+          "child_ms": 5000,
+          "campaign_ms": 300000,
+          "logs_bytes": 10485760,
+          "fixtures_bytes": 67108864,
+          "input_bytes": 262144
+        },
+        "named_scenarios": 48,
+        "expected_executions": 96,
+        "completed_executions": 96,
+        "passed_executions": 96,
+        "failed_executions": 0,
+        "unexecuted": 0,
+        "log_bytes": 0,
+        "ipc_log_bytes": 101036,
+        "combined_log_bytes": 101036,
+        "retained_bytes_before_final_report": 40342000,
+        "retained_bytes_including_report_and_manifest": 40632440,
+        "budget_error": null,
+        "sources": [
+          {
+            "path": "desktop/case-library.cjs",
+            "bytes": 7941,
+            "sha256": "a425b17b13e19a67ac5c8730f05b5bef78edc4a4b8d969ccbe22102c2f459084"
+          },
+          {
+            "path": "desktop/case-recovery.test.cjs",
+            "bytes": 30743,
+            "sha256": "977993db40b2909307e29da227c6f953e1c3f3b31487ecdc0f1972210247903b"
+          },
+          {
+            "path": "desktop/case-recovery-child.cjs",
+            "bytes": 9672,
+            "sha256": "e8ba0f642621d2d22215577d5196fcf1a3a2f6609cd1eab7f3722453ce713653"
+          },
+          {
+            "path": "docs/case-recovery-acceptance.md",
+            "bytes": 4936,
+            "sha256": "5533f78ad2b2c6c88da9271d27186fc322ac0c5bbe0b94ea2930c538435a189a"
+          }
+        ],
+        "sources_unchanged": [
+          {
+            "path": "desktop/case-library.cjs",
+            "unchanged": true
+          },
+          {
+            "path": "desktop/case-recovery.test.cjs",
+            "unchanged": true
+          },
+          {
+            "path": "desktop/case-recovery-child.cjs",
+            "unchanged": true
+          },
+          {
+            "path": "docs/case-recovery-acceptance.md",
+            "unchanged": true
+          }
+        ],
+        "limitations": [
+          "Owned simple exact-byte verifier; actual portable-case reader is a separate integration check.",
+          "Process termination is not a power-loss or filesystem durability test.",
+          "No real disk exhaustion, permission changes, external applications, network shares, or hostile concurrent writers.",
+          "Unfamiliar-tester acceptance remains pending; broader T1/T2/T3 fuzzing remains unfinished.",
+          "This local run does not qualify later changes on hosted Windows CI."
+        ]
+      }
+    }
+  ],
+  "initial_failure_interpretation": {
+    "failed_executions": 26,
+    "distinct_scenarios": 13,
+    "reproduced_defect_scenarios": 7,
+    "unmet_publication_control_scenarios": 6,
+    "note": "The baseline audit's application_failures field is an aggregate failed-execution count, not a defect count."
+  },
+  "local_checks": [
+    {
+      "schema": "surge-local-recovery-check-v1",
+      "step": {
+        "id": "deletion-ui",
+        "argv": [
+          "node",
+          "library-deletion.test.cjs"
+        ],
+        "cwd": "desktop",
+        "timeout_seconds": 120
+      },
+      "status": "passed",
+      "started_utc": "2026-10-24T03:23:58.810458+00:00",
+      "result": {
+        "status": "passed",
+        "exit_code": 0,
+        "cleanup": "not_needed",
+        "elapsed_seconds": 2.218,
+        "log_sha256": "7f12827ee77c04c562b4b3c06ab225b763f98886a074516d64c25079e0c4d32a",
+        "log_bytes": 295
+      },
+      "finished_utc": "2026-10-24T03:24:01.044955+00:00",
+      "evidence": {
+        "path": "verification/qualification/case-recovery-milestone/deletion-ui-cca6f380f358/result.json",
+        "bytes": 587,
+        "sha256": "3532c5aba28ab259b4e278787b18bf0a4154ce545f7239af870daa5aa56ef670"
+      },
+      "log": {
+        "path": "verification/qualification/case-recovery-milestone/deletion-ui-cca6f380f358/command.log",
+        "bytes": 295,
+        "sha256": "7f12827ee77c04c562b4b3c06ab225b763f98886a074516d64c25079e0c4d32a"
+      }
+    },
+    {
+      "schema": "surge-local-recovery-check-v1",
+      "step": {
+        "id": "desktop-regressions",
+        "argv": [
+          "node",
+          "--test",
+          "security.test.cjs",
+          "runtime.test.cjs",
+          "case-library.test.cjs",
+          "case-recovery.test.cjs"
+        ],
+        "cwd": "desktop",
+        "timeout_seconds": 120
+      },
+      "status": "passed",
+      "started_utc": "2026-10-24T03:22:16.769664+00:00",
+      "result": {
+        "status": "passed",
+        "exit_code": 0,
+        "cleanup": "not_needed",
+        "elapsed_seconds": 28.093,
+        "log_sha256": "1ba5fce9f20a42f5724660a11dc3b3d49ff4a9460d5b21f84389765139c06bc4",
+        "log_bytes": 5707,
+        "tests": 12
+      },
+      "finished_utc": "2026-10-24T03:22:44.876124+00:00",
+      "evidence": {
+        "path": "verification/qualification/case-recovery-milestone/desktop-regressions-48bf4ebd8442/result.json",
+        "bytes": 716,
+        "sha256": "2ba9cb51f9eff36e4f80919ae60059b50907e8ba14e072a7cf79d765883f2681"
+      },
+      "log": {
+        "path": "verification/qualification/case-recovery-milestone/desktop-regressions-48bf4ebd8442/command.log",
+        "bytes": 5707,
+        "sha256": "1ba5fce9f20a42f5724660a11dc3b3d49ff4a9460d5b21f84389765139c06bc4"
+      }
+    },
+    {
+      "schema": "surge-local-recovery-check-v1",
+      "step": {
+        "id": "format",
+        "argv": [
+          "node",
+          "node_modules/prettier/bin/prettier.cjs",
+          "--check",
+          "case-library.cjs",
+          "case-library.test.cjs",
+          "case-recovery.test.cjs",
+          "case-recovery-child.cjs",
+          "package.json"
+        ],
+        "cwd": "desktop",
+        "timeout_seconds": 60
+      },
+      "status": "passed",
+      "started_utc": "2026-10-24T03:24:20.888153+00:00",
+      "result": {
+        "status": "passed",
+        "exit_code": 0,
+        "cleanup": "not_needed",
+        "elapsed_seconds": 0.515,
+        "log_sha256": "17aa973d3f004560237d9a95171210b0671deff23d61628eecf7322ff5938f20",
+        "log_bytes": 66
+      },
+      "finished_utc": "2026-10-24T03:24:21.420860+00:00",
+      "evidence": {
+        "path": "verification/qualification/case-recovery-milestone/format-ced81b34403b/result.json",
+        "bytes": 760,
+        "sha256": "1771510df05eade34323e673dad82920efaa7b1db3b42d728037518ea5821c43"
+      },
+      "log": {
+        "path": "verification/qualification/case-recovery-milestone/format-ced81b34403b/command.log",
+        "bytes": 66,
+        "sha256": "17aa973d3f004560237d9a95171210b0671deff23d61628eecf7322ff5938f20"
+      }
+    },
+    {
+      "schema": "surge-local-recovery-check-v1",
+      "step": {
+        "id": "library-ui",
+        "argv": [
+          "node",
+          "library-ui.test.cjs"
+        ],
+        "cwd": "desktop",
+        "timeout_seconds": 120
+      },
+      "status": "passed",
+      "started_utc": "2026-10-24T03:23:18.904805+00:00",
+      "result": {
+        "status": "passed",
+        "exit_code": 0,
+        "cleanup": "not_needed",
+        "elapsed_seconds": 5.141,
+        "log_sha256": "946241881317f4cc9cf059f7d8e22867d8bef2777f13d6da4da29920f23d43e3",
+        "log_bytes": 520
+      },
+      "finished_utc": "2026-10-24T03:23:24.061528+00:00",
+      "evidence": {
+        "path": "verification/qualification/case-recovery-milestone/library-ui-2137604e7da3/result.json",
+        "bytes": 580,
+        "sha256": "5c6a9852a7bd40ad282e058a584f40854c1519f1a0ffa9df3708e0af6336176f"
+      },
+      "log": {
+        "path": "verification/qualification/case-recovery-milestone/library-ui-2137604e7da3/command.log",
+        "bytes": 520,
+        "sha256": "946241881317f4cc9cf059f7d8e22867d8bef2777f13d6da4da29920f23d43e3"
+      }
+    },
+    {
+      "schema": "surge-local-recovery-check-v1",
+      "step": {
+        "id": "python-suite",
+        "argv": [
+          "<repo>\\.venv\\Scripts\\python.exe",
+          "-B",
+          "scripts/test.py"
+        ],
+        "cwd": ".",
+        "timeout_seconds": 300
+      },
+      "status": "passed",
+      "started_utc": "2026-10-24T03:20:40.301373+00:00",
+      "result": {
+        "status": "passed",
+        "exit_code": 0,
+        "cleanup": "not_needed",
+        "elapsed_seconds": 75.609,
+        "log_sha256": "981eebdc09ba661f4475450d61532d4b5e0a11de443b6b78c80b4f1a38c96f08",
+        "log_bytes": 71421,
+        "tests": 429
+      },
+      "finished_utc": "2026-10-24T03:21:55.910496+00:00",
+      "evidence": {
+        "path": "verification/qualification/case-recovery-milestone/python-suite-3469215f4c7b/result.json",
+        "bytes": 719,
+        "sha256": "12ba30106a8875e38278b2ea18b9e73089f849392a7681ca848f751e37b0e47d"
+      },
+      "log": {
+        "path": "verification/qualification/case-recovery-milestone/python-suite-3469215f4c7b/command.log",
+        "bytes": 71421,
+        "sha256": "981eebdc09ba661f4475450d61532d4b5e0a11de443b6b78c80b4f1a38c96f08"
+      }
+    },
+    {
+      "schema": "surge-local-recovery-check-v1",
+      "step": {
+        "id": "saved-ui",
+        "argv": [
+          "node",
+          "saved-flow.test.cjs"
+        ],
+        "cwd": "desktop",
+        "timeout_seconds": 120
+      },
+      "status": "passed",
+      "started_utc": "2026-10-24T03:24:01.232810+00:00",
+      "result": {
+        "status": "passed",
+        "exit_code": 0,
+        "cleanup": "not_needed",
+        "elapsed_seconds": 4.735,
+        "log_sha256": "5cd69d653e2a05c9daa736fb541c156154bb81d26c076ffd84aba6dbfc79f25a",
+        "log_bytes": 907
+      },
+      "finished_utc": "2026-10-24T03:24:05.985492+00:00",
+      "evidence": {
+        "path": "verification/qualification/case-recovery-milestone/saved-ui-53dab7be4cfb/result.json",
+        "bytes": 578,
+        "sha256": "10d6f0f555cf299dabf94ba04704eee6008e318d3057f286b4e72530d12b1dcc"
+      },
+      "log": {
+        "path": "verification/qualification/case-recovery-milestone/saved-ui-53dab7be4cfb/command.log",
+        "bytes": 907,
+        "sha256": "5cd69d653e2a05c9daa736fb541c156154bb81d26c076ffd84aba6dbfc79f25a"
+      }
+    }
+  ],
+  "ui_results": [
+    {
+      "checks": 9,
+      "result": {
+        "path": "verification/electron/case-library-1Fa9j2/results.json",
+        "bytes": 729,
+        "sha256": "cd441bde2c8165a1b5488834a71eb6f2ce57ef1a36dd8919855a4dcec5039a33"
+      }
+    },
+    {
+      "checks": 3,
+      "result": {
+        "path": "verification/electron/case-library-CSFiBL/results.json",
+        "bytes": 276,
+        "sha256": "659eacc0288bdc9a5a7a37048769b97029df99d0f45c51a597b64a5427764ce9"
+      }
+    },
+    {
+      "checks": 10,
+      "result": {
+        "path": "verification/electron/saved-flow-6-ERv3Pd/results.json",
+        "bytes": 824,
+        "sha256": "d4505efece05f8cdbab21ed9502674c94e183c1d9a4a334e9169bd6ad1b85268"
+      }
+    }
+  ],
+  "independent_audits": [
+    {
+      "path": "verification/qualification/case-recovery-milestone/baseline-independent-audit.json",
+      "bytes": 616,
+      "sha256": "b2ddd828c886478f429497c14834c186829c5c9a18a8f74bf07c08504e4a3393"
+    },
+    {
+      "path": "verification/qualification/case-recovery-milestone/final-independent-audit.json",
+      "bytes": 618,
+      "sha256": "df99bbe73203976a74b542d58846166629be04cb81d01c7e45bfa0a2e470cdd4"
+    },
+    {
+      "path": "verification/qualification/case-recovery-milestone/integrated-independent-audit.json",
+      "bytes": 618,
+      "sha256": "62f545bc6e2acf9ea354b45e88ad537846e495d698e960dc0152f6f5f16ea1a3"
+    },
+    {
+      "path": "verification/qualification/case-recovery-milestone/successful-campaign-comparison.json",
+      "bytes": 4068,
+      "sha256": "78f29e821bf322752b6696e506e71b989229c64b9e598c0979bef531e988a212"
+    }
+  ],
+  "preserved_preparation_failures": [
+    {
+      "files": [
+        "worker-attempt-1.log",
+        "worker-attempt-1.json"
+      ],
+      "classification": "fixture_field_length_error"
+    },
+    {
+      "files": [
+        "worker-attempt-2.log",
+        "worker-attempt-2.json"
+      ],
+      "classification": "fixture_missing_reference_configuration"
+    },
+    {
+      "files": [
+        "library-after-fix-1.log"
+      ],
+      "classification": "sandbox_temporary_rename_restriction"
+    },
+    {
+      "files": [
+        "library-after-fix-2.log"
+      ],
+      "classification": "sandbox_hardlink_restriction"
+    },
+    {
+      "files": [
+        "desktop-console-failure.json",
+        "run_check-before-utf8.py"
+      ],
+      "classification": "reporting_encoding_failure_after_child_tests_passed"
+    }
+  ],
+  "review": {
+    "security_engineer": 8,
+    "hiring_manager_internship_project": 8.5,
+    "changed": false,
+    "basis": "Greater confidence in recovery; no scope expansion or fresh hosted qualification.",
+    "next": "Scoped committed recovery candidate with both hosted required jobs and independent retrieval/verification of recovery artifacts."
+  },
+  "limitations": [
+    "Controlled child termination, not power-loss durability or whole-Electron interruption at every boundary.",
+    "Fast fixture byte verifier is separate from actual-engine and UI verification.",
+    "Export publication requires local hard-link support; removable/network filesystems not physically tested.",
+    "Temporary residue can remain; old unexpected in-entry files are not automatically removed.",
+    "Published export and retained staging alias until cleanup; staging is not an immutable forensic snapshot.",
+    "Close fault simulated after handle closure; input-close/unclosed-handle/invalid-nonzero-write faults not individually injected.",
+    "No hostile concurrent writer, native-dialog acceptance, new endurance test or broader fuzzing campaign.",
+    "Separate direct investigation-file export is outside the case-library recovery claim."
+  ]
+}

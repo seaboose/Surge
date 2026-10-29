@@ -195,7 +195,7 @@ class DesktopWorkflowTests(unittest.TestCase):
     def test_policy_load_filter_context_export_and_failed_load_retains_state(self):
         from app import Workbench
 
-        window = Workbench()
+        window = Workbench(start_hidden=True)
         window.withdraw()
         try:
             source, settings = sample()

@@ -12,6 +12,14 @@ The renderer cannot choose arbitrary filesystem paths or run commands. Every req
 
 Saved cases embed data, settings, and fingerprints. Opening a case recomputes its result before accepting it. Fingerprints detect content changes; they are not signatures or proof that the source is trustworthy.
 
+Survive adds an owned-game evidence path. `survive_study.py` launches finite
+trials; `survive_capture.py` retains exact game telemetry while inspection uses
+stable snapshots. The v3 adapter derives movement constraints from reviewed
+profiles. Replay, timeline and raw records share one selection. Investigation
+revisions bind narrative citations to source bytes before exporting a standalone
+HTML report. Trial conditions and independent assessments remain outside detector
+inputs. See the [source guide](code-map.md) and [Survive workflow](survive-workflow.md).
+
 Optional owned-app collection follows this path: `surge_owned_app` links the C++ measurement library, writes complete range samples to an inherited pipe, and receives only Stop from the desktop. `native_stream.py` validates frames on a reader thread and retains at most 500 full samples. `native_integrity.py` applies the frozen local baseline registry and calculates per-sample coverage. Collection never modifies approvals.
 
 The owned DLL declares bounded export pairs in a versioned read-only descriptor. C++ validates its PE layout and reports a complete partition of executable file-backed bytes into selected ranges and explicit exclusions. `integrity_manifest.py` independently verifies this partition at the import boundary. Approvals bind the entire versioned declaration; legacy approvals cannot authorize it. Snapshot retention also uses an encoded-byte budget so larger manifests remain replayable within the existing import limit. Whole-sample eviction stays visible as incomplete collection.

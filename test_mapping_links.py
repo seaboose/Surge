@@ -89,7 +89,7 @@ class MappingLinkUITests(unittest.TestCase):
     def setUp(self):
         from app import Workbench
 
-        self.win = Workbench()
+        self.win = Workbench(start_hidden=True)
         self.win.withdraw()
 
     def tearDown(self):

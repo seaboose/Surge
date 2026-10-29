@@ -68,7 +68,7 @@ class InvestigationUITests(unittest.TestCase):
     def setUp(self):
         from app import Workbench
 
-        self.win = Workbench()
+        self.win = Workbench(start_hidden=True)
         self.win.withdraw()
         self.win.current, self.win.reference, self.win.run_config, self.win.result = input_case()
         self.win._render_findings()

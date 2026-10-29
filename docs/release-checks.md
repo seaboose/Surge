@@ -1,5 +1,23 @@
 # Release verification
 
+## Defensive qualification from a clean checkout
+
+The [qualification runner](qualification.md) passed all 12 required steps in a fresh local checkout: setup/build, 295 Python tests without skips, three native tests, demo and fixture replay, short stream checks, desktop boundary/native/continuous journeys and source hygiene. Git was clean before and after and the 168-file evaluated source snapshot stayed unchanged. [Results](qualification-results.md) and [generated evidence](../evidence/qualification-validation.json) preserve the earlier setup-quoting and CTest-summary failures and their fixes. The original repository remains uncommitted; the evaluated commit is a private local candidate snapshot.
+
+This qualification assembles existing defensive checks. It does not run or complete the blocked fuzzing campaign, replace full CI, or supply a new performance measurement.
+
+## Replay consistency fixes and incomplete fuzzing milestone
+
+The [correctness follow-up](adversarial-correctness-results.md) closes the two replay defects found in the adversarial review: counter rollback and missing process/build identity validation. Fifteen new regression tests exposed 46 failing JSON/JSONL import subcases before the fix and pass afterward. All 285 Python tests, three native CTests, five published demo replays, and both native and continuous desktop journeys passed locally. The documentation now states the existing Review-with-gaps precedence and current-only staleness semantics precisely.
+
+The planned fuzz-harness tasks were blocked by an automated cybersecurity safeguard before a campaign ran. No native sanitizer campaign, generated semantic-oracle campaign, production-limit pack or held-back final run is claimed. Two acceptance gates pass and five remain incomplete. The [evidence record](../evidence/adversarial-correctness-validation.json) preserves that distinction; this is not a completed fuzzing milestone, new hosted CI result or release package.
+
+## Full desktop performance and reliability
+
+The [new measurement](performance-reliability-results.md) passed its predeclared criteria on one Windows host: 1,189 samples in a ten-minute session with zero transport drops, 2.41% average CPU relative to one logical core, 254.66 MiB peak sampled private memory, and 3.61 MiB steady-window growth. Periodic Inspect and Export, automatic stop, saved-case replay, twenty restarts and child cleanup passed. Ten persistent in-range changes were detected within 493 ms; blocked output, a real producer stall and abrupt exit retained Unknown health evidence.
+
+The first desktop attempt exposed a runner mistake: reusing an export filename triggered Surge's intentional overwrite refusal. Unique filenames and immediate dialog checks corrected the runner. No production-code changes were necessary. The [evidence](../evidence/performance-reliability-validation.json) preserves that failure explanation and the corrected run. This is a local measurement, not a new hosted CI result or a multi-hour leak-freedom claim.
+
 ## Versioned integrity and compatibility
 
 The [compatibility report](../evidence/native-compatibility-validation.json) records Release and Debug development checks followed by a fresh MinSizeRel build with a third declared range. All three passed with the same frozen implementation. Across those controlled checks, 116 clean observations stayed clear, all 18 persistent changes observed inside checked ranges required review, and 20 unavailable observations stayed Unknown. Seven unapproved observations required review. All 161 records replayed through the workspace and saved cases. These are correctness checks, not real-cheat accuracy estimates.

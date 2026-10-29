@@ -67,6 +67,21 @@ let app;
       { method, args },
     );
   const click = async (name) => {
+    if (
+      name === "Start collection" &&
+      !(await page.getByRole("button", { name, exact: true }).count())
+    )
+      name = "Start another capture";
+    await require("./test-export-menu.cjs").revealExport(page, name);
+    if (name === "Open saved case") {
+      await page
+        .getByRole("button", { name: "Case library", exact: true })
+        .click();
+      await page
+        .getByRole("dialog", { name: "Case library", exact: true })
+        .waitFor();
+      name = "Open case file";
+    }
     await page.getByRole("button", { name, exact: true }).click();
     await ready();
   };
@@ -88,25 +103,48 @@ let app;
       filePaths: [file],
     });
   }, source);
-  await click("Import data");
+  await click("Import evidence");
   const original = await call("state");
-  await click("Our app");
-  const controls = page.getByRole("region", { name: "Our app collection" });
+  await click("Try Demo");
+  const controls = page.getByRole("region", { name: "Demo app collection" });
   await controls.waitFor();
-  await click("Start");
-  await page.getByText("Our app · Collecting", { exact: true }).waitFor();
+  await click("Start collection");
+  await page.getByText("Demo app · Collecting", { exact: true }).waitFor();
   await waitRecords(4);
+  assert.equal((await call("native_status")).capture.build, "v2");
+  assert.equal(
+    await controls
+      .getByRole("combobox", { name: "Build", exact: true })
+      .count(),
+    0,
+  );
   assert.equal(
     (await call("state")).current.sha256,
     original.current.sha256,
     "Starting collection must preserve the current evidence",
   );
-  await click("Inspect");
-  await page.getByRole("button", { name: "Findings", exact: true }).waitFor();
+  await click("Inspect snapshot");
+  await page.getByRole("button", { name: "Results", exact: true }).waitFor();
   const inspected = await call("state");
   assert.ok(inspected.summary);
   assert.ok(inspected.current.records >= 4);
+  await controls
+    .getByRole("button", { name: "Inspect newer snapshot", exact: true })
+    .waitFor();
   assert.equal(await page.locator("fieldset.workspace").isDisabled(), false);
+  // Demo snapshots expose normal observations without a manual filter change.
+  assert.equal(
+    await page
+      .getByRole("checkbox", { name: "Findings only", exact: true })
+      .isChecked(),
+    false,
+  );
+  await page.getByRole("region", { name: "Demo snapshot result" }).waitFor();
+  await page
+    .getByRole("table", { name: "Results", exact: true })
+    .locator("tbody tr")
+    .first()
+    .waitFor();
   await page
     .locator(".evidence")
     .getByText(/Coverage:/)
@@ -115,7 +153,6 @@ let app;
     .locator(".evidence")
     .getByText(/executable bytes in scope/)
     .waitFor();
-  assert.equal(await page.locator("h1, h2, h3").count(), 0);
   await page
     .getByRole("textbox", { name: "Search records" })
     .fill("LabCodeProbe");
@@ -125,7 +162,7 @@ let app;
     .waitFor();
   assert.ok(
     await controls
-      .getByRole("button", { name: "Stop", exact: true })
+      .getByRole("button", { name: "Stop collection", exact: true })
       .isEnabled(),
     "A failed status read must not disable stopping the owned app",
   );
@@ -156,27 +193,31 @@ let app;
     };
   });
   await controls
-    .getByText("Our app · Collection failed", { exact: true })
+    .getByText("Demo app · Collection failed", { exact: true })
     .waitFor();
   assert.ok(
     await controls
-      .getByRole("button", { name: "Inspect", exact: true })
+      .getByRole("button", { name: "Inspect snapshot", exact: true })
       .isEnabled(),
+  );
+  await require("./test-export-menu.cjs").revealExport(
+    page,
+    "Export captured records",
   );
   assert.ok(
-    await controls
-      .getByRole("button", { name: "Export", exact: true })
+    await page
+      .getByRole("button", { name: "Export captured records", exact: true })
       .isEnabled(),
   );
-  await click("Inspect");
+  await click("Inspect snapshot");
   await click("Data");
   assert.ok(
     await controls
-      .getByRole("button", { name: "Stop", exact: true })
+      .getByRole("button", { name: "Stop collection", exact: true })
       .isEnabled(),
   );
-  await click("Stop");
-  await page.getByText("Our app · Stopped", { exact: true }).waitFor();
+  await click("Stop collection");
+  await page.getByText("Demo app · Stopped", { exact: true }).waitFor();
   const stopped = await call("state");
   assert.ok(stopped.current.records >= inspected.current.records);
   assert.ok(stopped.summary);
@@ -187,7 +228,7 @@ let app;
   await app.evaluate(({ dialog }, file) => {
     dialog.showSaveDialog = async () => ({ canceled: false, filePath: file });
   }, exported);
-  await click("Export");
+  await click("Export captured records");
   const rows = fs
     .readFileSync(exported, "utf8")
     .trim()
@@ -198,7 +239,7 @@ let app;
   await app.evaluate(({ dialog }, file) => {
     dialog.showSaveDialog = async () => ({ canceled: false, filePath: file });
   }, saved);
-  await click("Save case");
+  await click("Export case file");
   await click("Data");
   await app.evaluate(({ dialog }, file) => {
     dialog.showOpenDialog = async () => ({
@@ -206,17 +247,19 @@ let app;
       filePaths: [file],
     });
   }, saved);
-  await click("Open case");
+  await click("Open saved case");
   assert.deepEqual(
     (await call("state")).summary,
     stopped.summary,
     "Reopened evidence must reproduce the capture findings",
   );
+  await page.getByText("Previous demo capture", { exact: true }).click();
+  await click("View demo capture");
   const sessions = new Set([status.session_id]);
   for (let cycle = 0; cycle < 2; cycle++) {
-    await click("Start");
+    await click("Start collection");
     await waitRecords(2);
-    await click("Stop");
+    await click("Stop collection");
     const again = (await call("native_status")).capture;
     assert.equal(again.state, "stopped");
     assert.ok(
@@ -226,34 +269,41 @@ let app;
     sessions.add(again.session_id);
   }
   await page.setViewportSize({ width: 900, height: 650 });
-  await page.evaluate(
-    () => (document.documentElement.style.fontSize = "19.5px"),
-  );
+  await page.evaluate(() => {
+    const baseFontSize = parseFloat(
+      getComputedStyle(document.documentElement).fontSize,
+    );
+    document.documentElement.style.fontSize = `${baseFontSize * 1.5}px`;
+  });
   assert.equal(
     await page.evaluate(
       () => document.documentElement.scrollWidth > innerWidth + 2,
     ),
     false,
   );
-  await controls.getByRole("button", { name: "Start", exact: true }).focus();
+  await controls
+    .getByRole("button", { name: "Start another capture", exact: true })
+    .focus();
   await page.keyboard.press("Enter");
   await ready();
-  await page.getByText("Our app · Collecting", { exact: true }).waitFor();
+  await page.getByText("Demo app · Collecting", { exact: true }).waitFor();
   await waitRecords(2);
-  await controls.getByRole("button", { name: "Stop", exact: true }).focus();
+  await controls
+    .getByRole("button", { name: "Stop collection", exact: true })
+    .focus();
   await page.keyboard.press("Enter");
   await ready();
-  await page.getByText("Our app · Stopped", { exact: true }).waitFor();
+  await page.getByText("Demo app · Stopped", { exact: true }).waitFor();
   const keyboardStopped = (await call("native_status")).capture;
   assert.ok(keyboardStopped.records >= 2, JSON.stringify(keyboardStopped));
   await controls
-    .getByText(new RegExp(`${keyboardStopped.records} records`))
+    .getByText(new RegExp(`${keyboardStopped.records} retained records`))
     .waitFor();
   await page.setViewportSize({ width: 1360, height: 900 });
-  await page.evaluate(() => (document.documentElement.style.fontSize = "13px"));
+  await page.evaluate(() => (document.documentElement.style.fontSize = ""));
   await page.screenshot({ path: path.join(out, "continuous-evidence.png") });
   assert.deepEqual(errors, []);
-  await click("Start");
+  await click("Start collection");
   const active = await waitRecords(2);
   const ownedPid = Number(active.session_id.split("-")[0]);
   const workerPid = await app.evaluate(() => global.__children[0].pid);

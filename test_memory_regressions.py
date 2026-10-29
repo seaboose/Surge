@@ -14,7 +14,7 @@ import record_search
 
 BASE = Path(__file__).parent
 spec = importlib.util.spec_from_file_location(
-    "surge_before_memory", BASE / "verification/memory-baseline-engine.py"
+    "surge_before_memory", BASE / "tests/fixtures/memory-baseline-engine.py"
 )
 before = importlib.util.module_from_spec(spec)
 sys.modules[spec.name] = before

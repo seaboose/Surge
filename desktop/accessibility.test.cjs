@@ -84,11 +84,22 @@ async function fit(label) {
       env,
     });
     page = await app.firstWindow();
+    // Exercise copy behavior without changing the user's desktop clipboard.
+    await app.evaluate(({ clipboard }) => {
+      let copied = "";
+      clipboard.writeText = (value) => {
+        copied = value;
+      };
+      clipboard.readText = () => copied;
+    });
     page.setDefaultTimeout(15000);
     const errors = [];
     page.on("pageerror", (e) => errors.push(e.message));
     await ready();
-    await importFile(source, "Import data");
+    const baseFontSize = await page.evaluate(() =>
+      parseFloat(getComputedStyle(document.documentElement).fontSize),
+    );
+    await importFile(source, "Import evidence");
     await page
       .locator(".setup summary")
       .filter({ hasText: /^Options$/ })
@@ -97,9 +108,12 @@ async function fit(label) {
     await click("Analyze");
     await page.locator(".evidence .observed").waitFor();
     for (const text of [1, 1.5, 2]) {
-      await page.evaluate((text) => {
-        document.documentElement.style.fontSize = `${13 * text}px`;
-      }, text);
+      await page.evaluate(
+        ({ text, baseFontSize }) => {
+          document.documentElement.style.fontSize = `${baseFontSize * text}px`;
+        },
+        { text, baseFontSize },
+      );
       for (const zoom of [1, 2]) {
         await app.evaluate(
           ({ BrowserWindow }, zoom) =>
@@ -163,7 +177,7 @@ async function fit(label) {
       BrowserWindow.getAllWindows()[0].webContents.setZoomFactor(1),
     );
     await page.evaluate(() => {
-      document.documentElement.style.fontSize = "13px";
+      document.documentElement.style.fontSize = "";
     });
     await app.evaluate(({ BrowserWindow }) => {
       const wc = BrowserWindow.getAllWindows()[0].webContents;
@@ -207,9 +221,9 @@ async function fit(label) {
     await app.evaluate(({ BrowserWindow }) =>
       BrowserWindow.getAllWindows()[0].setSize(720, 540),
     );
-    await page.evaluate(() => {
-      document.documentElement.style.fontSize = "26px";
-    });
+    await page.evaluate((baseFontSize) => {
+      document.documentElement.style.fontSize = `${baseFontSize * 2}px`;
+    }, baseFontSize);
     for (const key of ["1", "2", "3", "4", "5"]) {
       await page.keyboard.press(`Alt+${key}`);
       await fit(`small window ${dpi}, view ${key}`);
@@ -230,7 +244,7 @@ async function fit(label) {
       BrowserWindow.getAllWindows()[0].setSize(1360, 880),
     );
     await page.evaluate(() => {
-      document.documentElement.style.fontSize = "13px";
+      document.documentElement.style.fontSize = "";
     });
     await page.keyboard.press("Alt+1");
     await click("Edit rules");
@@ -243,7 +257,7 @@ async function fit(label) {
     );
     await page.keyboard.press("Alt+2");
     const rows = page
-      .getByRole("table", { name: "Findings", exact: true })
+      .getByRole("table", { name: "Results", exact: true })
       .locator("tbody tr");
     await rows.first().focus();
     await page.keyboard.press("ArrowDown");

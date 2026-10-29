@@ -1,0 +1,2061 @@
+{
+  "publication_redaction": "Local interpreter locations replaced with <python-runtime>/python.exe. Recorded outcomes and hashes are unchanged; these are historical commands, not a new run.",
+  "schema": "surge-first-use-acceptance-v1",
+  "status": "automated_checks_passed_human_acceptance_pending",
+  "criteria": {
+    "M1": "passed_with_declared_same_host_scope",
+    "M2": "passed_with_declared_same_host_scope",
+    "M3": "passed_with_declared_same_host_scope",
+    "M4": "passed_with_declared_same_host_scope",
+    "M5": "passed_with_declared_same_host_scope",
+    "M6": "passed_with_declared_same_host_scope",
+    "H1": "pending_unfamiliar_tester",
+    "H2": "pending_unfamiliar_tester",
+    "H3": "pending_unfamiliar_tester",
+    "H4": "pending_unfamiliar_tester"
+  },
+  "attempts": [
+    {
+      "attempt": 1,
+      "preparation": {
+        "archive_sha256": "ac835867efd7dec1f3df13cc63d325a15de840a9b512a27c12b727b5328f2555",
+        "manifest_sha256": "ff35f89567bad1e45b7ea84004946c8884d4ad1b3cd32dde71c46e01f976ea92",
+        "file_count": 243,
+        "initial_artifacts_absent": {
+          ".venv": true,
+          "desktop/node_modules": true,
+          "desktop/dist": true,
+          "native/build": true,
+          "native/captures": true,
+          "native/baselines.json": true
+        },
+        "initial_caches_absent": true,
+        "profile": "new isolated profile per journey",
+        "source_match": true
+      },
+      "runs": [
+        {
+          "schema": "surge-first-use-machine-v1",
+          "status": "passed",
+          "os": "Windows-11-10.0.26200-SP0",
+          "python": "3.12.14 (main, Aug 25 2026, 14:01:42) [MSC v.1944 64 bit (AMD64)]",
+          "steps": [
+            {
+              "id": "cache_path",
+              "status": "passed",
+              "timeout_seconds": 30,
+              "command": [
+                "powershell.exe",
+                "-NoProfile",
+                "-Command",
+                "pnpm store path"
+              ],
+              "exit_code": 0,
+              "elapsed_seconds": 1.75,
+              "log": "cache_path.log",
+              "log_sha256": "72e59de57e6f0c9a6b524b29de60af4e96d8305816e8361eed59e1fce2d68f28"
+            },
+            {
+              "id": "setup",
+              "status": "passed",
+              "timeout_seconds": 600,
+              "command": [
+                "powershell.exe",
+                "-NoProfile",
+                "-ExecutionPolicy",
+                "Bypass",
+                "-File",
+                "Setup-Surge.ps1",
+                "-Python",
+                "<python-runtime>/python.exe"
+              ],
+              "exit_code": 0,
+              "elapsed_seconds": 8.766,
+              "log": "setup.log",
+              "log_sha256": "a9d7784b28e957d5d2d2a84be74081c5230d322cecc8baebc1491f098d02f764"
+            },
+            {
+              "id": "replay",
+              "status": "passed",
+              "timeout_seconds": 180,
+              "command": [
+                "node",
+                "first-use.test.cjs",
+                "replay"
+              ],
+              "exit_code": 0,
+              "elapsed_seconds": 8.734,
+              "log": "replay.log",
+              "log_sha256": "06b8151c2af8d00dd7ae7172993ba94703e891364014e5d3ab86fb65246d186a"
+            }
+          ],
+          "requested": [
+            "cache_path",
+            "setup",
+            "replay"
+          ],
+          "fresh_os": false,
+          "human_acceptance": "pending",
+          "source_before_matches": true,
+          "source_after_matches": true,
+          "baseline_sha256": null
+        }
+      ],
+      "assessment": {
+        "criterion": "M2",
+        "status": "failed",
+        "reason": "pnpm used host store; initial npm_config_store_dir and ELECTRON_CACHE variables did not establish empty-cache isolation. Setup and replay passed but do not count as cold-cache success.",
+        "retry": "first-use-2",
+        "source_changes": false
+      },
+      "ui_results": [
+        {
+          "mode": "replay",
+          "status": "passed",
+          "started": "2026-10-23T18:19:28.738Z",
+          "finished": "2026-10-23T18:19:37.384Z",
+          "profile": "<project>\\work\\first-use-1\\fresh extraction\\Surge\\verification\\electron\\first-use-mDJRR5\\profile",
+          "checks": [
+            {
+              "name": "Fresh isolated profile opens at the start screen",
+              "passed": true,
+              "milliseconds": 306
+            },
+            {
+              "name": "Missing native build gives actionable guidance",
+              "passed": true,
+              "milliseconds": 296
+            },
+            {
+              "name": "Import and inspect approved-update.case.json",
+              "passed": true,
+              "milliseconds": 383,
+              "evidence": {
+                "sha256": "b9d92a0d821665742ffab1585f55a008be88e5ff51d5be5ae094ae0e3cf8d75a",
+                "expected": {
+                  "No finding": 4,
+                  "Review": 0,
+                  "Unknown": 0
+                },
+                "summary": {
+                  "total": 4,
+                  "Review": 0,
+                  "Unknown": 0,
+                  "No finding": 4,
+                  "rows_with_gaps": 0
+                },
+                "saved_result": {
+                  "expected": true,
+                  "ranges": 2,
+                  "review": 0,
+                  "unknown": 0
+                }
+              }
+            },
+            {
+              "name": "Import and inspect unapproved-update.case.json",
+              "passed": true,
+              "milliseconds": 351,
+              "evidence": {
+                "sha256": "f802fb38c5d9747a2c2b9e8ff48f8269bcad32f177816bac23abafe4906fa664",
+                "expected": {
+                  "No finding": 0,
+                  "Review": 4,
+                  "Unknown": 0
+                },
+                "summary": {
+                  "total": 4,
+                  "Review": 4,
+                  "Unknown": 0,
+                  "No finding": 0,
+                  "rows_with_gaps": 4
+                },
+                "saved_result": {
+                  "expected": false,
+                  "ranges": 2,
+                  "review": 4,
+                  "unknown": 0
+                }
+              }
+            },
+            {
+              "name": "Import and inspect changed-code.case.json",
+              "passed": true,
+              "milliseconds": 348,
+              "evidence": {
+                "sha256": "43cf670a910e22b639b2e183ac422e8a60964c84e18a29109ae5e04d48ad5fdb",
+                "expected": {
+                  "No finding": 3,
+                  "Review": 1,
+                  "Unknown": 0
+                },
+                "summary": {
+                  "total": 4,
+                  "Review": 1,
+                  "Unknown": 0,
+                  "No finding": 3,
+                  "rows_with_gaps": 0
+                },
+                "saved_result": {
+                  "expected": false,
+                  "ranges": 2,
+                  "review": 1,
+                  "unknown": 0
+                }
+              }
+            },
+            {
+              "name": "Import and inspect unreadable.case.json",
+              "passed": true,
+              "milliseconds": 334,
+              "evidence": {
+                "sha256": "21eafd7eea008ade55aea08eaecdebe860e26dbd89afa08566d5042cc40a4d71",
+                "expected": {
+                  "No finding": 3,
+                  "Review": 0,
+                  "Unknown": 1
+                },
+                "summary": {
+                  "total": 4,
+                  "Review": 0,
+                  "Unknown": 1,
+                  "No finding": 3,
+                  "rows_with_gaps": 1
+                },
+                "saved_result": {
+                  "expected": false,
+                  "ranges": 2,
+                  "review": 0,
+                  "unknown": 1
+                }
+              }
+            },
+            {
+              "name": "Import and inspect outside-coverage.case.json",
+              "passed": true,
+              "milliseconds": 340,
+              "evidence": {
+                "sha256": "e6208f7380f76785cc74d2a9efbd950dd180156ac5055094d13ec8bd0bcc5fcf",
+                "expected": {
+                  "No finding": 4,
+                  "Review": 0,
+                  "Unknown": 0
+                },
+                "summary": {
+                  "total": 4,
+                  "Review": 0,
+                  "Unknown": 0,
+                  "No finding": 4,
+                  "rows_with_gaps": 0
+                },
+                "saved_result": {
+                  "expected": true,
+                  "ranges": 2,
+                  "review": 0,
+                  "unknown": 0
+                }
+              }
+            },
+            {
+              "name": "No uncaught renderer errors",
+              "passed": true,
+              "milliseconds": 1
+            }
+          ],
+          "renderer_errors": [],
+          "limitations": [
+            "Automated same-host rehearsal, not an unfamiliar tester or another Windows installation.",
+            "Native file dialogs are stubbed to select owned fixtures; shell dialog interaction is not tested.",
+            "Read-only bridge assertions supplement visible controls; actions use actual interface buttons.",
+            "Short bounded capture only; does not repeat endurance, wider fuzzing, or hostile-host validation."
+          ]
+        }
+      ]
+    },
+    {
+      "attempt": 2,
+      "preparation": {
+        "archive_sha256": "ac835867efd7dec1f3df13cc63d325a15de840a9b512a27c12b727b5328f2555",
+        "manifest_sha256": "ff35f89567bad1e45b7ea84004946c8884d4ad1b3cd32dde71c46e01f976ea92",
+        "file_count": 243,
+        "initial_artifacts_absent": {
+          ".venv": true,
+          "desktop/node_modules": true,
+          "desktop/dist": true,
+          "native/build": true,
+          "native/captures": true,
+          "native/baselines.json": true
+        },
+        "initial_caches_absent": true,
+        "profile": "new isolated profile per journey",
+        "source_match": true,
+        "identical_archive_from": "first-use-1/frozen source/dist/surge-source.zip"
+      },
+      "runs": [
+        {
+          "schema": "surge-first-use-machine-v1",
+          "status": "passed",
+          "os": "Windows-11-10.0.26200-SP0",
+          "python": "3.12.14 (main, Aug 25 2026, 14:01:42) [MSC v.1944 64 bit (AMD64)]",
+          "steps": [
+            {
+              "id": "cache_path",
+              "status": "passed",
+              "timeout_seconds": 30,
+              "command": [
+                "powershell.exe",
+                "-NoProfile",
+                "-Command",
+                "pnpm store path"
+              ],
+              "exit_code": 0,
+              "elapsed_seconds": 1.141,
+              "log": "cache_path.log",
+              "log_sha256": "ae22aa7d03f6545a231b9af24918d12a80670335c2eaf808dbe6052524bf2d0c",
+              "observed_cache_path": "<project>\\work\\first-use-2\\empty caches\\pnpm-store\\v11"
+            },
+            {
+              "id": "setup",
+              "status": "passed",
+              "timeout_seconds": 600,
+              "command": [
+                "powershell.exe",
+                "-NoProfile",
+                "-ExecutionPolicy",
+                "Bypass",
+                "-File",
+                "Setup-Surge.ps1",
+                "-Python",
+                "<python-runtime>/python.exe"
+              ],
+              "exit_code": 0,
+              "elapsed_seconds": 11.937,
+              "log": "setup.log",
+              "log_sha256": "5e24deb3f0fa1ea7574fc40df9c85bab68dae96b33097abb147be17d92f7dfa9"
+            },
+            {
+              "id": "replay",
+              "status": "passed",
+              "timeout_seconds": 180,
+              "command": [
+                "node",
+                "first-use.test.cjs",
+                "replay"
+              ],
+              "exit_code": 0,
+              "elapsed_seconds": 4.703,
+              "log": "replay.log",
+              "log_sha256": "24cc91d1308d7559a3690d1bcc55d358cf842e6484c56704cdda178a2c9048ac"
+            }
+          ],
+          "requested": [
+            "cache_path",
+            "setup",
+            "replay"
+          ],
+          "fresh_os": false,
+          "human_acceptance": "pending",
+          "source_before_matches": true,
+          "source_after_matches": true,
+          "baseline_sha256": null
+        },
+        {
+          "schema": "surge-first-use-machine-v1",
+          "status": "failed",
+          "os": "Windows-11-10.0.26200-SP0",
+          "python": "3.12.14 (main, Aug 25 2026, 14:01:42) [MSC v.1944 64 bit (AMD64)]",
+          "steps": [
+            {
+              "id": "native_configure",
+              "status": "passed",
+              "timeout_seconds": 300,
+              "command": [
+                "cmake",
+                "-S",
+                "native",
+                "-B",
+                "native/build",
+                "-A",
+                "x64"
+              ],
+              "exit_code": 0,
+              "elapsed_seconds": 5.203,
+              "log": "native_configure.log",
+              "log_sha256": "650b4eb47d23f5d5ec669d807ecab30c7b598e0bbe4f4f567fcd7f596398eaa3"
+            },
+            {
+              "id": "native_build",
+              "status": "passed",
+              "timeout_seconds": 300,
+              "command": [
+                "cmake",
+                "--build",
+                "native/build",
+                "--config",
+                "Release",
+                "--",
+                "/nodeReuse:false"
+              ],
+              "exit_code": 0,
+              "elapsed_seconds": 14.641,
+              "log": "native_build.log",
+              "log_sha256": "f89856127005564440616445a9be7a0a539a392a1359eb70888a020639cfb174"
+            },
+            {
+              "id": "native_ctest",
+              "status": "passed",
+              "timeout_seconds": 180,
+              "command": [
+                "ctest",
+                "--test-dir",
+                "native/build",
+                "-C",
+                "Release",
+                "--output-on-failure",
+                "--timeout",
+                "60",
+                "--no-tests=error"
+              ],
+              "exit_code": 0,
+              "elapsed_seconds": 0.36,
+              "log": "native_ctest.log",
+              "log_sha256": "af198acbbdf23a72f4059fa91be932f203be640c996cafbff131abf15888e4d9"
+            },
+            {
+              "id": "unapproved",
+              "status": "passed",
+              "timeout_seconds": 180,
+              "command": [
+                "node",
+                "first-use.test.cjs",
+                "unapproved"
+              ],
+              "exit_code": 0,
+              "elapsed_seconds": 3.39,
+              "log": "unapproved.log",
+              "log_sha256": "033575c72b8c8288ca1b66a570446716419c53e475ebc48d09a2ddcd96cd9612"
+            },
+            {
+              "id": "approve",
+              "status": "passed",
+              "timeout_seconds": 60,
+              "command": [
+                "<project>\\work\\first-use-2\\fresh extraction\\Surge\\.venv\\Scripts\\python.exe",
+                "-B",
+                "scripts/native_capture.py",
+                "approve",
+                "--build",
+                "v2",
+                "--reason",
+                "Reviewed included v2 fixture; isolated first-use acceptance only"
+              ],
+              "exit_code": 0,
+              "elapsed_seconds": 0.297,
+              "log": "approve.log",
+              "log_sha256": "4a1a31615a60d9580dbc612d55a7c7aec1ed9b9472f5c4e36786c1ff336942e7"
+            },
+            {
+              "id": "approved",
+              "status": "passed",
+              "timeout_seconds": 180,
+              "command": [
+                "node",
+                "first-use.test.cjs",
+                "approved"
+              ],
+              "exit_code": 0,
+              "elapsed_seconds": 3.657,
+              "log": "approved.log",
+              "log_sha256": "6ffa7444c656c6a94ac6f402b0242dabf61f35b3bd811321577e58dd6f11284c"
+            },
+            {
+              "id": "library",
+              "status": "passed",
+              "timeout_seconds": 180,
+              "command": [
+                "node",
+                "library-ui.test.cjs"
+              ],
+              "exit_code": 0,
+              "elapsed_seconds": 3.703,
+              "log": "library.log",
+              "log_sha256": "0e3683a1fc3d00f9e035c29e0f81feeef2b166f49acf3b5b7e9c3a1aa613ed1c"
+            },
+            {
+              "id": "deletion",
+              "status": "passed",
+              "timeout_seconds": 180,
+              "command": [
+                "node",
+                "library-deletion.test.cjs"
+              ],
+              "exit_code": 0,
+              "elapsed_seconds": 2.406,
+              "log": "deletion.log",
+              "log_sha256": "762cb66bd657f258b8de219a897f027ffc5a595658bc5908819863aecc8f2b1f"
+            },
+            {
+              "id": "saved",
+              "status": "passed",
+              "timeout_seconds": 180,
+              "command": [
+                "node",
+                "saved-flow.test.cjs"
+              ],
+              "exit_code": 0,
+              "elapsed_seconds": 5.375,
+              "log": "saved.log",
+              "log_sha256": "c1c8793076ce88669eef35385ebd6e5f25b77b2953c93a57bd077bad64cf0aac"
+            },
+            {
+              "id": "replays",
+              "status": "passed",
+              "timeout_seconds": 60,
+              "command": [
+                "<project>\\work\\first-use-2\\fresh extraction\\Surge\\.venv\\Scripts\\python.exe",
+                "-B",
+                "scripts/verify_native_demo.py"
+              ],
+              "exit_code": 0,
+              "elapsed_seconds": 0.281,
+              "log": "replays.log",
+              "log_sha256": "19ef6159f6001109a7e74fd47d32337bff2ca4da2033e21c5390787a3b6adb08"
+            },
+            {
+              "id": "hygiene",
+              "status": "passed",
+              "timeout_seconds": 60,
+              "command": [
+                "<project>\\work\\first-use-2\\fresh extraction\\Surge\\.venv\\Scripts\\python.exe",
+                "-B",
+                "scripts/check_release.py"
+              ],
+              "exit_code": 0,
+              "elapsed_seconds": 0.313,
+              "log": "hygiene.log",
+              "log_sha256": "ddc0606e6c2eb241fcc3d22afab89b18d41ad228b0db4c8d5bde7a03e76131ba"
+            },
+            {
+              "id": "format",
+              "status": "failed",
+              "timeout_seconds": 180,
+              "command": [
+                "powershell.exe",
+                "-NoProfile",
+                "-Command",
+                "pnpm run format:check"
+              ],
+              "exit_code": 1,
+              "elapsed_seconds": 2.469,
+              "log": "format.log",
+              "log_sha256": "7b21bf86f3ec0df8cb7712b4516e1b0275c61c4b605b9e4ad5e242d6111a1686"
+            }
+          ],
+          "requested": [
+            "native_configure",
+            "native_build",
+            "native_ctest",
+            "unapproved",
+            "approve",
+            "approved",
+            "library",
+            "deletion",
+            "saved",
+            "replays",
+            "hygiene",
+            "format"
+          ],
+          "fresh_os": false,
+          "human_acceptance": "pending",
+          "source_before_matches": true,
+          "source_after_matches": true,
+          "baseline_sha256": "c79fb14d6ade3f2c62c5b4e580da410876f7b2fdb91819cbf163eacec112ab5c"
+        }
+      ],
+      "assessment": null,
+      "ui_results": [
+        [
+          {
+            "name": "canceled deletion retains membership",
+            "passed": true
+          },
+          {
+            "name": "opened deletion clears membership and preserves evidence",
+            "passed": true
+          },
+          {
+            "name": "recently saved deletion clears stale reopen action",
+            "passed": true
+          }
+        ],
+        [
+          {
+            "name": "combined opening and keyboard focus",
+            "passed": true
+          },
+          {
+            "name": "import case into empty library",
+            "passed": true
+          },
+          {
+            "name": "open verified case",
+            "passed": true
+          },
+          {
+            "name": "save a named independent snapshot",
+            "passed": true
+          },
+          {
+            "name": "rename keeps case bytes intact",
+            "passed": true
+          },
+          {
+            "name": "export and import portable copy",
+            "passed": true
+          },
+          {
+            "name": "delete confirmation cancellation and evidence preservation",
+            "passed": true
+          },
+          {
+            "name": "invalid import and renderer path rejection preserve state",
+            "passed": true
+          },
+          {
+            "name": "library persists across desktop restart",
+            "passed": true
+          }
+        ],
+        {
+          "mode": "replay",
+          "status": "passed",
+          "started": "2026-10-23T18:20:36.267Z",
+          "finished": "2026-10-23T18:20:40.884Z",
+          "profile": "<project>\\work\\first-use-2\\fresh extraction\\Surge\\verification\\electron\\first-use-48ZwX1\\profile",
+          "checks": [
+            {
+              "name": "Fresh isolated profile opens at the start screen",
+              "passed": true,
+              "milliseconds": 303
+            },
+            {
+              "name": "Missing native build gives actionable guidance",
+              "passed": true,
+              "milliseconds": 335
+            },
+            {
+              "name": "Import and inspect approved-update.case.json",
+              "passed": true,
+              "milliseconds": 386,
+              "evidence": {
+                "sha256": "b9d92a0d821665742ffab1585f55a008be88e5ff51d5be5ae094ae0e3cf8d75a",
+                "expected": {
+                  "No finding": 4,
+                  "Review": 0,
+                  "Unknown": 0
+                },
+                "summary": {
+                  "total": 4,
+                  "Review": 0,
+                  "Unknown": 0,
+                  "No finding": 4,
+                  "rows_with_gaps": 0
+                },
+                "saved_result": {
+                  "expected": true,
+                  "ranges": 2,
+                  "review": 0,
+                  "unknown": 0
+                }
+              }
+            },
+            {
+              "name": "Import and inspect unapproved-update.case.json",
+              "passed": true,
+              "milliseconds": 373,
+              "evidence": {
+                "sha256": "f802fb38c5d9747a2c2b9e8ff48f8269bcad32f177816bac23abafe4906fa664",
+                "expected": {
+                  "No finding": 0,
+                  "Review": 4,
+                  "Unknown": 0
+                },
+                "summary": {
+                  "total": 4,
+                  "Review": 4,
+                  "Unknown": 0,
+                  "No finding": 0,
+                  "rows_with_gaps": 4
+                },
+                "saved_result": {
+                  "expected": false,
+                  "ranges": 2,
+                  "review": 4,
+                  "unknown": 0
+                }
+              }
+            },
+            {
+              "name": "Import and inspect changed-code.case.json",
+              "passed": true,
+              "milliseconds": 371,
+              "evidence": {
+                "sha256": "43cf670a910e22b639b2e183ac422e8a60964c84e18a29109ae5e04d48ad5fdb",
+                "expected": {
+                  "No finding": 3,
+                  "Review": 1,
+                  "Unknown": 0
+                },
+                "summary": {
+                  "total": 4,
+                  "Review": 1,
+                  "Unknown": 0,
+                  "No finding": 3,
+                  "rows_with_gaps": 0
+                },
+                "saved_result": {
+                  "expected": false,
+                  "ranges": 2,
+                  "review": 1,
+                  "unknown": 0
+                }
+              }
+            },
+            {
+              "name": "Import and inspect unreadable.case.json",
+              "passed": true,
+              "milliseconds": 382,
+              "evidence": {
+                "sha256": "21eafd7eea008ade55aea08eaecdebe860e26dbd89afa08566d5042cc40a4d71",
+                "expected": {
+                  "No finding": 3,
+                  "Review": 0,
+                  "Unknown": 1
+                },
+                "summary": {
+                  "total": 4,
+                  "Review": 0,
+                  "Unknown": 1,
+                  "No finding": 3,
+                  "rows_with_gaps": 1
+                },
+                "saved_result": {
+                  "expected": false,
+                  "ranges": 2,
+                  "review": 0,
+                  "unknown": 1
+                }
+              }
+            },
+            {
+              "name": "Import and inspect outside-coverage.case.json",
+              "passed": true,
+              "milliseconds": 374,
+              "evidence": {
+                "sha256": "e6208f7380f76785cc74d2a9efbd950dd180156ac5055094d13ec8bd0bcc5fcf",
+                "expected": {
+                  "No finding": 4,
+                  "Review": 0,
+                  "Unknown": 0
+                },
+                "summary": {
+                  "total": 4,
+                  "Review": 0,
+                  "Unknown": 0,
+                  "No finding": 4,
+                  "rows_with_gaps": 0
+                },
+                "saved_result": {
+                  "expected": true,
+                  "ranges": 2,
+                  "review": 0,
+                  "unknown": 0
+                }
+              }
+            },
+            {
+              "name": "No uncaught renderer errors",
+              "passed": true,
+              "milliseconds": 1
+            }
+          ],
+          "renderer_errors": [],
+          "limitations": [
+            "Automated same-host rehearsal, not an unfamiliar tester or another Windows installation.",
+            "Native file dialogs are stubbed to select owned fixtures; shell dialog interaction is not tested.",
+            "Read-only bridge assertions supplement visible controls; actions use actual interface buttons.",
+            "Short bounded capture only; does not repeat endurance, wider fuzzing, or hostile-host validation."
+          ]
+        },
+        {
+          "mode": "unapproved",
+          "status": "passed",
+          "started": "2026-10-23T18:21:17.699Z",
+          "finished": "2026-10-23T18:21:20.996Z",
+          "profile": "<project>\\work\\first-use-2\\fresh extraction\\Surge\\verification\\electron\\first-use-aqvkzo\\profile",
+          "checks": [
+            {
+              "name": "Fresh isolated profile opens at the start screen",
+              "passed": true,
+              "milliseconds": 309
+            },
+            {
+              "name": "unapproved environment preconditions",
+              "passed": true,
+              "milliseconds": 28,
+              "evidence": {
+                "executable_sha256": "dc63b158a65310c06e4a098e724d3e23654859e3806a2be2ece55ee92e8d5e23",
+                "registry_sha256": null
+              }
+            },
+            {
+              "name": "Start and inspect through the visible demo controls",
+              "passed": true,
+              "milliseconds": 1781,
+              "evidence": {
+                "summary": {
+                  "total": 6,
+                  "Review": 6,
+                  "Unknown": 0,
+                  "No finding": 0,
+                  "rows_with_gaps": 6
+                },
+                "demo_result": {
+                  "expected": false,
+                  "ranges": 2,
+                  "review": 6,
+                  "unknown": 0
+                },
+                "inspected_capture": {
+                  "session_id": "30728-134372532791708435",
+                  "capture_state": "running",
+                  "final_sequence": 3,
+                  "captured_at": "2026-10-23T18:21:20.247Z",
+                  "inspected_at": "2026-10-23T18:21:20.578964+00:00",
+                  "records": 6,
+                  "samples": 3
+                }
+              }
+            },
+            {
+              "name": "Stop opens the final snapshot",
+              "passed": true,
+              "milliseconds": 67,
+              "evidence": {
+                "summary": {
+                  "total": 8,
+                  "Review": 8,
+                  "Unknown": 0,
+                  "No finding": 0,
+                  "rows_with_gaps": 8
+                },
+                "inspected_capture": {
+                  "session_id": "30728-134372532791708435",
+                  "capture_state": "stopped",
+                  "final_sequence": 4,
+                  "captured_at": "2026-10-23T18:21:20.750Z",
+                  "inspected_at": "2026-10-23T18:21:20.818926+00:00",
+                  "records": 8,
+                  "samples": 4
+                }
+              }
+            },
+            {
+              "name": "No uncaught renderer errors",
+              "passed": true,
+              "milliseconds": 0
+            }
+          ],
+          "renderer_errors": [],
+          "limitations": [
+            "Automated same-host rehearsal, not an unfamiliar tester or another Windows installation.",
+            "Native file dialogs are stubbed to select owned fixtures; shell dialog interaction is not tested.",
+            "Read-only bridge assertions supplement visible controls; actions use actual interface buttons.",
+            "Short bounded capture only; does not repeat endurance, wider fuzzing, or hostile-host validation."
+          ]
+        },
+        {
+          "mode": "approved",
+          "status": "passed",
+          "started": "2026-10-23T18:21:21.407Z",
+          "finished": "2026-10-23T18:21:24.980Z",
+          "profile": "<project>\\work\\first-use-2\\fresh extraction\\Surge\\verification\\electron\\first-use-sm6sOb\\profile",
+          "checks": [
+            {
+              "name": "Fresh isolated profile opens at the start screen",
+              "passed": true,
+              "milliseconds": 314
+            },
+            {
+              "name": "approved environment preconditions",
+              "passed": true,
+              "milliseconds": 10,
+              "evidence": {
+                "executable_sha256": "dc63b158a65310c06e4a098e724d3e23654859e3806a2be2ece55ee92e8d5e23",
+                "registry_sha256": "c79fb14d6ade3f2c62c5b4e580da410876f7b2fdb91819cbf163eacec112ab5c"
+              }
+            },
+            {
+              "name": "Start and inspect through the visible demo controls",
+              "passed": true,
+              "milliseconds": 1736,
+              "evidence": {
+                "summary": {
+                  "total": 6,
+                  "Review": 0,
+                  "Unknown": 0,
+                  "No finding": 6,
+                  "rows_with_gaps": 0
+                },
+                "demo_result": {
+                  "expected": true,
+                  "ranges": 2,
+                  "review": 0,
+                  "unknown": 0
+                },
+                "inspected_capture": {
+                  "session_id": "37152-134372532828112536",
+                  "capture_state": "running",
+                  "final_sequence": 3,
+                  "captured_at": "2026-10-23T18:21:23.852Z",
+                  "inspected_at": "2026-10-23T18:21:24.209590+00:00",
+                  "records": 6,
+                  "samples": 3
+                }
+              }
+            },
+            {
+              "name": "Stop opens the final snapshot",
+              "passed": true,
+              "milliseconds": 70,
+              "evidence": {
+                "summary": {
+                  "total": 8,
+                  "Review": 0,
+                  "Unknown": 0,
+                  "No finding": 8,
+                  "rows_with_gaps": 0
+                },
+                "inspected_capture": {
+                  "session_id": "37152-134372532828112536",
+                  "capture_state": "stopped",
+                  "final_sequence": 4,
+                  "captured_at": "2026-10-23T18:21:24.354Z",
+                  "inspected_at": "2026-10-23T18:21:24.438521+00:00",
+                  "records": 8,
+                  "samples": 4
+                }
+              }
+            },
+            {
+              "name": "Save and reopen preserves evidence without a live claim",
+              "passed": true,
+              "milliseconds": 366,
+              "evidence": {
+                "summary": {
+                  "total": 8,
+                  "Review": 0,
+                  "Unknown": 0,
+                  "No finding": 8,
+                  "rows_with_gaps": 0
+                },
+                "saved_result": {
+                  "expected": true,
+                  "ranges": 2,
+                  "review": 0,
+                  "unknown": 0
+                },
+                "inspected_capture": null
+              }
+            },
+            {
+              "name": "No uncaught renderer errors",
+              "passed": true,
+              "milliseconds": 0
+            }
+          ],
+          "renderer_errors": [],
+          "limitations": [
+            "Automated same-host rehearsal, not an unfamiliar tester or another Windows installation.",
+            "Native file dialogs are stubbed to select owned fixtures; shell dialog interaction is not tested.",
+            "Read-only bridge assertions supplement visible controls; actions use actual interface buttons.",
+            "Short bounded capture only; does not repeat endurance, wider fuzzing, or hostile-host validation."
+          ]
+        },
+        {
+          "stage": 6,
+          "status": "passed",
+          "checks": [
+            "Stop is primary after inspection; newer inspection is secondary",
+            "Footer follows demo steps and table says Observations",
+            "Save confirmation opens exact saved case directly",
+            "Normal saved case opens with observations; empty-filter recovery clears all filters",
+            "Reopen leaves demo panel and identifies saved case without runtime provenance",
+            "Historical summary reflects verified approved evidence and limits scope",
+            "Concurrent capture stays separate and cannot change saved summary",
+            "After app restart, case reopens with its verified observations and no collector",
+            "Minimum window retains reachable observations without horizontal overflow",
+            "Renaming the open case updates its label without changing verified evidence"
+          ]
+        }
+      ]
+    },
+    {
+      "attempt": 3,
+      "preparation": {
+        "archive_sha256": "4b0c7a359e97c543e220c03d053cef2bd7adf701ee612b87776f3aa6ee30a358",
+        "manifest_sha256": "02c7a0ed1b5bbf1858e8275a87c38eab4e136d97428af3a7140f818745f2d91e",
+        "file_count": 243,
+        "initial_artifacts_absent": {
+          ".venv": true,
+          "desktop/node_modules": true,
+          "desktop/dist": true,
+          "native/build": true,
+          "native/captures": true,
+          "native/baselines.json": true
+        },
+        "initial_caches_absent": true,
+        "source_match": true
+      },
+      "runs": [
+        {
+          "schema": "surge-first-use-machine-v1",
+          "status": "passed",
+          "os": "Windows-11-10.0.26200-SP0",
+          "python": "3.12.14 (main, Aug 25 2026, 14:01:42) [MSC v.1944 64 bit (AMD64)]",
+          "steps": [
+            {
+              "id": "cache_path",
+              "status": "passed",
+              "timeout_seconds": 30,
+              "command": [
+                "powershell.exe",
+                "-NoProfile",
+                "-Command",
+                "pnpm store path"
+              ],
+              "exit_code": 0,
+              "elapsed_seconds": 1.109,
+              "log": "cache_path.log",
+              "log_sha256": "ab87ace8a0189bf9d51e932785ced05a0a6d27d5d0479cab20b934019efee654",
+              "observed_cache_path": "<project>\\work\\first-use-3\\empty caches\\pnpm-store\\v11"
+            },
+            {
+              "id": "setup",
+              "status": "passed",
+              "timeout_seconds": 600,
+              "command": [
+                "powershell.exe",
+                "-NoProfile",
+                "-ExecutionPolicy",
+                "Bypass",
+                "-File",
+                "Setup-Surge.ps1",
+                "-Python",
+                "<python-runtime>/python.exe"
+              ],
+              "exit_code": 0,
+              "elapsed_seconds": 11.031,
+              "log": "setup.log",
+              "log_sha256": "27348e42b22167ab4e7206d902b9a009091c83f24a74338d8d6c6d1174154d04"
+            },
+            {
+              "id": "replay",
+              "status": "passed",
+              "timeout_seconds": 180,
+              "command": [
+                "node",
+                "first-use.test.cjs",
+                "replay"
+              ],
+              "exit_code": 0,
+              "elapsed_seconds": 4.515,
+              "log": "replay.log",
+              "log_sha256": "9aaaca9a9b4eeedd0276b33416c316bb3715723834d29df891dcc0589af5cd2c"
+            },
+            {
+              "id": "native_configure",
+              "status": "passed",
+              "timeout_seconds": 300,
+              "command": [
+                "cmake",
+                "-S",
+                "native",
+                "-B",
+                "native/build",
+                "-A",
+                "x64"
+              ],
+              "exit_code": 0,
+              "elapsed_seconds": 3.312,
+              "log": "native_configure.log",
+              "log_sha256": "6cfda7db1ee7d8dc9cb5b98ef09c4038b25fc07adba954b55a65de6bf82f5c53"
+            },
+            {
+              "id": "native_build",
+              "status": "passed",
+              "timeout_seconds": 300,
+              "command": [
+                "cmake",
+                "--build",
+                "native/build",
+                "--config",
+                "Release",
+                "--",
+                "/nodeReuse:false"
+              ],
+              "exit_code": 0,
+              "elapsed_seconds": 12.547,
+              "log": "native_build.log",
+              "log_sha256": "d4a411f205a4e26766d58169bca3e81f548e42a5f13701bee6bdf74f6658961c"
+            },
+            {
+              "id": "native_ctest",
+              "status": "passed",
+              "timeout_seconds": 180,
+              "command": [
+                "ctest",
+                "--test-dir",
+                "native/build",
+                "-C",
+                "Release",
+                "--output-on-failure",
+                "--timeout",
+                "60",
+                "--no-tests=error"
+              ],
+              "exit_code": 0,
+              "elapsed_seconds": 0.281,
+              "log": "native_ctest.log",
+              "log_sha256": "006cfbc585e72a11cbed061389d28c5b6311755fbe9f2539230a24845be9df1c"
+            },
+            {
+              "id": "unapproved",
+              "status": "passed",
+              "timeout_seconds": 180,
+              "command": [
+                "node",
+                "first-use.test.cjs",
+                "unapproved"
+              ],
+              "exit_code": 0,
+              "elapsed_seconds": 3.344,
+              "log": "unapproved.log",
+              "log_sha256": "d232bf842db75738aeb24da90416890fade1f58d1551983f1d76a4387b7ec65c"
+            },
+            {
+              "id": "approve",
+              "status": "passed",
+              "timeout_seconds": 60,
+              "command": [
+                "<project>\\work\\first-use-3\\fresh extraction\\Surge\\.venv\\Scripts\\python.exe",
+                "-B",
+                "scripts/native_capture.py",
+                "approve",
+                "--build",
+                "v2",
+                "--reason",
+                "Reviewed included v2 fixture; isolated first-use acceptance only"
+              ],
+              "exit_code": 0,
+              "elapsed_seconds": 0.25,
+              "log": "approve.log",
+              "log_sha256": "4a1a31615a60d9580dbc612d55a7c7aec1ed9b9472f5c4e36786c1ff336942e7"
+            },
+            {
+              "id": "approved",
+              "status": "passed",
+              "timeout_seconds": 180,
+              "command": [
+                "node",
+                "first-use.test.cjs",
+                "approved"
+              ],
+              "exit_code": 0,
+              "elapsed_seconds": 3.516,
+              "log": "approved.log",
+              "log_sha256": "e9ef71dd556e45c60a0c642fa76e74e427ed53fa75dafdda3f8f5975375c87a7"
+            },
+            {
+              "id": "library",
+              "status": "passed",
+              "timeout_seconds": 180,
+              "command": [
+                "node",
+                "library-ui.test.cjs"
+              ],
+              "exit_code": 0,
+              "elapsed_seconds": 3.032,
+              "log": "library.log",
+              "log_sha256": "78e821513a06c57aaa7b83d805595e00aa6945f4989abfc95e4acecce38930d5"
+            },
+            {
+              "id": "deletion",
+              "status": "passed",
+              "timeout_seconds": 180,
+              "command": [
+                "node",
+                "library-deletion.test.cjs"
+              ],
+              "exit_code": 0,
+              "elapsed_seconds": 2.031,
+              "log": "deletion.log",
+              "log_sha256": "64763a18de0f8e61cdf4d3bee9dfa5753c4c93bfcdd9b18dea30e976701cc89b"
+            },
+            {
+              "id": "saved",
+              "status": "passed",
+              "timeout_seconds": 180,
+              "command": [
+                "node",
+                "saved-flow.test.cjs"
+              ],
+              "exit_code": 0,
+              "elapsed_seconds": 4.516,
+              "log": "saved.log",
+              "log_sha256": "61881c308859dacee1d2033deb465201a0a9c0f24f9764020c1b5904d32e9884"
+            },
+            {
+              "id": "replays",
+              "status": "passed",
+              "timeout_seconds": 60,
+              "command": [
+                "<project>\\work\\first-use-3\\fresh extraction\\Surge\\.venv\\Scripts\\python.exe",
+                "-B",
+                "scripts/verify_native_demo.py"
+              ],
+              "exit_code": 0,
+              "elapsed_seconds": 0.25,
+              "log": "replays.log",
+              "log_sha256": "19ef6159f6001109a7e74fd47d32337bff2ca4da2033e21c5390787a3b6adb08"
+            },
+            {
+              "id": "hygiene",
+              "status": "passed",
+              "timeout_seconds": 60,
+              "command": [
+                "<project>\\work\\first-use-3\\fresh extraction\\Surge\\.venv\\Scripts\\python.exe",
+                "-B",
+                "scripts/check_release.py"
+              ],
+              "exit_code": 0,
+              "elapsed_seconds": 0.281,
+              "log": "hygiene.log",
+              "log_sha256": "ddc0606e6c2eb241fcc3d22afab89b18d41ad228b0db4c8d5bde7a03e76131ba"
+            },
+            {
+              "id": "format",
+              "status": "passed",
+              "timeout_seconds": 180,
+              "command": [
+                "powershell.exe",
+                "-NoProfile",
+                "-Command",
+                "pnpm run format:check"
+              ],
+              "exit_code": 0,
+              "elapsed_seconds": 2.093,
+              "log": "format.log",
+              "log_sha256": "4abe21ecf85b6530437dbf64db4b2a4930475daeb68ef57f6ce0607ccdd48f5e"
+            }
+          ],
+          "requested": [
+            "cache_path",
+            "setup",
+            "replay",
+            "native_configure",
+            "native_build",
+            "native_ctest",
+            "unapproved",
+            "approve",
+            "approved",
+            "library",
+            "deletion",
+            "saved",
+            "replays",
+            "hygiene",
+            "format"
+          ],
+          "fresh_os": false,
+          "human_acceptance": "pending",
+          "source_before_matches": true,
+          "source_after_matches": true,
+          "baseline_sha256": "ac87183de0c35deaa82b7a725222616fb08554abe1eb2ea6d204b6c0ce5dbc4d"
+        }
+      ],
+      "assessment": null,
+      "ui_results": [
+        [
+          {
+            "name": "canceled deletion retains membership",
+            "passed": true
+          },
+          {
+            "name": "opened deletion clears membership and preserves evidence",
+            "passed": true
+          },
+          {
+            "name": "recently saved deletion clears stale reopen action",
+            "passed": true
+          }
+        ],
+        [
+          {
+            "name": "combined opening and keyboard focus",
+            "passed": true
+          },
+          {
+            "name": "import case into empty library",
+            "passed": true
+          },
+          {
+            "name": "open verified case",
+            "passed": true
+          },
+          {
+            "name": "save a named independent snapshot",
+            "passed": true
+          },
+          {
+            "name": "rename keeps case bytes intact",
+            "passed": true
+          },
+          {
+            "name": "export and import portable copy",
+            "passed": true
+          },
+          {
+            "name": "delete confirmation cancellation and evidence preservation",
+            "passed": true
+          },
+          {
+            "name": "invalid import and renderer path rejection preserve state",
+            "passed": true
+          },
+          {
+            "name": "library persists across desktop restart",
+            "passed": true
+          }
+        ],
+        {
+          "mode": "replay",
+          "status": "passed",
+          "started": "2026-10-23T18:23:30.367Z",
+          "finished": "2026-10-23T18:23:34.791Z",
+          "profile": "<project>\\work\\first-use-3\\fresh extraction\\Surge\\verification\\electron\\first-use-ArmIVh\\profile",
+          "checks": [
+            {
+              "name": "Fresh isolated profile opens at the start screen",
+              "passed": true,
+              "milliseconds": 309
+            },
+            {
+              "name": "Missing native build gives actionable guidance",
+              "passed": true,
+              "milliseconds": 282
+            },
+            {
+              "name": "Import and inspect approved-update.case.json",
+              "passed": true,
+              "milliseconds": 410,
+              "evidence": {
+                "sha256": "b9d92a0d821665742ffab1585f55a008be88e5ff51d5be5ae094ae0e3cf8d75a",
+                "expected": {
+                  "No finding": 4,
+                  "Review": 0,
+                  "Unknown": 0
+                },
+                "summary": {
+                  "total": 4,
+                  "Review": 0,
+                  "Unknown": 0,
+                  "No finding": 4,
+                  "rows_with_gaps": 0
+                },
+                "saved_result": {
+                  "expected": true,
+                  "ranges": 2,
+                  "review": 0,
+                  "unknown": 0
+                }
+              }
+            },
+            {
+              "name": "Import and inspect unapproved-update.case.json",
+              "passed": true,
+              "milliseconds": 331,
+              "evidence": {
+                "sha256": "f802fb38c5d9747a2c2b9e8ff48f8269bcad32f177816bac23abafe4906fa664",
+                "expected": {
+                  "No finding": 0,
+                  "Review": 4,
+                  "Unknown": 0
+                },
+                "summary": {
+                  "total": 4,
+                  "Review": 4,
+                  "Unknown": 0,
+                  "No finding": 0,
+                  "rows_with_gaps": 4
+                },
+                "saved_result": {
+                  "expected": false,
+                  "ranges": 2,
+                  "review": 4,
+                  "unknown": 0
+                }
+              }
+            },
+            {
+              "name": "Import and inspect changed-code.case.json",
+              "passed": true,
+              "milliseconds": 356,
+              "evidence": {
+                "sha256": "43cf670a910e22b639b2e183ac422e8a60964c84e18a29109ae5e04d48ad5fdb",
+                "expected": {
+                  "No finding": 3,
+                  "Review": 1,
+                  "Unknown": 0
+                },
+                "summary": {
+                  "total": 4,
+                  "Review": 1,
+                  "Unknown": 0,
+                  "No finding": 3,
+                  "rows_with_gaps": 0
+                },
+                "saved_result": {
+                  "expected": false,
+                  "ranges": 2,
+                  "review": 1,
+                  "unknown": 0
+                }
+              }
+            },
+            {
+              "name": "Import and inspect unreadable.case.json",
+              "passed": true,
+              "milliseconds": 488,
+              "evidence": {
+                "sha256": "21eafd7eea008ade55aea08eaecdebe860e26dbd89afa08566d5042cc40a4d71",
+                "expected": {
+                  "No finding": 3,
+                  "Review": 0,
+                  "Unknown": 1
+                },
+                "summary": {
+                  "total": 4,
+                  "Review": 0,
+                  "Unknown": 1,
+                  "No finding": 3,
+                  "rows_with_gaps": 1
+                },
+                "saved_result": {
+                  "expected": false,
+                  "ranges": 2,
+                  "review": 0,
+                  "unknown": 1
+                }
+              }
+            },
+            {
+              "name": "Import and inspect outside-coverage.case.json",
+              "passed": true,
+              "milliseconds": 461,
+              "evidence": {
+                "sha256": "e6208f7380f76785cc74d2a9efbd950dd180156ac5055094d13ec8bd0bcc5fcf",
+                "expected": {
+                  "No finding": 4,
+                  "Review": 0,
+                  "Unknown": 0
+                },
+                "summary": {
+                  "total": 4,
+                  "Review": 0,
+                  "Unknown": 0,
+                  "No finding": 4,
+                  "rows_with_gaps": 0
+                },
+                "saved_result": {
+                  "expected": true,
+                  "ranges": 2,
+                  "review": 0,
+                  "unknown": 0
+                }
+              }
+            },
+            {
+              "name": "No uncaught renderer errors",
+              "passed": true,
+              "milliseconds": 1
+            }
+          ],
+          "renderer_errors": [],
+          "limitations": [
+            "Automated same-host rehearsal, not an unfamiliar tester or another Windows installation.",
+            "Native file dialogs are stubbed to select owned fixtures; shell dialog interaction is not tested.",
+            "Read-only bridge assertions supplement visible controls; actions use actual interface buttons.",
+            "Short bounded capture only; does not repeat endurance, wider fuzzing, or hostile-host validation."
+          ]
+        },
+        {
+          "mode": "unapproved",
+          "status": "passed",
+          "started": "2026-10-23T18:23:51.043Z",
+          "finished": "2026-10-23T18:23:54.318Z",
+          "profile": "<project>\\work\\first-use-3\\fresh extraction\\Surge\\verification\\electron\\first-use-LR2Vpj\\profile",
+          "checks": [
+            {
+              "name": "Fresh isolated profile opens at the start screen",
+              "passed": true,
+              "milliseconds": 311
+            },
+            {
+              "name": "unapproved environment preconditions",
+              "passed": true,
+              "milliseconds": 24,
+              "evidence": {
+                "executable_sha256": "9cbf923efa38a9a6963d79f1e4c7eb3756e0e9293da9363a1a43f02aba8359a2",
+                "registry_sha256": null
+              }
+            },
+            {
+              "name": "Start and inspect through the visible demo controls",
+              "passed": true,
+              "milliseconds": 1823,
+              "evidence": {
+                "summary": {
+                  "total": 6,
+                  "Review": 6,
+                  "Unknown": 0,
+                  "No finding": 0,
+                  "rows_with_gaps": 6
+                },
+                "demo_result": {
+                  "expected": false,
+                  "ranges": 2,
+                  "review": 6,
+                  "unknown": 0
+                },
+                "inspected_capture": {
+                  "session_id": "32364-134372534324781208",
+                  "capture_state": "running",
+                  "final_sequence": 3,
+                  "captured_at": "2026-10-23T18:23:53.542Z",
+                  "inspected_at": "2026-10-23T18:23:53.898873+00:00",
+                  "records": 6,
+                  "samples": 3
+                }
+              }
+            },
+            {
+              "name": "Stop opens the final snapshot",
+              "passed": true,
+              "milliseconds": 92,
+              "evidence": {
+                "summary": {
+                  "total": 8,
+                  "Review": 8,
+                  "Unknown": 0,
+                  "No finding": 0,
+                  "rows_with_gaps": 8
+                },
+                "inspected_capture": {
+                  "session_id": "32364-134372534324781208",
+                  "capture_state": "stopped",
+                  "final_sequence": 4,
+                  "captured_at": "2026-10-23T18:23:54.047Z",
+                  "inspected_at": "2026-10-23T18:23:54.174342+00:00",
+                  "records": 8,
+                  "samples": 4
+                }
+              }
+            },
+            {
+              "name": "No uncaught renderer errors",
+              "passed": true,
+              "milliseconds": 1
+            }
+          ],
+          "renderer_errors": [],
+          "limitations": [
+            "Automated same-host rehearsal, not an unfamiliar tester or another Windows installation.",
+            "Native file dialogs are stubbed to select owned fixtures; shell dialog interaction is not tested.",
+            "Read-only bridge assertions supplement visible controls; actions use actual interface buttons.",
+            "Short bounded capture only; does not repeat endurance, wider fuzzing, or hostile-host validation."
+          ]
+        },
+        {
+          "mode": "approved",
+          "status": "passed",
+          "started": "2026-10-23T18:23:54.667Z",
+          "finished": "2026-10-23T18:23:58.112Z",
+          "profile": "<project>\\work\\first-use-3\\fresh extraction\\Surge\\verification\\electron\\first-use-SlULHx\\profile",
+          "checks": [
+            {
+              "name": "Fresh isolated profile opens at the start screen",
+              "passed": true,
+              "milliseconds": 317
+            },
+            {
+              "name": "approved environment preconditions",
+              "passed": true,
+              "milliseconds": 8,
+              "evidence": {
+                "executable_sha256": "9cbf923efa38a9a6963d79f1e4c7eb3756e0e9293da9363a1a43f02aba8359a2",
+                "registry_sha256": "ac87183de0c35deaa82b7a725222616fb08554abe1eb2ea6d204b6c0ce5dbc4d"
+              }
+            },
+            {
+              "name": "Start and inspect through the visible demo controls",
+              "passed": true,
+              "milliseconds": 1782,
+              "evidence": {
+                "summary": {
+                  "total": 6,
+                  "Review": 0,
+                  "Unknown": 0,
+                  "No finding": 6,
+                  "rows_with_gaps": 0
+                },
+                "demo_result": {
+                  "expected": true,
+                  "ranges": 2,
+                  "review": 0,
+                  "unknown": 0
+                },
+                "inspected_capture": {
+                  "session_id": "50156-134372534360094685",
+                  "capture_state": "running",
+                  "final_sequence": 3,
+                  "captured_at": "2026-10-23T18:23:57.050Z",
+                  "inspected_at": "2026-10-23T18:23:57.443553+00:00",
+                  "records": 6,
+                  "samples": 3
+                }
+              }
+            },
+            {
+              "name": "Stop opens the final snapshot",
+              "passed": true,
+              "milliseconds": 59,
+              "evidence": {
+                "summary": {
+                  "total": 8,
+                  "Review": 0,
+                  "Unknown": 0,
+                  "No finding": 8,
+                  "rows_with_gaps": 0
+                },
+                "inspected_capture": {
+                  "session_id": "50156-134372534360094685",
+                  "capture_state": "stopped",
+                  "final_sequence": 4,
+                  "captured_at": "2026-10-23T18:23:57.556Z",
+                  "inspected_at": "2026-10-23T18:23:57.654989+00:00",
+                  "records": 8,
+                  "samples": 4
+                }
+              }
+            },
+            {
+              "name": "Save and reopen preserves evidence without a live claim",
+              "passed": true,
+              "milliseconds": 301,
+              "evidence": {
+                "summary": {
+                  "total": 8,
+                  "Review": 0,
+                  "Unknown": 0,
+                  "No finding": 8,
+                  "rows_with_gaps": 0
+                },
+                "saved_result": {
+                  "expected": true,
+                  "ranges": 2,
+                  "review": 0,
+                  "unknown": 0
+                },
+                "inspected_capture": null
+              }
+            },
+            {
+              "name": "No uncaught renderer errors",
+              "passed": true,
+              "milliseconds": 0
+            }
+          ],
+          "renderer_errors": [],
+          "limitations": [
+            "Automated same-host rehearsal, not an unfamiliar tester or another Windows installation.",
+            "Native file dialogs are stubbed to select owned fixtures; shell dialog interaction is not tested.",
+            "Read-only bridge assertions supplement visible controls; actions use actual interface buttons.",
+            "Short bounded capture only; does not repeat endurance, wider fuzzing, or hostile-host validation."
+          ]
+        },
+        {
+          "stage": 6,
+          "status": "passed",
+          "checks": [
+            "Stop is primary after inspection; newer inspection is secondary",
+            "Footer follows demo steps and table says Observations",
+            "Save confirmation opens exact saved case directly",
+            "Normal saved case opens with observations; empty-filter recovery clears all filters",
+            "Reopen leaves demo panel and identifies saved case without runtime provenance",
+            "Historical summary reflects verified approved evidence and limits scope",
+            "Concurrent capture stays separate and cannot change saved summary",
+            "After app restart, case reopens with its verified observations and no collector",
+            "Minimum window retains reachable observations without horizontal overflow",
+            "Renaming the open case updates its label without changing verified evidence"
+          ]
+        }
+      ]
+    }
+  ],
+  "manifest": {
+    ".gitattributes": "b3ab4ec346755c1f646a3a0ebdb0d8bb723f05f346a66e8d1a22558288319a21",
+    ".gitignore": "91e8e7080aab0264e0df7f3f28e5c4d5fb9a244288636220ac6c0ac0fc49860e",
+    "LICENSE": "56859f263743de7bbd3bb73bbf4c89270107d40bf4a25c8bd01432c8ea56cf3f",
+    "NOTICE.md": "d6a7dcb570e6203482f15e06d6b8ef77b5969c820254b3e2e6ef073b14998d12",
+    "README.md": "ae45ce7a64cb99cd47154660339600fdefadce81a2d8fc541cef3c76ce8c504a",
+    "SECURITY.md": "8fab36a5baaa4765a0671d47a2498dc77237940a01418495aa7f2efafbc16161",
+    "Setup-Surge.ps1": "e08bc4db0604db7d989016a2fb07e462f865053db3753b8468e211953ff4bae9",
+    "Start-Surge-Legacy.cmd": "82c6f40159bf54898f6de90ba37074a00c6cba410cbe7ee6ba3e3cd0eb14534b",
+    "Start-Surge-Legacy.ps1": "1ec0591ac03db9949811b867a28f80d0f335155d6895da4c7e0bbe3b258852e5",
+    "Start-Surge.cmd": "56a26fa687d233a5437620ea196f8191fb1ae071be6cefd0a3cade304c0fe51b",
+    "Start-Surge.ps1": "fdc9e7d99f1b221a56fbb951f8aaab34a926a010ab4f1340059f194052131402",
+    "Start-Workbench.cmd": "f99fa50647044a5cffa0323789ff2374c45a249a5d085dd97ba75d7fc88485cf",
+    "Start-Workbench.ps1": "56381eabad78b7ef8fccad69f3825f2bc275529328f23cda534f7a82eb22d843",
+    "app.py": "79e4f934750103bbe0aed02057fafd858184d35d8c37bf4f3bccd9ae208a5342",
+    "chart.py": "9c11f9ff5fb27bba92314bf64f24cad1c2fc35fd1b2f53873be3811735e55f5f",
+    "comparison.py": "356a05ad7d80bad637cc50993ddfbb36a54416b036cbc7019de9a05424c30a65",
+    "comparison_view.py": "69f1e090593081c8174a3ca717bd7b600bca2da00461fb9cb0a3e76c3eb64d1f",
+    "desktop_worker.py": "6eb0fbbd912f6a60173f484db3f3522d22cb0f3d985753469e4743f1474eabd5",
+    "engine.py": "6355ce177ce225b25bf276c8f9a4329b31bda47f37792cce7e0e39a17a81e850",
+    "evaluation.py": "370e0efffc6841c6ffd974a16d9a22d83683d62f627e2da1679dfe8a861b87cb",
+    "evidence_labels.py": "d671325f3e95ad5aeef7b3815e5ff5b077392b7e5a7b2c3ca6a9b6670adca1a6",
+    "import_errors.py": "c36e47da5705f5e8c9d55a2e219d09c9cba3ca7940b08620ffe9a5e490645796",
+    "integrity_manifest.py": "753e0ddaa6d65e5af0c57f1b124f52b200a5fc9d88b7188e15101f3052d1e8a6",
+    "investigation.py": "6c8f340b57f137a795376cc0d14e12fdaf2b4e06f693fc3476c5a53dc4366d3a",
+    "mapping_checks.py": "47099e57cb76f5d5e66ebc9acd79a4d0139e4dc5655b2140e50d4652553d2e55",
+    "native_integrity.py": "83b66adac52977303d8822f7897d7b417797b44de05c8a40186670a1d30ca117",
+    "native_stream.py": "d3f281409f879d8be3415d8d279912cd477636af1e4d530e94fb6108da0a8915",
+    "pyproject.toml": "39ee93d42a8dcd642d00bb23f90ad2445298607a2ee5d6f774d206a677dac4fd",
+    "record_search.py": "4f314a453abdc475d5b31c75a951e6475f4a3a034e0a57dd2584aeecc49ce9b8",
+    "requirements-dev.txt": "57a225a6562f77ce418a7527ac4536c102e5ac8a4529ff5754171d828011604a",
+    "requirements-properties.txt": "45a863e95d1cf0b074de20994eb04b3043a0e9f9b4de12b33a560910483c4705",
+    "test_chart.py": "b983c660bf842886272a1eff63f80a7553b31cb0f48d9f6b0ab5268dd620131e",
+    "test_demo_clarity.py": "4af220c4e5964a1e2a2cc0c2383243d9c1dfa9f5f2d138e234570d3601d23e40",
+    "test_demo_polish.py": "6f03ea9f470fb59ef7fb1c6f40d2d440329ec00b67d9d12f6e430f9e0038be9a",
+    "test_demo_summary.py": "b74d8c35e835b5991038e387cd9ade16eb6b1fdc3164eb3b34224b6e4090508f",
+    "test_desktop_capture_provenance.py": "02189014eba0713a51211e80bd4ce34fdcc736ab5d34ad399d4dc66a284ffcb0",
+    "test_desktop_worker.py": "e54267dff03261b37c0dccfe711e3d873e478a4d5473b6362aa48dbeeb5bdd00",
+    "test_evaluation.py": "28bd550d86864d62ed666495b244c5d848755823ea3a8e70b108a262adee41bd",
+    "test_import_errors.py": "31649975ce21fc1f7750d2c25e5294f2dc3eafa7a392e92bfea6da0ab3c2aff6",
+    "test_investigation.py": "b359198b842cf286792a65b058f30c8b92577ca9e6bbbcda89c0a767c35912a7",
+    "test_investigation_completion.py": "fa06c9ec9434a93a7f3e3ea2650820efdef678d93ac8613ffd8abbc7e0c40153",
+    "test_mapping.py": "acb388b3a76bce16088d7c933b03f97f19c74e2501c5a2d7e4139a97e19b3b47",
+    "test_mapping_links.py": "b296e673279ad7f5eff3af933fcbd3124378052b461917433d695471a9f58551",
+    "test_memory_regressions.py": "d2207ab142494ff321d2a7bed66a8d06b5723228dd5f14ee0f946419def892b0",
+    "test_native_integrity.py": "35e988e68af5ef5e1e833ba85af0f1ffc9b882a5c00eb7ebd0623d442e3244fd",
+    "test_native_manifest_security.py": "e4572a3a284bddc37c197dfca90b1806ad9a711ad523c6f485947a731fb3e4a0",
+    "test_native_replay_contract.py": "4012a4db9a3546867310746da4b56ecbb0394ba59e69cf1ffa16858c94bead60",
+    "test_native_session.py": "c23601ff7803fd5e552bb0a56c930c555cfa6287a41b2e4ae8cfb028b065e96b",
+    "test_native_stream.py": "c39654704a1d177b272c21c82017c4588e3ea6ddef89a4ee370374c0ff32b1c4",
+    "test_native_window.py": "b4ecaaff3333a446e96114a12bf20ee9b19b5ef621fb912c61caffecf82d588b",
+    "test_policy_refinement.py": "fe9788239bd18f5effefc6270bdff0d10c3967277f0795fda0682644eca8fde5",
+    "test_presentation.py": "2177d88dfaf968fa7578c71e609abf931c83ec8467d901800ad63c674020cda5",
+    "test_preview_values.py": "891e8733cd4cd4dbb25ea14cea3ce9f30ee6acbd7a1999d03a49b3e7569f8b14",
+    "test_qualification.py": "5285a1f498fb8d5edf4e91ad784c2d6a55892b62c7ff720fcad6b7a5010ab3a0",
+    "test_record_search.py": "12aafa6f2ba546131903b018d33bf1e5f34a7212cd24417e0bada9d576f359b0",
+    "test_reference_groups.py": "a6b97499d42839023781c9d2e95649e9c888c61db89b218e35671c61176bc0fe",
+    "test_refinement3_security.py": "031562eed780996b2e3393aa74a99c2e3b9aa6ee14c75f2ebbf780afeb7efa83",
+    "test_refinement4_security.py": "6e1fc835dd6222b18cd736bcebaf0498294a028c2ec1a4e9e6f97e3a2defdf78",
+    "test_refinement_security.py": "ba9f9e2236a72c3ae9c452a64aa9bd1df925a6f5dbff5d32bfc87a3e9bc2257f",
+    "test_retention_qualification.py": "edc8b71bbd62df392a2b4cee9d90585d09505769e9a31b7cd95f515da34757a0",
+    "test_saved_case_summary.py": "a5d9c54ed98b53c3d71cce40cdefe2825ce121a4d195223051bd8a497b4ad7b1",
+    "test_start.py": "a64949c766a51fcc1083e4ba71be8b78e022c42db69a20f23f1b72f5fb035591",
+    "test_workbench.py": "06c47408d2c21cd48c9be0d723501bca725303b15fa4ed2a2927607deb6331fd",
+    "test_workflow.py": "43ddf71d282066e8b84f32f8eeb054928bb6844959c9239ae648fba7e977cd30",
+    "workflow.py": "269d6c038f789ee8cdf382ce2a58114273d1d00dca512a20dc9088396e94dbf3",
+    ".github/workflows/ci.yml": "a96f62a1a9dc79b6033d8547590f5c659d9d4d66da926674193acf3e2a132868",
+    "benchmarks/evaluate_refinement.py": "ce9642ce98d2b8c9faa9d53230ab6e4beac843a23e0d96b1f508c7ff5c4dda9e",
+    "benchmarks/evaluate_refinement2.py": "249cdb601bce3c1246b200d348fe729a4404b2f4055ed97ee9f2759363caa58d",
+    "benchmarks/evaluate_refinement3.py": "c2281c2536ccaecf3ca8632da1eabb7c2da7f998d455090fbd3a467014401348",
+    "benchmarks/evaluate_refinement4.py": "1904aaf8edcbbc48b7b990930151c0aabf369149979d9e6bb5bb160808a5928a",
+    "benchmarks/prepare_refinement.py": "59a9f54e014a90ab81bfc795a2fe98d6c250caf2b1b7e687ffbb8c597f9b9b95",
+    "benchmarks/prepare_refinement2.py": "efd88a7cd2eafba20972302760cbe6a0b89b51ec4638b1586bb809b7dfcbdf19",
+    "benchmarks/prepare_refinement3.py": "f3ea0df850362078644bc87a319af37088a1b57b46fd1492a73efd9a6080c354",
+    "benchmarks/prepare_refinement4.py": "a608a1fd1900acd39388e6105717e66a8b022933fa70876e129131fbc663a8dc",
+    "benchmarks/prepare_rt_iot2022.py": "41ea164c4b0149a429d52004d16302c2c9ef497c66d1c96fbb198b95543d0c5c",
+    "benchmarks/probe_profiles_development.py": "e6d45f7db177874b2b195c8953f37841c9118de84f0d71a46660564ba81b20e7",
+    "benchmarks/probe_refinement2_development.py": "6c96dc5e36b33ae94b98959a5c631420a9b3b65e8cb0dd2fc21ae03fcb5ec3ca",
+    "benchmarks/probe_refinement3_development.py": "407ac9d013dbae43e7d687ae2615ab16134373800dffbd79bc1589db17b79709",
+    "benchmarks/probe_refinement4_development.py": "9f78405a9620ed4151145a83361e2c52f4b0e4380101d2edf2f117a486d5bd69",
+    "benchmarks/probe_refinement4_hybrid.py": "f6aa506e15a8faca0bc839344f2e1f4f6540a05795af5fe83c51dbeab30c4ed3",
+    "benchmarks/probe_refinement4_interval.py": "563384558fab909f1b7011cbf20e5eaa7799f4741f362d0f5b93fef7a31ad641",
+    "benchmarks/select_refinement.py": "cc8648f98a97eb8e48ec6b000e1f6c9a2aea32a585b9650023c295888dbb3bac",
+    "benchmarks/select_refinement2_development.py": "8619f22e255ef67a7cca4f6b61c5e808feae5f1e61736f562328b68ba854731c",
+    "benchmarks/select_refinement3_development.py": "5e9f9792b5c3ae5911dffbb276157fd47b69fa7ee8a6ea5e3fc0f25c5db77d78",
+    "benchmarks/select_refinement4_development.py": "4f1aef50584a516837999f7717914c420b1a6d30882e244b28ea1ac0753e49ea",
+    "benchmarks/test_refinement2_protocol.py": "34971604b814cfd78b8fdcf4f68ec520e072cfad48a30b027ac2576c3f4c1f60",
+    "benchmarks/test_refinement3_protocol.py": "5627564e8568aa4cbb50b2d6a2406309707c964d9b9711984aee3be5fb073d37",
+    "benchmarks/test_refinement4_protocol.py": "eb594eedd13c4930a07a9c122ff10bd3abdbcb94cc56227c780ca3ca02f65f8e",
+    "demos/native/README.md": "536e61bffa4a40d4f55b58b63102fbddfa09ad2223c32ada2ee71f1fc21f76b9",
+    "demos/native/approved-update.case.json": "b9d92a0d821665742ffab1585f55a008be88e5ff51d5be5ae094ae0e3cf8d75a",
+    "demos/native/changed-code.case.json": "43cf670a910e22b639b2e183ac422e8a60964c84e18a29109ae5e04d48ad5fdb",
+    "demos/native/expected.json": "afdd28b5f5b8d50fede1857786bb7663fa86353c76a231d91b89d52311e8a7f4",
+    "demos/native/outside-coverage.case.json": "e6208f7380f76785cc74d2a9efbd950dd180156ac5055094d13ec8bd0bcc5fcf",
+    "demos/native/unapproved-update.case.json": "f802fb38c5d9747a2c2b9e8ff48f8269bcad32f177816bac23abafe4906fa664",
+    "demos/native/unreadable.case.json": "21eafd7eea008ade55aea08eaecdebe860e26dbd89afa08566d5042cc40a4d71",
+    "desktop/README.md": "2e953ae9c571c5c42e6763ac6751ba83d803e3d80f3a5918091080a9b62b0696",
+    "desktop/accessibility.test.cjs": "020c2ba8aa1a0ebbcac83ee2d0609c3de5dae9565c0cfffff4ae9ad49b48cabb",
+    "desktop/benchmark.test.cjs": "49c02c33e0cae83102cf2a382be479f7717e39f4046b542aa5ce0fd64d921a46",
+    "desktop/boundary.cjs": "5ccb99ccb5032537323ee692726063c03cfaf3333867b25174ca27eef6f9aede",
+    "desktop/build.cjs": "b8a8dc05d798ce88b7727ffaf94c7593a48a87caf08eefa49e815341a4a62552",
+    "desktop/case-library.cjs": "07ecde910ba51e8cfbc03009bfa8db25d84d32126c54f5ab9521ca4c44ca5951",
+    "desktop/case-library.test.cjs": "20c7ccc71c015bd4e12d56dbacee705c08e6e8aec97abbeff7c237773a82e2ec",
+    "desktop/demo-clarity.test.cjs": "e70a84c32acd8d23e95f3edd7c982641bfeaffc6c46668014000403427dff5c5",
+    "desktop/demo-flow.test.cjs": "850fa89cc651e2ea4c21e064ec72f8b25ae98fea3ad37161ad8b5f3243f08eb9",
+    "desktop/demo-polish.test.cjs": "0e2d94a60c4a096db3ef3bab153c9a83ae1818c222cb78e529e7afc09de225ef",
+    "desktop/demo.test.cjs": "f3889ad77b023c356da8b44861fa95b29e4c6920a9eb07b24a459e751b7fc003",
+    "desktop/evaluation.test.cjs": "2fd5c770f2609c75ec316f74160b48fbcb1de2992bb52dbd498bcb3a4968aaea",
+    "desktop/first-use.test.cjs": "47d1f9a205b964440886446dccd6778fe2f958b700a804a3a18be014d7470493",
+    "desktop/library-deletion.test.cjs": "28187b3f9244f134f6c51117e61a45760b608e628f55867e44effa04ec3e105b",
+    "desktop/library-ui.test.cjs": "5458e16b9ee48ae540a3040d576c9701750eae3ac3d4b2ae95d67ea126b38a61",
+    "desktop/main.cjs": "50fd1e8e6aa8181fafecb5cdcdf7b6a786c53166449fa996a306ae7e3c086b2a",
+    "desktop/memory.cjs": "9b9537ae54ac7c4af9776d763c44152423dccd4e2cbd428afcaa7398e277662c",
+    "desktop/native.test.cjs": "bcde22f0a05368391236866941b721cf997f9a477c73d710baac3209ff0f1bee",
+    "desktop/package.json": "30a425ab2613fa81494802bc7eeccd7c8e2276e909a5d083aa0aa0806b7b5468",
+    "desktop/parity.cjs": "393f65a2bd33df5f43bb3bca687de29dffc738a25f76b86735fd0fbf9ec6534b",
+    "desktop/pnpm-lock.yaml": "1c850623baabfd8f10a2e0f87acfbe5b8b3f4d1be1309e9ea894ac2202a0e73e",
+    "desktop/pnpm-workspace.yaml": "74a713c4c8c003167633ad21f485ba6a5ea2bc1c7323200ed28ddab3a28fdb35",
+    "desktop/preload.cjs": "dab72bd21fe5f57a0d27b59e71bfc9f97d14350ca212f3f2088581a81cc056a2",
+    "desktop/refinement.test.cjs": "df1eec422b53c91cb5f54c6b6b9e11a13cc8a482aa2d506733ad2f36fc70d018",
+    "desktop/refinement2.test.cjs": "2bedeaf9306ad79c9a1c8c69fa2953fe347d2d7ce6ba1d387e66a3c33a736487",
+    "desktop/refinement3.test.cjs": "2831a71211ff89543939002f45a27425491543a1094cd537c0704c89aac5b174",
+    "desktop/refinement4.test.cjs": "3c32ff60ba431ce3c9088d4afc2b9b0c933b59fbe542b2b7c7dd51cc0febece2",
+    "desktop/reliability.cjs": "d5e1beccbc63889b60f2a53435cc2eae1bff56918d30e68e6e897997852bac79",
+    "desktop/results-flow.test.cjs": "0433ac82badc9bdf2cd8cd81293b6dfcebba774cd5e8ae3017111843ca6b2e31",
+    "desktop/runtime.cjs": "e33d96930292c8170adbf032398a9a7e3c42d2b78783aaf17c752e32bcaecd77",
+    "desktop/runtime.test.cjs": "d2ba67a40df3bc49e9dd8a35087965743d2fc66ba61bf9df4a22e3fa2a7b6449",
+    "desktop/saved-context.test.cjs": "641f8001925824dfa4485cf61aa4b69d8e6ee451057b1ad084a0eee9782e09ee",
+    "desktop/saved-flow.test.cjs": "d9b5cc114458f7c52e8b929247cab997c861dda164c89c7e62a81916670ee7dd",
+    "desktop/security.test.cjs": "a0c9f692f04c7677d1c62714072860e52fe1a77c450df991c197b2ceb3936b7a",
+    "desktop/stream.test.cjs": "69555367fe2b15b7816b7ba91dc4368870ec9eb2be95675e7a5eb233cf07ede5",
+    "desktop/test-export-menu.cjs": "588d10a1925e84581ac4d010997ccc0716cd6c95f9c2381cd0a2efe2f67b7b80",
+    "desktop/usability.test.cjs": "91b17c708466938062940119bd011ab89c7640dd8ae53e1befdc455a6b36b18a",
+    "desktop/src/index.html": "cbfe843ee3bac1c13eab39ad9b6b5bb3d519ba34575480d49e5eb5f18c76686b",
+    "desktop/src/main.jsx": "769a4b8373a0bfae1f8fd760887fe8050341d856cf0e4e6b0448140b6d1333e6",
+    "desktop/src/style.css": "dbed48c8f34221a38ba16fec45e4f980623d74116523f4156841ce000adec814",
+    "docs/adversarial-correctness-results.md": "a5f9d36c3596e1e9d6c93ffa6ff3e2e15b1ded24b6d5fd94d5f706cec3bba235",
+    "docs/adversarial-correctness-review.md": "0a90db4466c4e807bca6b7cd25bdb8fb262b3870a48b69d459f180aef104199c",
+    "docs/architecture.md": "1289fa21e02c5766ae0c20d65ab69cb964e2f702a1eb9418d54b5e894394d16f",
+    "docs/case-library-acceptance.md": "04466a5ad5a5854e442f841066d78a59306bc408241a36c12312135569bb523c",
+    "docs/case-library-results.md": "03f88d97a7332ced259d2994128e6db2f925374d6f6507479181f67d56a70b4e",
+    "docs/current-release-acceptance.md": "80c0135c760f714b4bbac4ff2bbcaffe04503119d59037b6b4730874ced0dbda",
+    "docs/current-release-results.md": "139f8a0b4bc8858ebb00e6493e6b4ae76e81cdbc5ac7b4a92699fa6603ecfeff",
+    "docs/demo-clarity-results.md": "6c07c5f0b6c6485c3b929eb4b72e21e8e2ae11e1858a4d0ac8d1de4139521d5f",
+    "docs/demo-flow-results.md": "43bb89784efb7b3a7950d4e5bedb8ab19bdd64c212410a1cc9b01b5cbbba816c",
+    "docs/demo-polish-results.md": "4ec275b1bd5d45198fe9f9e6f14bd53c1deaae6b5e22cac83a00a1c2e1be651d",
+    "docs/evaluation.md": "517ab1500e2e010f10aabcb70e8517b9a2a0d8a83c77668d5ab71ceaaea83af5",
+    "docs/export-cardinality-results.md": "2a7722c0c1817774ce9e593ff9cc19942eeb1ccf95151d21d72167badcd9e5fa",
+    "docs/export-cardinality.md": "3dc2d3290abfe7f07556be0b0a14513f312d89d2d80f1eba8bc47863a7f66628",
+    "docs/first-use-acceptance.md": "248876c9cdceb27113e673218274b9c04c3b96894310026aa6a3baac3bf6b2d4",
+    "docs/first-use-tester.md": "26c501ef37df3c1fa807aae9d7bea82f350454b40a7c914703efb23d9def25dc",
+    "docs/investigation.png": "1a60cfe84224784eeee30008dd23807d14b96ffae60eb0a15ded5509087d9aa3",
+    "docs/libfuzzer-pilot-results.md": "434c4f7270053ff911d6aa0aaa325fa6f2167a2b01c8847262846a7fb963c52d",
+    "docs/libfuzzer-pilot.md": "89ea60a77afbf83851419c7ebda53bf04e32be4e4b2e1bf6374c25e44f420b6b",
+    "docs/native-compatibility.md": "1af4d133e9590679a93ce04c63cf6269bdeae9b67441ab26de8a657742b75795",
+    "docs/native-investigation.png": "ce3cb4078baaf8cd34a9340f28e0371eca2ded432fffd1b72e10f51a13a5e446",
+    "docs/parser-boundaries.md": "75f006e9ef16503b87a2cf51015a857472ef96e21e2f76ec36765ece1ccf0b25",
+    "docs/parser-boundary-results.md": "3b910b79f3a949c94b3fc3db3f3c970ede6a28a3e21989a1a96525410dd366bb",
+    "docs/performance-reliability-results.md": "2e78adda5c45fcca100801a5ae13da09f82598ada2bfe654788f346e6e2e2e77",
+    "docs/performance-reliability.md": "e8602b5bad6fddccfcf8c00ee00347254676ac6472a7ec1350e1b6c7c51f04a1",
+    "docs/property-qualification-results.md": "a2284d49c9584c85d29a3a225087865d7f243b857938ff1be5eb9a221049e689",
+    "docs/property-qualification.md": "a2802a71ef695798a85e978d9f6a984e3683ad39fa11bff4192e99db79662b73",
+    "docs/qualification-asan-results.md": "0cded70b3ceec0f7074d4df4f61335705d040317028412006727b46258142273",
+    "docs/qualification-results.md": "036b51b6d98c35aed862a65e8366d845e3e97be8723a2c85c218428ed9ec1b4c",
+    "docs/qualification-ui-results.md": "7a4a5fa4296f2e45b41e8376db7904927378905d8677b3fa6bdaea7f6e17363e",
+    "docs/qualification.md": "89aaaa6344bc602d02e75cfd90ae73a3527f0a9aaab26308dc968b4333e57562",
+    "docs/release-checks.md": "991986774d9389249b722116a52ff8455006459c695b474716812410e1fc0a24",
+    "docs/replay-timing-results.md": "a003249d48043e8331c928a13bdd9c9da12a7118db81b4bb02ae9aa40c1bf57a",
+    "docs/results-flow-results.md": "b7da23a1167fdc44b2dae615e158a89b288a9f90e325ac25989b82630d66bbaa",
+    "docs/retention-acceptance.md": "6b2b49b64ff21184dcd97ea8736389fa69d6dbea851fc7b31d03ebe82ab96f6f",
+    "docs/retention-results.md": "8141fe4cc365e96cd63d80556c3c990a65cc39cd55b49922b302d0f64e9f4aa6",
+    "docs/saved-demo-flow-results.md": "64b1c560f7e69aec3b5d0c1429122330e98483f085dab11f1eed6898793db9ac",
+    "docs/surge-opening.png": "0d433bb2a31ea2ea238c2c0577814c826216dfe01972ff3277d79f02178cf411",
+    "docs/surge-saved-results.png": "0388214e2b3db37df9987fa1162db703f7f45a946e3fa915672b4efcf30e632b",
+    "docs/usability-results.md": "a89bc5507337ef8c075fce03e3bd586ed9ab3dc2e8738a1114d2931c62fedbe7",
+    "docs/evaluation/accepted-holdout.json": "213aed8729a3dac881a44b82559b574109f0bc39206f68277b09d3007dcff49a",
+    "docs/evaluation/rejected-development.json": "b38558bc15cdb73d6196c7e66329f5d57b2dcb36d12ceb0aa8589b07750749ae",
+    "evidence/adversarial-correctness-validation.json": "0d369dcff5eee6c8394cca8663b96feae3e1d10d0cc89763d8d021632c93c7f0",
+    "evidence/case-library-validation.json": "8c16b790dfdaca8f127bdb620a9810f889f6725276b62da5f12b0f6ec5182667",
+    "evidence/current-release-validation.json": "07862a3a2300796380489dce19e58585e79b75ceb2a89ed44075521c9375a1e5",
+    "evidence/export-cardinality-validation.json": "8182e31cc52a4c0f4bff4233c37e611e8c9aa6e4293eef6f758938f818794d2d",
+    "evidence/libfuzzer-pilot-validation.json": "7c9e1f88c3fd368279d1bc18f94baea20b41e1a4c1283907a35bbe08888d8b6c",
+    "evidence/native-compatibility-validation.json": "f7deb65f375e16997942fc3fb0dc340823ef8791579f6e508166bcf8e76b0be8",
+    "evidence/native-stream-validation.json": "2411790a62321c7d50ead0a991071ac1f04479838e614a1e737f16ed35df2704",
+    "evidence/parser-boundary-validation.json": "cb01c860002d140e58571467b7cf9ba4104ad146ef4cda1991702f2b49a350a0",
+    "evidence/performance-reliability-validation.json": "76a8ec86ed2384a9a2f90357706ccd36c9ce8341df9934e1c463e0a6d83127d9",
+    "evidence/property-qualification-validation.json": "af4a2e649de87ac4d20425c046594037bab59c12e84b357c88eac5cc817d810e",
+    "evidence/qualification-asan-validation.json": "992db719bedb7385bedd182a57dd22d2d90c782e13001f9b4fc4d1c97c96c092",
+    "evidence/qualification-ui-validation.json": "71d0d8777de7bb7d843ef2680b2094b105afdb03af2c63280077273c432402ea",
+    "evidence/qualification-validation.json": "a43abec5d00193eb1bede7246419774fe023406baee0158a38151546e787110b",
+    "evidence/replay-timing-validation.json": "56f7b57316f7b45c11ffc47d15a2e52f8b23ef9569b660ee90159a90b838ff10",
+    "evidence/retention-validation.json": "138a724772a1d2199db82033f24428aeae725b45f050e3920dee88634627e749",
+    "evidence/saved-demo-flow-validation.json": "3d45d2cbd0721a1d3eed2ac7cd8a5dd6b4b84dbf0d83398bd65b701b6f67b652",
+    "evidence/surge-evaluation-evidence.zip": "936a7a7708d896c8c764a5d9dc60027d81bf3f6cfb936578f4bb12a267d3ec5d",
+    "evidence/usability-validation.json": "f1346a7908f5f190670ed5ebbcd41b98f63c7a36595daf9357f9aa32fa701a10",
+    "native/CMakeLists.txt": "19d56a792512566db973c056c6ed2291ecdbab9d70240c016c9b31d09b4452bb",
+    "native/README.md": "8e3a46cd736cc622d041c7b178457059ddb143aec112b841377c78dddf2a7e1c",
+    "native/asan_probe.cpp": "747312c1380ec469075c5532ab1428155a0ac34cb2737ae4fdacdbba75837f18",
+    "native/asan_required.hpp": "b9acf406e1d8e18eadbfefa621e5e7a9383571ce08712f4652b8670f855d6749",
+    "native/code_pe_tests.cpp": "5213ff20af88f8b4f4265e7a5161a863d4cc99a15ba01624b97b477cf2189b16",
+    "native/code_range_collector.cpp": "463718d40e7adf04d91cc0dceeffa581318ec306421277e372a3e60d3b1fbe29",
+    "native/code_range_collector.hpp": "c3d678e8270dd3b8e9f956f3e459ebcd1aea68cf795a0a87ed289ac55a762d9f",
+    "native/code_range_pe.hpp": "c895baf4bd574b5e7f5c561e7353842981828e9e77345ac6f95f30871a5ba8f2",
+    "native/collector_smoke.cpp": "61001319d092e6a0c29049d02c92073dbbed344024ee67d60c55dde680446508",
+    "native/fixture_runner.cpp": "f83c8a358a44c23acbb6cc7471d2456b637baa8bca68a8315a02f9bddfc4f87c",
+    "native/lab_code.asm": "934eb1b34410a9f1bef25620ab20c02bec950c3160e460683efd17f8c110f4f5",
+    "native/lab_code.def": "d84df346c3aff829637b81949b031eb2f3468e078da47f4107abbe86429fc9ef",
+    "native/lab_code_v2.asm": "01aa1dad63c1267d1194128d6cd69850fbbb8bc8a8b71856f50750ce0aa349da",
+    "native/lab_manifest.hpp": "873ae51fdf366ba6011f7dbaca061ce65296a961232f11143f8e577de4134b7d",
+    "native/lab_module.cpp": "1a3b6608d0d4227d01b1d91113ed6baa9c872c55b63ed62b740346f96fed66db",
+    "native/manifest_pe_tests.cpp": "c95a5efdbe1af601c2546fff3641d712caddfc59d762d011bb08025c3566a7ed",
+    "native/owned_app.cpp": "53c65caa9d7b8e79d08ca8c8d40dc95e608d570e5edab1ef560cba08b96d4d47",
+    "native/pilot/boundaries.cpp": "8e5e348867d325789bb659eace194bacfdec6965afc798fd9f2243dea0151cce",
+    "native/pilot/parser.cpp": "a9c375b9abb153080efce090e4e212641c9ab150bf5e3bc76429e6278f98679b",
+    "native/pilot/runtime_control.cpp": "79bc90e3e94fadd1815284f31c43934633a57c75e413014d17895ff393157b7a",
+    "native/pilot/seed.hpp": "036439b197897bab1e2705b7bceacffe36c13c96bce5ff58752e46d6ce957e18",
+    "policies/rt-iot2022-refinement-3.policy.json": "97a25e84a2f53135bbeb5a69f9adf1de70c7213968d207cf15cb94477160f697",
+    "policies/rt-iot2022-reviewed.policy.json": "d3d95892597d3b5c5a7703329d4966a94c2a5c57be1825d8a0ad9fd6e61d5f69",
+    "scripts/build_native_demo.py": "e4bd6130dd0fa71e80534467582d2599c9517f136015376db56cd82f1a621a86",
+    "scripts/check_libfuzzer.py": "69de3209a474ef2a1a24b04a4af05b5a35b016df73609a14e7220bf3d6321d33",
+    "scripts/check_properties.py": "5e0c1c909d2efd3973a568f911600ea2264cc95afb77faeb747abea6028c9654",
+    "scripts/check_release.py": "6d0fb4a7d326ca579eccb98596e086592010f88d28ca94bfe47da755a1111512",
+    "scripts/check_retention.py": "2dd69e741ad1ef6b8095d5d56fbc1f85d005634abd8eaf6738855dc56343bc7f",
+    "scripts/measure_reliability.py": "b6bde88dcb89ee94db5826e25ef5974afd4f995375c85abfa8b288037ab7c8bc",
+    "scripts/native_capture.py": "af7e273f0afa420b20f5f0de72a8ea0f10b2b90720ca31dd6e0c511329e1babd",
+    "scripts/package_source.py": "8b7a48ee41f16fbe81f98d1a39fdbc1462fea7e289c18ccc88f7c9e6d472b6fa",
+    "scripts/parser_boundary_contract.py": "aa320a66ea9dac25c123501f40b79004710d3fa3b5c588b0e8c75c611804c22b",
+    "scripts/qualify.py": "f8ade3bb1d89acaec89feaafd0759f1f443b6986e12cf6b65a5cec950f0f79eb",
+    "scripts/release_files.py": "bb11287520b23aec1f3e10e328666aeddebc6f19440ea460e4a7a3122ce081c2",
+    "scripts/retention_contract.py": "74268e7ce0fb301f597bf3681fffd9150db705f7a91d30009a1e053cba2fe62e",
+    "scripts/test.py": "eca00660a78ac10a77df161c9c5145ff39544c22b53f75f403df2d64ff74e836",
+    "scripts/test_native_compatibility.py": "fa61b26b76aa0078dddf85d20625308d93abc874c99856d23a89eb7bb2f10fba",
+    "scripts/test_native_live.py": "15cdd322e5be4d55908e89114adec092d7b6952312bdeffbaebfaf6d76eeb25d",
+    "scripts/test_native_stream.py": "0e4f12d609cf7ee16a5619345cdd0fe8d21d3c063979ec812052f14a286bc894",
+    "scripts/verify_evidence.py": "b9226ad9fafa191b0140a838d6eafd52e8e2adc3a7feef2eae9cc7350efccbc5",
+    "scripts/verify_native_demo.py": "641cdb30a7e8b1c7c7be6088feb4a2c28508acae3137e09276094a491fa6ff3f",
+    "tests/fixtures/legacy.case.json": "5a9b891fc240ba991e57501f594141a99060c0ec967597dc361e23d700304b91",
+    "verification/memory-baseline-engine.py": "f6de33af70ea55481b02a793cc08e7064f9b8d2d8fdd060a3656d720875c07d3",
+    "verification/sample_memory.py": "64b141774e9cc4bd1a9abcac07bb9df064a58368dc7e18df0f7b1a680f937309",
+    "verification/summarize_memory.py": "c00acdcf9db23a5d08e7cf51a09d42eaee0869ad829b9d0cc375ce5a3570f358",
+    "verification/summarize_retention.py": "a0fb123356bdd227d211f36ba59b8a92a979a9ec05578f29a168fb437f8e4252",
+    "work/rename_results_ui.py": "e515dd5b08900f6644f0e209251e7e62df8e872fc5442f3d76f931d728d11d64",
+    "work/saved-flow-library-attempt-1.txt": "c3a385ecadd66b66d3197b8af95e0c218e44d4eb1046ed5d3e6a2cdfdea79227",
+    "work/saved_flow_report.py": "07fc813d68a3c3298e9974649e64cbb9ec731c460eede71e7829ceb55b8b877e"
+  },
+  "versions": {
+    "node": "v24.19.0",
+    "pnpm": "11.25.0",
+    "cmake": "cmake version 4.4.4\n\nCMake suite maintained and supported by Kitware (kitware.com/cmake)."
+  },
+  "process_cleanup": {
+    "matching_process_count": 0,
+    "processes": [],
+    "observed_at_utc": "2026-10-23T18:24:31.4534675Z"
+  },
+  "prior_code_comparison": {
+    "compared_existing_code_files": 153,
+    "changed_normalized_code_files": [],
+    "new_test": "desktop/first-use.test.cjs",
+    "qualification_snapshot": "d16eabad50b76cd6faeb08911e61b50c594318b5"
+  },
+  "line_ending_fix": [
+    {
+      "file": "desktop/accessibility.test.cjs",
+      "before_sha256": "b44552fa8d970210b3c0dae135e89cc460c49857c0fba557b8f323919f904d0d",
+      "after_sha256": "020c2ba8aa1a0ebbcac83ee2d0609c3de5dae9565c0cfffff4ae9ad49b48cabb",
+      "crlf_pairs": 298,
+      "change": "CRLF to LF only"
+    },
+    {
+      "file": "desktop/demo-clarity.test.cjs",
+      "before_sha256": "24108f3e37412f6319f18b091802a7b80a23b40729d1acb4a261356b27ffbc29",
+      "after_sha256": "e70a84c32acd8d23e95f3edd7c982641bfeaffc6c46668014000403427dff5c5",
+      "crlf_pairs": 165,
+      "change": "CRLF to LF only"
+    },
+    {
+      "file": "desktop/demo-polish.test.cjs",
+      "before_sha256": "db42053818b8c94d3fceb33bad3c623ae63bef28bec8e382541dfdc463e1fdec",
+      "after_sha256": "0e2d94a60c4a096db3ef3bab153c9a83ae1818c222cb78e529e7afc09de225ef",
+      "crlf_pairs": 156,
+      "change": "CRLF to LF only"
+    },
+    {
+      "file": "desktop/demo.test.cjs",
+      "before_sha256": "8c38a960e9314735d99dd4872c7ac5718cff2f333fff0a6ffec493a028f707b3",
+      "after_sha256": "f3889ad77b023c356da8b44861fa95b29e4c6920a9eb07b24a459e751b7fc003",
+      "crlf_pairs": 115,
+      "change": "CRLF to LF only"
+    },
+    {
+      "file": "desktop/memory.cjs",
+      "before_sha256": "f1968de124d8e9c658a0db2695f5ade7c2f5ecbbf38937c61746d4e3380427d4",
+      "after_sha256": "9b9537ae54ac7c4af9776d763c44152423dccd4e2cbd428afcaa7398e277662c",
+      "crlf_pairs": 516,
+      "change": "CRLF to LF only"
+    },
+    {
+      "file": "desktop/native.test.cjs",
+      "before_sha256": "a85786d12f39f8072d2a52ff3b2d3c06ba5b0be6b4c33e79fcf1b12e73dc9556",
+      "after_sha256": "bcde22f0a05368391236866941b721cf997f9a477c73d710baac3209ff0f1bee",
+      "crlf_pairs": 178,
+      "change": "CRLF to LF only"
+    },
+    {
+      "file": "desktop/parity.cjs",
+      "before_sha256": "958a3e67b2608c6e303f9a8a1269ea5b85ccd8e2074a7e78b407087367b6231f",
+      "after_sha256": "393f65a2bd33df5f43bb3bca687de29dffc738a25f76b86735fd0fbf9ec6534b",
+      "crlf_pairs": 1314,
+      "change": "CRLF to LF only"
+    },
+    {
+      "file": "desktop/refinement.test.cjs",
+      "before_sha256": "c32b0311d71a9c2ffd1ae7525afeec1ae64ae5616649fe45243e6afe9555649b",
+      "after_sha256": "df1eec422b53c91cb5f54c6b6b9e11a13cc8a482aa2d506733ad2f36fc70d018",
+      "crlf_pairs": 292,
+      "change": "CRLF to LF only"
+    },
+    {
+      "file": "desktop/refinement2.test.cjs",
+      "before_sha256": "38fa5015c7c9c80134bb1bfb1f868f97195b8f294de1ea6cce13486f431ffe90",
+      "after_sha256": "2bedeaf9306ad79c9a1c8c69fa2953fe347d2d7ce6ba1d387e66a3c33a736487",
+      "crlf_pairs": 288,
+      "change": "CRLF to LF only"
+    },
+    {
+      "file": "desktop/stream.test.cjs",
+      "before_sha256": "b797bb4a6e1d048958b81979a2c6b9eac94ccedd1e6cf117f4a9c7bc567fa14c",
+      "after_sha256": "69555367fe2b15b7816b7ba91dc4368870ec9eb2be95675e7a5eb233cf07ede5",
+      "crlf_pairs": 373,
+      "change": "CRLF to LF only"
+    }
+  ],
+  "limitations": [
+    "Same Windows installation, user and system toolchains; no prerequisite installation or independent machine.",
+    "Fresh task-local package/Electron caches; host supply-chain policy cache reused.",
+    "Electron entry wrapper, not Start-Surge.cmd; manual launcher still pending.",
+    "Native file dialogs stubbed; deletion test uses bridge setup for one unrelated fixture.",
+    "Renderer error monitoring in new first-use journeys, not uniformly in every reused test.",
+    "Original T1/T2/T3 fuzzing incomplete; no new full qualification, sanitizer, performance or endurance run."
+  ],
+  "post_run_documents": [
+    "docs/first-use-results.md",
+    "evidence/first-use-validation.json",
+    "README first-use results link"
+  ]
+}

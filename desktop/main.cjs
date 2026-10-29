@@ -7,11 +7,18 @@ const {
   clipboard,
   protocol,
   session,
+  Menu,
+  screen,
 } = require("electron");
 const { spawn } = require("node:child_process");
 const path = require("node:path");
 const fs = require("node:fs/promises");
 const { validate } = require("./boundary.cjs");
+const runtime = require("./runtime.cjs");
+const startup = require("./startup.cjs");
+const presentation = require("./presentation.cjs");
+const { saveInvestigationExport } = require("./investigation-export.cjs");
+const developerTools = app.isPackaged ? null : require("./developer-tools.cjs");
 
 protocol.registerSchemesAsPrivileged([
   {
@@ -27,15 +34,57 @@ let win,
   queue = Promise.resolve(),
   queued = 0;
 const ROOT = path.resolve(__dirname, "..");
-function failWorker(message) {
+const { CaseLibrary } = require("./case-library.cjs");
+let library;
+let launchPresentation = null;
+let profileError;
+let profile = app.getPath("userData");
+try {
+  profile = startup.configureProfile(app);
+} catch (error) {
+  profileError = error;
+}
+const diagnostics = new startup.StartupDiagnostics(
+  profile,
+  app.getVersion(),
+  app.isPackaged,
+);
+const runtimeIdentity = {
+  packaged: app.isPackaged,
+  applicationRoot: ROOT,
+  backendPath: path.join(ROOT, "desktop_worker.py"),
+  pythonExecutable: null,
+  profilePath: profile,
+  surviveDataRoot: app.isPackaged ? path.join(profile, "Survive") : null,
+  nativeExecutable: path.join(ROOT, "native/build/surge_owned_app.exe"),
+  baselinePath: path.join(ROOT, "native/baselines.json"),
+  diagnosticPath: diagnostics.file,
+  workerPid: null,
+  pythonVersion: null,
+  backendModulePaths: null,
+  ready: false,
+  status: "starting",
+  errorCode: null,
+};
+// Read-only metadata for trusted main-process qualification. This is not IPC
+// and is never exposed to the renderer or written into startup diagnostics.
+Object.defineProperty(app, "surgeRuntimeIdentity", {
+  get: () => Object.freeze({ ...runtimeIdentity }),
+});
+function failWorker(message, code = "SURGE_WORKER_STOPPED") {
   for (const item of pending.values()) {
     clearTimeout(item.timer);
-    item.reject(new Error(message));
+    item.reject(Object.assign(new Error(message), { code }));
   }
   pending.clear();
 }
 function startWorker() {
-  const python = require("./runtime.cjs").pythonPath(ROOT);
+  const python = runtime.pythonPath(ROOT, process.env, process.platform, {
+    packaged: app.isPackaged,
+    resourcesPath: process.resourcesPath,
+  });
+  runtimeIdentity.pythonExecutable = python;
+  diagnostics.record("worker", "starting");
   const workerEnv = {};
   for (const key of ["SystemRoot", "WINDIR", "TEMP", "TMP"]) {
     if (process.env[key]) workerEnv[key] = process.env[key];
@@ -47,8 +96,13 @@ function startWorker() {
       "-B",
       "-u",
       "-c",
-      "import sys; sys.path.insert(0, sys.argv[1]); import desktop_worker; desktop_worker.main()",
+      "import json, sys; sys.path.insert(0, sys.argv[1]); import desktop_worker; print(json.dumps({'surge_runtime_identity': 1, 'executable': sys.executable, 'version': sys.version.split()[0], 'modules': {name: sys.modules[name].__file__ for name in ('desktop_worker', 'engine', 'native_integrity', 'native_stream')}}), flush=True); desktop_worker.main(**json.loads(sys.argv[2]))",
       ROOT,
+      JSON.stringify({
+        packaged: app.isPackaged,
+        survive_data_root: runtimeIdentity.surviveDataRoot,
+        game_window: launchPresentation?.game || null,
+      }),
     ],
     {
       cwd: ROOT,
@@ -58,11 +112,15 @@ function startWorker() {
       env: workerEnv,
     },
   );
+  runtimeIdentity.workerPid = worker.pid || null;
   worker.stdout.setEncoding("utf8");
   worker.stdout.on("data", (chunk) => {
     output += chunk;
     if (output.length > 32 * 1024 * 1024) {
-      failWorker("Worker response exceeded its limit. Reopen Surge.");
+      failWorker(
+        "Worker response exceeded its limit. Reopen Surge.",
+        "SURGE_WORKER_PROTOCOL",
+      );
       worker.kill();
       return;
     }
@@ -71,8 +129,36 @@ function startWorker() {
       const line = output.slice(0, newline);
       output = output.slice(newline + 1);
       try {
-        const reply = JSON.parse(line),
-          item = pending.get(reply.id);
+        const reply = JSON.parse(line);
+        if (reply?.surge_runtime_identity === 1) {
+          const samePath = (actual, expected) =>
+            typeof actual === "string" &&
+            path.isAbsolute(actual) &&
+            (process.platform === "win32"
+              ? path.resolve(actual).toLowerCase() ===
+                path.resolve(expected).toLowerCase()
+              : path.resolve(actual) === path.resolve(expected));
+          if (
+            runtimeIdentity.pythonVersion ||
+            !/^\d+\.\d+\.\d+/.test(reply.version) ||
+            !samePath(reply.executable, python) ||
+            ![
+              "desktop_worker",
+              "engine",
+              "native_integrity",
+              "native_stream",
+            ].every((name) =>
+              samePath(reply.modules?.[name], path.join(ROOT, name + ".py")),
+            )
+          )
+            throw startup.startupError("SURGE_WORKER_PROTOCOL");
+          runtimeIdentity.pythonVersion = reply.version;
+          runtimeIdentity.backendModulePaths = Object.freeze({
+            ...reply.modules,
+          });
+          continue;
+        }
+        const item = pending.get(reply.id);
         if (!item) continue;
         clearTimeout(item.timer);
         pending.delete(reply.id);
@@ -80,7 +166,10 @@ function startWorker() {
           ? item.resolve(reply.value)
           : item.reject(new Error(reply.error || "Operation failed."));
       } catch {
-        failWorker("Worker response was invalid. Reopen Surge.");
+        failWorker(
+          "Worker response was invalid. Reopen Surge.",
+          "SURGE_WORKER_PROTOCOL",
+        );
         worker.kill();
       }
     }
@@ -93,6 +182,7 @@ function startWorker() {
   worker.on("error", () =>
     failWorker(
       "Python could not start. Check the configured runtime and reopen Surge.",
+      "SURGE_WORKER_SPAWN",
     ),
   );
   worker.on("exit", () =>
@@ -101,15 +191,23 @@ function startWorker() {
     ),
   );
 }
-function call(method, args) {
+function call(method, args, timeout = 120000) {
   return new Promise((resolve, reject) => {
     if (!worker || worker.exitCode !== null || !worker.stdin.writable)
-      return reject(new Error("Analysis worker is unavailable. Reopen Surge."));
+      return reject(
+        Object.assign(
+          new Error("Analysis worker is unavailable. Reopen Surge."),
+          { code: "SURGE_WORKER_STOPPED" },
+        ),
+      );
     const id = ++sequence;
     const timer = setTimeout(() => {
-      failWorker("Operation timed out. Reopen Surge before continuing.");
+      failWorker(
+        "Operation timed out. Reopen Surge before continuing.",
+        "SURGE_WORKER_TIMEOUT",
+      );
       worker.kill();
-    }, 120000);
+    }, timeout);
     pending.set(id, { resolve, reject, timer });
     worker.stdin.write(
       JSON.stringify({ protocol: 1, id, method, args }) + "\n",
@@ -124,12 +222,82 @@ function call(method, args) {
   });
 }
 async function execute(method, args) {
+  if (method === "survive_investigation_export") {
+    // Generate one pinned revision before the native picker. Cancellation does
+    // not create a revision or write a report, and renderer never chooses paths.
+    const report = await call(method, args);
+    const selected = await dialog.showSaveDialog(win, {
+      title: "Export investigation to a new HTML file",
+      defaultPath: /^surge-[a-zA-Z0-9_-]+\.html$/.test(report.filename || "")
+        ? report.filename
+        : "surge-investigation.html",
+      filters: [{ name: "Investigation report", extensions: ["html"] }],
+    });
+    if (selected.canceled || !selected.filePath) return { canceled: true };
+    return saveInvestigationExport(selected.filePath, report.html);
+  }
+  if (method.startsWith("library_")) {
+    library ||= new CaseLibrary(
+      path.join(app.getPath("userData"), "cases"),
+      call,
+    );
+    if (method === "library_list") return library.list();
+    if (method === "library_save")
+      return library.save(args.name, args.revision);
+    if (method === "library_open") return library.open(args.id);
+    if (method === "library_rename") return library.rename(args.id, args.name);
+    if (method === "library_delete") {
+      const entry = await library.entry(args.id);
+      const answer = await dialog.showMessageBox(win, {
+        type: "question",
+        title: "Delete saved case?",
+        message: `Delete “${entry.meta.name}” from the library?`,
+        detail:
+          "This removes only this saved case. Original evidence, exported files, and the open investigation remain unchanged. This cannot be undone.",
+        buttons: ["Cancel", "Delete case"],
+        defaultId: 0,
+        cancelId: 0,
+        noLink: true,
+      });
+      if (answer.response !== 1) return { canceled: true };
+      return library.delete(args.id);
+    }
+    if (method === "library_import") {
+      const selected = await dialog.showOpenDialog(win, {
+        title: "Import case into library",
+        filters: [{ name: "Evidence case", extensions: ["json"] }],
+        properties: ["openFile"],
+      });
+      if (selected.canceled || selected.filePaths.length !== 1)
+        return { canceled: true };
+      const source = selected.filePaths[0];
+      return library.import(
+        source,
+        path
+          .basename(source)
+          .replace(/(?:\.case)?\.json$/i, "")
+          .slice(0, 100) || "Imported case",
+      );
+    }
+    if (method === "library_export") {
+      await library.entry(args.id);
+      const selected = await dialog.showSaveDialog(win, {
+        title: "Export portable case to a new file",
+        defaultPath: "investigation.case.json",
+      });
+      if (selected.canceled || !selected.filePath) return { canceled: true };
+      return library.export(args.id, selected.filePath);
+    }
+  }
   const files = {
     import: [
       "Choose data",
       [{ name: "Data", extensions: ["csv", "json", "jsonl", "ndjson"] }],
     ],
-    open: ["Open case", [{ name: "Evidence case", extensions: ["json"] }]],
+    open: [
+      "Open saved case",
+      [{ name: "Evidence case", extensions: ["json"] }],
+    ],
     compare: [
       "Compare case",
       [{ name: "Evidence case", extensions: ["json"] }],
@@ -185,20 +353,35 @@ if (!app.requestSingleInstanceLock()) app.quit();
 else {
   app.setAppUserModelId("local.surge.desktop");
   app.on("second-instance", () => {
-    if (win) {
-      if (win.isMinimized()) win.restore();
-      win.show();
-      win.focus();
-    }
+    presentation.revealWindow(win, launchPresentation, true);
   });
   app
     .whenReady()
     .then(async () => {
+      diagnostics.record("startup", "starting");
+      launchPresentation = presentation.resolvePresentation(
+        process.env.SURGE_PRESENTATION,
+        screen,
+      );
+      if (profileError) throw profileError;
+      // Resolve the bundled runtime first; packaged launches never use PATH or
+      // a developer override, including when a required file is missing.
+      runtime.pythonPath(ROOT, process.env, process.platform, {
+        packaged: app.isPackaged,
+        resourcesPath: process.resourcesPath,
+      });
+      startup.checkResources(ROOT, app.isPackaged);
+      diagnostics.record("resources", "ready");
       const assets = new Map([
         ["/index.html", "index.html"],
         ["/app.js", "app.js"],
         ["/style.css", "style.css"],
+        ["/app.css", "app.css"],
       ]);
+      if (developerTools) {
+        for (const name of ["app.js.map", "app.css.map", "style.css.map"])
+          assets.set("/" + name, name);
+      }
       protocol.handle("surge", async (request) => {
         const url = new URL(request.url);
         const asset = url.host === "app" && assets.get(url.pathname);
@@ -208,34 +391,52 @@ else {
           "index.html": "text/html; charset=utf-8",
           "app.js": "text/javascript; charset=utf-8",
           "style.css": "text/css; charset=utf-8",
+          "app.css": "text/css; charset=utf-8",
         };
-        return new Response(
-          await fs.readFile(path.join(__dirname, "dist", asset)),
-          {
-            headers: {
-              "Content-Type": types[asset],
-              "X-Content-Type-Options": "nosniff",
+        try {
+          return new Response(
+            await fs.readFile(path.join(__dirname, "dist", asset)),
+            {
+              headers: {
+                "Content-Type":
+                  types[asset] || "application/json; charset=utf-8",
+                "X-Content-Type-Options": "nosniff",
+              },
             },
-          },
-        );
+          );
+        } catch (error) {
+          if (error.code === "ENOENT")
+            return new Response("Not found", { status: 404 });
+          throw error;
+        }
       });
       session.defaultSession.setPermissionRequestHandler(
         (_web, _permission, callback) => callback(false),
       );
       session.defaultSession.setPermissionCheckHandler(() => false);
       session.defaultSession.webRequest.onBeforeRequest((details, callback) => {
-        callback({ cancel: !details.url.startsWith("surge://app/") });
+        callback({
+          cancel: !(
+            details.url.startsWith("surge://app/") ||
+            (developerTools && details.url.startsWith("devtools://devtools/"))
+          ),
+        });
       });
       startWorker();
+      const initial = await call("state", {}, startup.STARTUP_TIMEOUT_MS);
+      if (initial?.protocol !== 1 || !runtimeIdentity.pythonVersion)
+        throw startup.startupError("SURGE_WORKER_PROTOCOL");
+      diagnostics.record("worker", "ready");
       win = new BrowserWindow({
         width: 1360,
         height: 880,
+        ...(launchPresentation?.window || {}),
         minWidth: 720,
         minHeight: 540,
-        title: "Surge",
+        title: developerTools ? developerTools.windowTitle(app) : "Surge",
         backgroundColor: "#080c12",
         show: false,
-        autoHideMenuBar: true,
+        autoHideMenuBar: app.isPackaged,
         webPreferences: {
           preload: path.join(__dirname, "preload.cjs"),
           nodeIntegration: false,
@@ -244,9 +445,33 @@ else {
           webSecurity: true,
           allowRunningInsecureContent: false,
           spellcheck: false,
+          devTools: !app.isPackaged,
+          // Hidden qualification still needs compositor frames for screenshots.
+          ...(launchPresentation?.hidden
+            ? { backgroundThrottling: false, offscreen: true }
+            : {}),
         },
       });
-      win.removeMenu();
+      if (developerTools) {
+        win.on("page-title-updated", (event) => event.preventDefault());
+        developerTools.install(app, win, { Menu, dialog });
+      } else win.removeMenu();
+      win.webContents.on("will-prevent-unload", (event) => {
+        const choice = dialog.showMessageBoxSync(win, {
+          type: "question",
+          title: "Keep editing this investigation?",
+          message:
+            "There are unsaved investigation edits or a save still in progress.",
+          detail:
+            "Keep editing to finish saving. Closing discards unsaved text; saved revisions and evidence remain retained.",
+          buttons: ["Keep editing", "Close and discard unsaved edits"],
+          defaultId: 0,
+          cancelId: 0,
+          noLink: true,
+        });
+        // Electron's preventDefault here permits the page's unload to proceed.
+        if (choice === 1) event.preventDefault();
+      });
       // Keep standard zoom keys available even without a desktop menu.
       win.webContents.on("before-input-event", (event, input) => {
         if (
@@ -293,12 +518,69 @@ else {
           )
           .finally(() => queued--);
       });
-      win.once("ready-to-show", () => win.show());
+      win.once("ready-to-show", () =>
+        presentation.revealWindow(win, launchPresentation),
+      );
       await win.loadURL("surge://app/index.html");
+      runtimeIdentity.ready = true;
+      runtimeIdentity.status = "ready";
+      diagnostics.record("renderer", "ready");
     })
-    .catch((error) => {
-      dialog.showErrorBox("Surge could not start", error.message);
-      app.quit();
+    .catch(async (error) => {
+      runtimeIdentity.ready = false;
+      runtimeIdentity.status = "failed";
+      if (worker && worker.exitCode === null && worker.signalCode === null)
+        worker.kill();
+      const failure = startup.failureMessage(
+        error,
+        app.isPackaged,
+        diagnostics,
+      );
+      runtimeIdentity.errorCode = failure.code;
+      diagnostics.record("startup", "failed", failure.code);
+      // Async native guidance keeps trusted diagnostics inspectable. No worker
+      // stderr, imported filenames, exception text or payload enters this UI.
+      const detail = startup.failureMessage(
+        error,
+        app.isPackaged,
+        diagnostics,
+      ).detail;
+      let errorOwner;
+      try {
+        // A hidden owner anchors native guidance to the requested display even
+        // when startup failed before the application window could be created.
+        const owner = launchPresentation?.window
+          ? win && !win.isDestroyed()
+            ? win
+            : (errorOwner = new BrowserWindow({
+                ...launchPresentation.window,
+                show: false,
+                skipTaskbar: true,
+                autoHideMenuBar: true,
+                webPreferences: {
+                  nodeIntegration: false,
+                  contextIsolation: true,
+                  sandbox: true,
+                  devTools: false,
+                },
+              }))
+          : null;
+        const options = {
+          type: "error",
+          title: "Surge could not start",
+          message: "Surge could not start",
+          detail,
+          buttons: ["Close"],
+          defaultId: 0,
+          cancelId: 0,
+          noLink: true,
+        };
+        if (owner) await dialog.showMessageBox(owner, options);
+        else await dialog.showMessageBox(options);
+      } finally {
+        if (errorOwner && !errorOwner.isDestroyed()) errorOwner.destroy();
+        app.exit(1);
+      }
     });
 }
 app.on("window-all-closed", () => app.quit());

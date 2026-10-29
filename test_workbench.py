@@ -235,7 +235,7 @@ class DesktopTests(unittest.TestCase):
         from app import Workbench
         from tkinter import ttk
 
-        window = Workbench()
+        window = Workbench(start_hidden=True)
         window.withdraw()
         try:
             window.current = dataset([{"reading": 3}, {"reading": 90}])
@@ -272,7 +272,7 @@ class DesktopTests(unittest.TestCase):
     def test_desktop_mapping_analysis_case_comparison_and_invalidation(self):
         from app import Workbench
 
-        window = Workbench()
+        window = Workbench(start_hidden=True)
         window.withdraw()
         try:
             window.current = dataset([{"reading": 100, "id": "one"}, {"reading": 10, "id": "two"}])

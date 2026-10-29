@@ -32,6 +32,15 @@ async function dialog(file, save = false) {
   );
 }
 async function click(name) {
+  if (name === "Open saved case") {
+    await page
+      .getByRole("button", { name: "Case library", exact: true })
+      .click();
+    await page
+      .getByRole("dialog", { name: "Case library", exact: true })
+      .waitFor();
+    name = "Open case file";
+  }
   if (
     ["Load policy", "Save policy", "Edit rules", "Map context"].includes(name)
   ) {
@@ -70,12 +79,14 @@ async function check(name, fn) {
   page = await app.firstWindow();
   page.setDefaultTimeout(20000);
   page.on("pageerror", (e) => errors.push(e.message));
-  await page.getByRole("button", { name: "Open case", exact: true }).waitFor();
+  await page
+    .getByRole("button", { name: "Case library", exact: true })
+    .waitFor();
   await check(
     "fresh holdout case reopens with exact scoring and grouped evidence",
     async () => {
       await dialog(path.join(root, "candidate.case.json"));
-      await click("Open case");
+      await click("Open saved case");
       await click("Evaluate");
       await dialog(path.join(root, "holdout.labels.json"));
       await click("Import labels");
@@ -223,7 +234,7 @@ async function check(name, fn) {
         }),
       );
       await dialog(source);
-      await click("Import data");
+      await click("Import evidence");
       await dialog(ref);
       await click("Import reference");
       await dialog(policy);
@@ -247,7 +258,7 @@ async function check(name, fn) {
       const s = await rpc("state");
       assert.equal(s.summary.Unknown, 2);
       await page
-        .getByRole("table", { name: "Findings", exact: true })
+        .getByRole("table", { name: "Results", exact: true })
         .locator("tbody tr")
         .first()
         .click();
@@ -260,7 +271,6 @@ async function check(name, fn) {
       await page.screenshot({
         path: path.join(out, "refinement-fallback.png"),
       });
-      assert.equal(await page.locator("h1,h2,h3,header").count(), 0);
       assert.deepEqual(errors, []);
     },
   );

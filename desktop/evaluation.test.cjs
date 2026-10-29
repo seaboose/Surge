@@ -138,10 +138,10 @@ async function check(name, fn) {
   page.setDefaultTimeout(15000);
   page.on("pageerror", (e) => errors.push(e.message));
   await page
-    .getByRole("button", { name: "Import data", exact: true })
+    .getByRole("button", { name: "Import evidence", exact: true })
     .waitFor();
   await dialog(source);
-  await click("Import data");
+  await click("Import evidence");
   await dialog(reference);
   await click("Import reference");
   await dialog(policy);
@@ -160,9 +160,18 @@ async function check(name, fn) {
         0,
       );
       await click("Evaluate");
-      await page
-        .getByText("Current data is the test source.", { exact: false })
-        .waitFor();
+      await require("./visual-audit.cjs").auditPage(
+        app,
+        page,
+        "evaluation-empty",
+      );
+      await click("Labeling guidance");
+      await page.getByRole("note", { name: "Labeling guidance" }).waitFor();
+      assert.match(
+        await page.getByRole("note", { name: "Labeling guidance" }).innerText(),
+        /Current data is the test source;.*Labels never enter detection\./s,
+      );
+      await page.keyboard.press("Escape");
       const blank = path.join(files, "blank.json");
       await dialog(blank, true);
       await click("Save label template");
@@ -240,6 +249,11 @@ async function check(name, fn) {
         BrowserWindow.getAllWindows()[0].setSize(1100, 760),
       );
       await page.screenshot({ path: path.join(OUT, "evaluation-groups.png") });
+      await require("./visual-audit.cjs").auditPage(
+        app,
+        page,
+        "evaluation-groups",
+      );
       await page
         .locator("summary")
         .filter({ hasText: "Groups and provenance" })
@@ -254,7 +268,11 @@ async function check(name, fn) {
       await page.screenshot({
         path: path.join(OUT, "evaluation-evidence.png"),
       });
-      assert.equal(await page.locator("h1,h2,h3,header").count(), 0);
+      await require("./visual-audit.cjs").auditPage(
+        app,
+        page,
+        "evaluation-evidence",
+      );
     },
   );
   await check(
@@ -317,7 +335,7 @@ async function check(name, fn) {
         .waitFor();
       await click("Data");
       await dialog(source);
-      await click("Import data");
+      await click("Import evidence");
       assert.equal((await rpc("state")).labels, null);
       assert.deepEqual(errors, []);
     },

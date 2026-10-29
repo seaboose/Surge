@@ -133,7 +133,7 @@ class MappingUITests(unittest.TestCase):
     def setUp(self):
         from app import Workbench
 
-        self.win = Workbench()
+        self.win = Workbench(start_hidden=True)
         self.win.withdraw()
         self.win.current = dataset(
             [{"reading": 10, "id": "one", "clock": 0}, {"reading": None, "id": "one", "clock": 1}]

@@ -34,9 +34,13 @@ UI_STATE = Path(__file__).with_name(".surge-ui.json")
 
 
 class Workbench(tk.Tk):
-    def __init__(self):
+    def __init__(self, *, start_hidden=False):
         super().__init__()
-        self.title("Surge")
+        # Regression checks can construct the legacy UI without briefly mapping
+        # a second window. Layout checks explicitly deiconify when needed.
+        if start_hidden:
+            self.withdraw()
+        self.title("Surge — Legacy Workbench")
         self.geometry("1360x880")
         self.minsize(1100, 760)
         self.configure(bg=BG)

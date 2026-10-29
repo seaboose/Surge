@@ -17,7 +17,7 @@ class StartTests(unittest.TestCase):
     def setUp(self):
         from app import Workbench
 
-        self.win = Workbench()
+        self.win = Workbench(start_hidden=True)
         self.win.withdraw()
 
     def tearDown(self):
@@ -32,6 +32,8 @@ class StartTests(unittest.TestCase):
 
     def test_start_has_two_entry_actions_and_no_setup_or_navigation(self):
         win = self.win
+        self.assertEqual(win.title(), "Surge — Legacy Workbench")
+        self.assertEqual(win.state(), "withdrawn")
         self.assertEqual(win.empty_data.winfo_manager(), "pack")
         self.assertEqual(win.data_setup.winfo_manager(), "")
         self.assertEqual(win.rail.winfo_manager(), "")

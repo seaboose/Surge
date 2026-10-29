@@ -1,0 +1,139 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-__SURVIVE_SCRIPT_SHA256__'; style-src 'sha256-__SURVIVE_STYLE_SHA256__'; connect-src 'none'; img-src 'none'; font-src 'none'; object-src 'none'; base-uri 'none'; form-action 'none'">
+<title>Survive — recorded replay</title>
+<style id="replay-style">
+:root{color-scheme:light dark;--bg:light-dark(#fafbfc,#131719);--fg:light-dark(#20272b,#e7ecef);--muted:light-dark(#64717a,#a5b1b8);--line:light-dark(#dce2e6,#354149);--soft:light-dark(#edf1f4,#20282d);--player:light-dark(#176bc7,#65aaff);--aimed:light-dark(#b65b08,#f6ad55);--random:light-dark(#087d5b,#65d5aa);--danger:light-dark(#bc2e3a,#ff8792)}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--fg);font:14px/1.5 system-ui,sans-serif}main{max-width:1000px;margin:24px auto;padding:0 18px 24px}h1{font-size:24px;font-weight:600;margin:0 0 4px}p{margin:5px 0 12px}.muted{color:var(--muted)}.meta{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px 24px;margin:16px 0}.meta dt{color:var(--muted)}.meta dd{margin:0;overflow-wrap:anywhere}.controls{display:flex;align-items:center;flex-wrap:wrap;gap:8px;margin:12px 0}button{font:inherit;border:1px solid var(--line);background:var(--soft);color:var(--fg);border-radius:6px;padding:7px 12px}button:disabled{opacity:.5}button:focus-visible,input:focus-visible,summary:focus-visible{outline:2px solid var(--player);outline-offset:3px}label{display:flex;align-items:center;gap:7px}.timeline{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:12px;align-items:center}input[type=range]{width:100%;margin:0;accent-color:var(--player)}output,.mono{font-family:ui-monospace,Consolas,monospace;font-variant-numeric:tabular-nums}.view{width:100%;aspect-ratio:10/7}canvas{display:block;width:100%;height:100%}.legend{display:flex;flex-wrap:wrap;gap:14px;margin:6px 0}.legend span{display:flex;align-items:center;gap:5px}.swatch{display:inline-block;width:16px;height:3px;background:var(--player)}.aimed{background:var(--aimed)}.random{background:var(--random)}.coverage{font-weight:500}.coverage[data-level=gap]{color:var(--aimed)}.record{margin-top:12px;padding-top:12px;border-top:1px solid var(--line);overflow-wrap:anywhere}.hashes{display:grid;gap:8px;margin-top:16px}.hashes code{display:block;font:12px/1.5 ui-monospace,Consolas,monospace;overflow-wrap:anywhere}details{margin-top:12px}summary{cursor:default}pre{white-space:pre-wrap;overflow-wrap:anywhere;background:var(--soft);padding:12px;border-radius:6px;font:12px/1.5 ui-monospace,Consolas,monospace}.small{font-size:12px}@media(max-width:520px){main{margin-top:16px;padding:0 12px 16px}.meta{grid-template-columns:1fr}.timeline{gap:7px}.view{aspect-ratio:1}.controls button{min-height:42px}h1{font-size:22px}}
+</style>
+</head>
+<body>
+<main id="replay">
+  <h1>Survive · recorded replay</h1>
+  <p class="muted">Recorded positions and sampled reconstruction. This view is not an Unreal screen recording.</p>
+  <dl class="meta">
+    <div><dt>Selected profile</dt><dd id="profile"></dd></div>
+    <div><dt>Source kind · operator assertion</dt><dd id="source-kind"></dd></div>
+    <div><dt>Completion / records</dt><dd id="completion"></dd></div>
+    <div><dt>Evidence authenticity</dt><dd>Local unsigned evidence · not attested</dd></div>
+  </dl>
+  <div class="controls"><button id="play" type="button">Play</button><button id="previous" type="button">Previous event</button><button id="next" type="button">Next event</button><label><input id="arena" type="checkbox" checked>Current arena illustration</label></div>
+  <div class="timeline"><label for="time">Time</label><input id="time" type="range" min="0" max="60" step="0.001" value="0"><output id="clock" for="time">0.000 s</output></div>
+  <div class="view"><canvas id="arena-view" role="img" aria-label="Recorded player trajectory and reconstructed threats in top-down coordinates."></canvas></div>
+  <div class="legend small"><span><i class="swatch"></i>Recorded player / eligible trail</span><span><i class="swatch aimed"></i>Aimed threat</span><span><i class="swatch random"></i>Random threat</span></div>
+  <p id="geometry-note" class="small muted">Two-box layout illustrates the current source arena; this capture has no map fingerprint.</p>
+  <p><span id="coverage" class="coverage" aria-live="polite"></span><br><output id="position" class="small mono"></output></p>
+  <div class="record"><div id="current-event"></div><div id="sample-coverage" class="small muted"></div></div>
+  <details><summary>Recorded event data</summary><pre id="event-json"></pre></details>
+  <details><summary>Audit and replay limits</summary><pre id="audit"></pre></details>
+  <div class="hashes small"><div>Exact source SHA-256<code id="source-hash"></code></div><div>Selected profile SHA-256<code id="profile-hash"></code></div></div>
+  <noscript>This offline replay needs JavaScript to inspect its embedded data.</noscript>
+</main>
+<script id="capture-data" type="application/json">__SURVIVE_PAYLOAD_JSON__</script>
+<script id="replay-code">
+(()=>{
+  'use strict';
+  const data=JSON.parse(document.getElementById('capture-data').textContent);
+  const $=id=>document.getElementById(id),canvas=$('arena-view'),ctx=canvas.getContext('2d');
+  const points=data.points,rows=data.rows,threats=data.threats,profile=data.profile;
+  const duration=Math.max(0,data.duration_s),range=$('time'),play=$('play');
+  let elapsed=0,selectedEvent=null,playing=false,last=null,raf=0,width=700,height=490,colors={};
+  const clamp=(value,low,high)=>Math.max(low,Math.min(high,value));
+  const format=value=>Number(value).toFixed(3),isCircle=t=>t.pattern.startsWith('circle');
+  function text(id,value){$(id).textContent=value}
+  text('profile',profile.id);text('source-kind',data.source_kind_operator_asserted);
+  text('completion',data.completion+' / '+rows.length);text('source-hash',data.source_sha256);text('profile-hash',data.profile_sha256);
+  text('audit',JSON.stringify({audit_issues:data.summary.audit_issues,limits:data.summary.limits,
+    replay:['Player movement is linearly interpolated only between supported recorded positions at most150ms apart.',
+      'Blink jumps, unsupported modes and longer gaps hold the last recorded position; no between-sample path is invented.',
+      'Stepping an individual event shows that event’s recorded player position.',
+      'Projectiles are reconstructed from the recorded fire time, source and fixed velocity, capped at selected range and any recorded blocked endpoint.',
+      'Threat visuals and the optional current-source arena are schematic; no captured engine pixels or map identity are implied.']},null,2));
+  const intervals=data.summary.sample_interval_s;
+  text('sample-coverage','Trajectory samples '+data.summary.trajectory_samples+' · intervals over150ms '+intervals.over_150ms+
+    ' · maximum '+(intervals.max===null?'unavailable':format(intervals.max)+' s'));
+  range.max=String(duration);play.disabled=duration<=0;
+
+  function upperIndex(list,t,key){let lo=0,hi=list.length;while(lo<hi){const mid=(lo+hi)>>1;if(list[mid][key]<=t)lo=mid+1;else hi=mid}return lo-1}
+  function playerAtTime(t){
+    if(selectedEvent!==null){const r=rows[selectedEvent];return{x:r.x_cm,y:r.y_cm,coverage:'recorded event position',seq:r.seq,mode:r.movement_mode}}
+    const index=upperIndex(points,t,'t');
+    if(index<0){const p=points[0];return{x:p.x,y:p.y,coverage:'before first position',seq:p.seq,mode:p.mode}}
+    const a=points[index];
+    if(Math.abs(t-a.t)<=1e-9)return{x:a.x,y:a.y,coverage:'recorded position',seq:a.seq,mode:a.mode};
+    if(index+1<points.length&&a.next_eligible){const b=points[index+1],alpha=(t-a.t)/(b.t-a.t);return{x:a.x+(b.x-a.x)*alpha,y:a.y+(b.y-a.y)*alpha,coverage:a.next_coverage,seq:a.seq,mode:a.mode}}
+    return{x:a.x,y:a.y,coverage:'holding recorded position: '+a.next_coverage,seq:a.seq,mode:a.mode};
+  }
+  function projectileAt(t,at){
+    const traveled=Math.min(t.max_distance,Math.max(0,at-t.fire_s)*t.speed);
+    return[t.source[0]+t.velocity[0]/t.speed*traveled,t.source[1]+t.velocity[1]/t.speed*traveled];
+  }
+  function currentIndex(){return selectedEvent!==null?selectedEvent:Math.max(0,upperIndex(rows,elapsed,'elapsed_s'))}
+  function stageReached(time,seq){return time!==null&&(elapsed>time+1e-9||(Math.abs(elapsed-time)<=1e-9&&currentIndex()>=seq))}
+  function makeBounds(){
+    let x0=-1400,x1=1400,y0=-1400,y1=1400;
+    function add(x,y,r=0){x0=Math.min(x0,x-r);x1=Math.max(x1,x+r);y0=Math.min(y0,y-r);y1=Math.max(y1,y+r)}
+    for(const p of points)add(p.x,p.y,profile.movement.hit_radius_cm);
+    for(const t of threats){if(isCircle(t))add(t.target[0],t.target[1],t.radius);else{add(...t.source,t.radius);if(t.speed>0)add(t.source[0]+t.velocity[0]/t.speed*t.max_distance,t.source[1]+t.velocity[1]/t.speed*t.max_distance,t.radius)}}
+    const pad=Math.max(x1-x0,y1-y0)*.035;return{x0:x0-pad,x1:x1+pad,y0:y0-pad,y1:y1+pad};
+  }
+  const bounds=makeBounds();
+  function transform(){const left=40,top=12,w=width-56,h=height-44,scale=Math.min(w/(bounds.x1-bounds.x0),h/(bounds.y1-bounds.y0));
+    const ox=left+(w-(bounds.x1-bounds.x0)*scale)/2,oy=top+(h-(bounds.y1-bounds.y0)*scale)/2;
+    return{scale,xy:(x,y)=>[ox+(x-bounds.x0)*scale,oy+(bounds.y1-y)*scale]};}
+  function line(a,b,color,dashed=false,lineWidth=1.5){ctx.strokeStyle=color;ctx.lineWidth=lineWidth;ctx.setLineDash(dashed?[6,4]:[]);ctx.beginPath();ctx.moveTo(...a);ctx.lineTo(...b);ctx.stroke();ctx.setLineDash([])}
+  function circle(p,r,color,fill=false,dashed=false){ctx.beginPath();ctx.arc(p[0],p[1],Math.max(0,r),0,Math.PI*2);ctx.strokeStyle=color;ctx.fillStyle=color;ctx.lineWidth=1.5;ctx.setLineDash(dashed?[6,4]:[]);if(fill)ctx.fill();else ctx.stroke();ctx.setLineDash([])}
+  function tickStep(span){const power=Math.pow(10,Math.floor(Math.log10(Math.max(1,span/6)))),m=span/6/power;return power*(m<=1?1:m<=2?2:m<=5?5:10)}
+  function compact(n){return Math.abs(n)>=1e6?n.toExponential(1):String(Math.round(n))}
+  function draw(){
+    const dpr=Math.min(devicePixelRatio||1,2);ctx.setTransform(dpr,0,0,dpr,0,0);ctx.clearRect(0,0,width,height);ctx.fillStyle=colors.bg;ctx.fillRect(0,0,width,height);
+    const tr=transform(),xy=tr.xy,s=tr.scale;ctx.font='12px system-ui';ctx.fillStyle=colors.muted;
+    const sx=tickStep(bounds.x1-bounds.x0),sy=tickStep(bounds.y1-bounds.y0);
+    for(let x=Math.ceil(bounds.x0/sx)*sx,n=0;x<=bounds.x1&&n<20;x+=sx,n++){line(xy(x,bounds.y0),xy(x,bounds.y1),colors.line,false,1);const p=xy(x,bounds.y0);ctx.fillStyle=colors.muted;ctx.textAlign='center';ctx.fillText(compact(x),p[0],height-9)}
+    for(let y=Math.ceil(bounds.y0/sy)*sy,n=0;y<=bounds.y1&&n<20;y+=sy,n++){line(xy(bounds.x0,y),xy(bounds.x1,y),colors.line,false,1);const p=xy(bounds.x0,y);ctx.fillStyle=colors.muted;ctx.textAlign='right';ctx.fillText(compact(y),Math.max(30,p[0]-7),p[1]+4)}
+    if($('arena').checked){
+      const half=data.arena_illustration.half_extent,a=xy(-half,half),b=xy(half,-half);ctx.strokeStyle=colors.line;ctx.lineWidth=1;ctx.strokeRect(a[0],a[1],b[0]-a[0],b[1]-a[1]);
+      for(const q of data.arena_illustration.obstacles){const p=xy(q[0],q[3]),end=xy(q[2],q[1]);ctx.fillStyle=colors.soft;ctx.fillRect(p[0],p[1],end[0]-p[0],end[1]-p[1]);ctx.strokeStyle=colors.line;ctx.strokeRect(p[0],p[1],end[0]-p[0],end[1]-p[1]);}
+    }
+    // Only eligible recorded segments are joined. No line spans a missing interval or blink.
+    ctx.strokeStyle=colors.player;ctx.lineWidth=1.5;ctx.globalAlpha=.45;ctx.beginPath();
+    for(let i=0;i+1<points.length;i++){const a=points[i],b=points[i+1];if(a.t>=elapsed)break;if(!a.next_eligible)continue;const end=Math.min(elapsed,b.t),alpha=(end-a.t)/(b.t-a.t);ctx.moveTo(...xy(a.x,a.y));ctx.lineTo(...xy(a.x+(b.x-a.x)*alpha,a.y+(b.y-a.y)*alpha));}
+    ctx.stroke();ctx.globalAlpha=1;
+    for(const t of threats){
+      if(!stageReached(t.warning_s,t.warning_seq))continue;
+      const color=t.pattern.endsWith('_aimed')?colors.aimed:colors.random,dashed=t.pattern.endsWith('_aimed');
+      if(stageReached(t.terminal_s,t.terminal_seq)){
+        if(elapsed-t.terminal_s<=.12&&t.terminal_position){const p=xy(...t.terminal_position);line([p[0]-5,p[1]-5],[p[0]+5,p[1]+5],t.terminal_event==='threat_hit'?colors.danger:color);line([p[0]-5,p[1]+5],[p[0]+5,p[1]-5],t.terminal_event==='threat_hit'?colors.danger:color)}continue;
+      }
+      const fired=stageReached(t.fire_s,t.fire_seq);
+      if(isCircle(t)){const p=xy(...t.target);if(fired){ctx.globalAlpha=.15;circle(p,t.radius*s,color,true);ctx.globalAlpha=1}circle(p,t.radius*s,color,false,!fired&&dashed)}
+      else if(!fired){const end=[t.source[0]+t.velocity[0]/t.speed*t.max_distance,t.source[1]+t.velocity[1]/t.speed*t.max_distance];ctx.globalAlpha=.6;line(xy(...t.source),xy(...end),color,dashed);circle(xy(...t.source),t.radius*s,color);ctx.globalAlpha=1}
+      else if(t.speed>0){const p=projectileAt(t,elapsed);circle(xy(...p),t.radius*s,color,true)}
+    }
+    const pose=playerAtTime(elapsed),p=xy(pose.x,pose.y),unknown=pose.coverage.startsWith('holding')||pose.coverage.startsWith('before');
+    circle(p,profile.movement.hit_radius_cm*s,colors.player,false,unknown);const r=Math.max(4,profile.movement.visual_radius_cm*s);ctx.fillStyle=colors.player;ctx.beginPath();ctx.moveTo(p[0],p[1]-r);ctx.lineTo(p[0]+r,p[1]);ctx.lineTo(p[0],p[1]+r);ctx.lineTo(p[0]-r,p[1]);ctx.closePath();ctx.fill();
+  }
+  function update(){
+    range.value=String(elapsed);text('clock',format(elapsed)+' s');const pose=playerAtTime(elapsed),index=currentIndex(),event=rows[index];
+    text('coverage',pose.coverage);$('coverage').dataset.level=pose.coverage.startsWith('holding')||pose.coverage.startsWith('before')?'gap':'observed';
+    text('position','X '+format(pose.x)+' · Y '+format(pose.y)+' cm · '+pose.mode);
+    text('current-event','Record '+event.seq+' · '+format(event.elapsed_s)+' s · '+event.event+(event.detail?' · '+event.detail:'')+(event.related_id?' · '+event.related_id:''));
+    text('event-json',JSON.stringify(event,null,2));$('previous').disabled=index<=0;$('next').disabled=index>=rows.length-1;draw();
+  }
+  function pause(){playing=false;cancelAnimationFrame(raf);play.textContent='Play';last=null}
+  function frame(now){if(!playing)return;if(last===null)last=now;elapsed=Math.min(duration,elapsed+Math.min(.05,Math.max(0,(now-last)/1000)));last=now;selectedEvent=null;update();if(elapsed>=duration)pause();else raf=requestAnimationFrame(frame)}
+  play.addEventListener('click',()=>{if(playing){pause();return}if(elapsed>=duration)elapsed=0;selectedEvent=null;playing=true;last=null;play.textContent='Pause';raf=requestAnimationFrame(frame)});
+  range.addEventListener('input',()=>{pause();selectedEvent=null;elapsed=clamp(Number(range.value),0,duration);update()});
+  function step(direction){pause();selectedEvent=clamp(currentIndex()+direction,0,rows.length-1);elapsed=rows[selectedEvent].elapsed_s;update()}
+  $('previous').addEventListener('click',()=>step(-1));$('next').addEventListener('click',()=>step(1));
+  $('arena').addEventListener('change',()=>{$('geometry-note').hidden=!$('arena').checked;draw()});
+  document.addEventListener('visibilitychange',()=>{if(document.hidden)pause()});
+  function resize(){const r=canvas.getBoundingClientRect();width=r.width;height=r.height;const dpr=Math.min(devicePixelRatio||1,2);canvas.width=Math.max(1,Math.round(width*dpr));canvas.height=Math.max(1,Math.round(height*dpr));const probe=document.createElement('span');probe.hidden=true;document.body.appendChild(probe);for(const name of ['bg','fg','muted','line','soft','player','aimed','random','danger']){probe.style.color='var(--'+name+')';colors[name]=getComputedStyle(probe).color}probe.remove();draw()}
+  new ResizeObserver(resize).observe(canvas);matchMedia('(prefers-color-scheme: dark)').addEventListener('change',resize);resize();update();
+})();
+</script>
+</body>
+</html>

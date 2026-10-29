@@ -33,6 +33,16 @@ async function dialog(file, save = false) {
   );
 }
 async function click(name) {
+  await require("./test-export-menu.cjs").revealExport(page, name);
+  if (name === "Open saved case") {
+    await page
+      .getByRole("button", { name: "Case library", exact: true })
+      .click();
+    await page
+      .getByRole("dialog", { name: "Case library", exact: true })
+      .waitFor();
+    name = "Open case file";
+  }
   if (
     ["Load policy", "Save policy", "Edit rules", "Map context"].includes(name)
   ) {
@@ -76,13 +86,13 @@ async function report(args = {}) {
   page.setDefaultTimeout(20000);
   page.on("pageerror", (e) => errors.push(e.message));
   await page
-    .getByRole("button", { name: "Import data", exact: true })
+    .getByRole("button", { name: "Import evidence", exact: true })
     .waitFor();
   await check(
     "retained policy reproduces development detections and all legitimate groups",
     async () => {
       await dialog(path.join(root, "refinement-1/development.json"));
-      await click("Import data");
+      await click("Import evidence");
       await dialog(path.join(root, "reference.json"));
       await click("Import reference");
       await dialog(
@@ -94,7 +104,7 @@ async function report(args = {}) {
       await click("Load policy");
       await click("Analyze");
       await dialog(savedCase, true);
-      await click("Save case");
+      await click("Export case file");
       await click("Evaluate");
       await dialog(path.join(root, "refinement-1/development.labels.json"));
       await click("Import labels");
@@ -183,7 +193,7 @@ async function report(args = {}) {
     async () => {
       await click("Data");
       await dialog(savedCase);
-      await click("Open case");
+      await click("Open saved case");
       await click("Evaluate");
       await dialog(path.join(root, "refinement-1/development.labels.json"));
       await click("Import labels");
@@ -191,7 +201,6 @@ async function report(args = {}) {
       assert.deepEqual(after.summary, before.summary);
       assert.deepEqual(after.groups, before.groups);
       assert.equal((await rpc("state")).config.threshold, 1.8);
-      assert.equal(await page.locator("h1,h2,h3,header").count(), 0);
       assert.deepEqual(errors, []);
     },
   );

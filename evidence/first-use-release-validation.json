@@ -1,0 +1,818 @@
+{
+  "publication_redaction": "Local interpreter locations replaced with <python-runtime>/python.exe. Recorded outcomes and hashes are unchanged; these are historical commands, not a new run.",
+  "schema": "surge-permanent-first-use-validation-v1",
+  "automated_status": "passed",
+  "human_acceptance": "pending",
+  "hosted_ci": "not_executed",
+  "branch_protection": "not_changed",
+  "runs": [
+    {
+      "schema": "surge-first-use-release-v1",
+      "status": "failed",
+      "human_acceptance": "pending",
+      "fuzzing": "incomplete_not_run",
+      "os": "Windows-11-10.0.26200-SP0",
+      "python": "3.12.14",
+      "started_at_utc": "2026-10-23T18:33:25.211195+00:00",
+      "limits": [
+        "Unfamiliar-tester acceptance is pending; no human comprehension or uncoached usability claim.",
+        "Existing Windows host/user/toolchains; empty task-local dependency caches are not a fresh OS.",
+        "Isolated Electron entry wrappers and substituted native file dialogs; normal launcher not tested.",
+        "Original T1/T2/T3 fuzzing remains incomplete; no sanitizer, full qualification or endurance rerun.",
+        "Hosted CI execution and repository branch-protection settings are separate from local validation."
+      ],
+      "total_limit_seconds": 1800,
+      "steps": [
+        {
+          "id": "package",
+          "status": "passed",
+          "timeout_seconds": 60,
+          "command": [
+            "<python-runtime>/python.exe",
+            "-B",
+            "scripts/package_source.py"
+          ],
+          "exit_code": 0,
+          "cleanup": "not_needed",
+          "elapsed_seconds": 0.719,
+          "log_sha256": "04e7a5a2cf33e03e0db60d03bc3dd29c0ad12f2b876d43496b1d6d0b65ddcc12",
+          "log_bytes": 150
+        },
+        {
+          "id": "cache_path",
+          "status": "passed",
+          "timeout_seconds": 30,
+          "command": [
+            "powershell.exe",
+            "-NoProfile",
+            "-Command",
+            "pnpm store path"
+          ],
+          "exit_code": 0,
+          "cleanup": "not_needed",
+          "elapsed_seconds": 1.219,
+          "log_sha256": "8c1b88205e862bdb9bedfc799d8b6afa3c696b8d03d67f70aec575f99ea33b0e",
+          "log_bytes": 149
+        },
+        {
+          "id": "setup",
+          "status": "passed",
+          "timeout_seconds": 600,
+          "command": [
+            "powershell.exe",
+            "-NoProfile",
+            "-ExecutionPolicy",
+            "Bypass",
+            "-File",
+            "Setup-Surge.ps1",
+            "-Python",
+            "<python-runtime>/python.exe"
+          ],
+          "exit_code": 0,
+          "cleanup": "not_needed",
+          "elapsed_seconds": 11.563,
+          "log_sha256": "0c8057d0deae73f14a248fd84172fecb5ab37d3431f2cab77dd2482eccb919d1",
+          "log_bytes": 1007
+        },
+        {
+          "id": "replay",
+          "status": "failed",
+          "timeout_seconds": 180,
+          "command": [
+            "node",
+            "first-use.test.cjs",
+            "replay"
+          ],
+          "exit_code": 0,
+          "cleanup": "not_needed",
+          "elapsed_seconds": 4.047,
+          "log_sha256": "531a9d313e66f78b8fd829128492a1a17fcf7cd0bd1584a7db8cb5bc86d7c459",
+          "log_bytes": 643,
+          "reason": "'set' object is not subscriptable"
+        },
+        {
+          "id": "native_configure",
+          "status": "not_run",
+          "timeout_seconds": 300,
+          "command": [
+            "cmake",
+            "-S",
+            "native",
+            "-B",
+            "native/build",
+            "-A",
+            "x64"
+          ]
+        },
+        {
+          "id": "native_build",
+          "status": "not_run",
+          "timeout_seconds": 300,
+          "command": [
+            "cmake",
+            "--build",
+            "native/build",
+            "--config",
+            "Release",
+            "--",
+            "/nodeReuse:false"
+          ]
+        },
+        {
+          "id": "native_ctest",
+          "status": "not_run",
+          "timeout_seconds": 180,
+          "command": [
+            "ctest",
+            "--test-dir",
+            "native/build",
+            "-C",
+            "Release",
+            "--output-on-failure",
+            "--no-tests=error",
+            "--timeout",
+            "60"
+          ]
+        },
+        {
+          "id": "unapproved",
+          "status": "not_run",
+          "timeout_seconds": 180,
+          "command": [
+            "node",
+            "first-use.test.cjs",
+            "unapproved"
+          ]
+        },
+        {
+          "id": "approve",
+          "status": "not_run",
+          "timeout_seconds": 60,
+          "command": [
+            "<repo>\\verification\\qualification\\first-use-19c4538f449c\\fresh extraction\\Surge\\.venv\\Scripts\\python.exe",
+            "-B",
+            "scripts/native_capture.py",
+            "approve",
+            "--build",
+            "v2",
+            "--reason",
+            "Reviewed owned v2 fixture; isolated release check only"
+          ]
+        },
+        {
+          "id": "approved",
+          "status": "not_run",
+          "timeout_seconds": 180,
+          "command": [
+            "node",
+            "first-use.test.cjs",
+            "approved"
+          ]
+        },
+        {
+          "id": "library",
+          "status": "not_run",
+          "timeout_seconds": 180,
+          "command": [
+            "node",
+            "library-ui.test.cjs"
+          ]
+        },
+        {
+          "id": "deletion",
+          "status": "not_run",
+          "timeout_seconds": 180,
+          "command": [
+            "node",
+            "library-deletion.test.cjs"
+          ]
+        },
+        {
+          "id": "saved",
+          "status": "not_run",
+          "timeout_seconds": 180,
+          "command": [
+            "node",
+            "saved-flow.test.cjs"
+          ]
+        },
+        {
+          "id": "replays",
+          "status": "not_run",
+          "timeout_seconds": 60,
+          "command": [
+            "<repo>\\verification\\qualification\\first-use-19c4538f449c\\fresh extraction\\Surge\\.venv\\Scripts\\python.exe",
+            "-B",
+            "scripts/verify_native_demo.py"
+          ]
+        },
+        {
+          "id": "hygiene",
+          "status": "not_run",
+          "timeout_seconds": 60,
+          "command": [
+            "<repo>\\verification\\qualification\\first-use-19c4538f449c\\fresh extraction\\Surge\\.venv\\Scripts\\python.exe",
+            "-B",
+            "scripts/check_release.py"
+          ]
+        },
+        {
+          "id": "format",
+          "status": "not_run",
+          "timeout_seconds": 180,
+          "command": [
+            "powershell.exe",
+            "-NoProfile",
+            "-Command",
+            "pnpm run format:check"
+          ]
+        }
+      ],
+      "git": {
+        "head": "2b9e3c8bbfc22c7a82827f39e404fa87e7eb8fb5",
+        "clean": false
+      },
+      "initial_caches_absent": true,
+      "archive_sha256": "1d886e38719547206c7365064e1f5cac7a39258ca3c349c76f3d3b9f2b15c214",
+      "manifest_sha256": "b752ba232148c5853fdbf87a6df0567924cff6d3df68d0a2cc73c65c846c0652",
+      "initial_artifacts_absent": {
+        ".venv": true,
+        "desktop/node_modules": true,
+        "desktop/dist": true,
+        "native/build": true,
+        "native/captures": true,
+        "native/baselines.json": true
+      },
+      "source_unchanged": true,
+      "finished_at_utc": "2026-10-23T18:33:47.942609+00:00",
+      "elapsed_seconds": 22.719
+    },
+    {
+      "schema": "surge-first-use-release-v1",
+      "status": "failed",
+      "human_acceptance": "pending",
+      "fuzzing": "incomplete_not_run",
+      "os": "Windows-11-10.0.26200-SP0",
+      "python": "3.12.14",
+      "started_at_utc": "2026-10-23T18:34:39.503689+00:00",
+      "limits": [
+        "Unfamiliar-tester acceptance is pending; no human comprehension or uncoached usability claim.",
+        "Existing Windows host/user/toolchains; empty task-local dependency caches are not a fresh OS.",
+        "Isolated Electron entry wrappers and substituted native file dialogs; normal launcher not tested.",
+        "Original T1/T2/T3 fuzzing remains incomplete; no sanitizer, full qualification or endurance rerun.",
+        "Hosted CI execution and repository branch-protection settings are separate from local validation."
+      ],
+      "total_limit_seconds": 1800,
+      "steps": [
+        {
+          "id": "package",
+          "status": "passed",
+          "timeout_seconds": 60,
+          "command": [
+            "<python-runtime>/python.exe",
+            "-B",
+            "scripts/package_source.py"
+          ],
+          "exit_code": 0,
+          "cleanup": "not_needed",
+          "elapsed_seconds": 0.719,
+          "log_sha256": "04e7a5a2cf33e03e0db60d03bc3dd29c0ad12f2b876d43496b1d6d0b65ddcc12",
+          "log_bytes": 150
+        },
+        {
+          "id": "cache_path",
+          "status": "passed",
+          "timeout_seconds": 30,
+          "command": [
+            "powershell.exe",
+            "-NoProfile",
+            "-Command",
+            "pnpm store path"
+          ],
+          "exit_code": 0,
+          "cleanup": "not_needed",
+          "elapsed_seconds": 1.219,
+          "log_sha256": "4a13db6f3f462fef319e2823b417626379048d7ba7b262299d395a78d4dae019",
+          "log_bytes": 149
+        },
+        {
+          "id": "setup",
+          "status": "passed",
+          "timeout_seconds": 600,
+          "command": [
+            "powershell.exe",
+            "-NoProfile",
+            "-ExecutionPolicy",
+            "Bypass",
+            "-File",
+            "Setup-Surge.ps1",
+            "-Python",
+            "<python-runtime>/python.exe"
+          ],
+          "exit_code": 0,
+          "cleanup": "not_needed",
+          "elapsed_seconds": 10.906,
+          "log_sha256": "d8b2d83c993085bc43c580dffc27c31ae5d3de4fea256e2d0fd058b151b91536",
+          "log_bytes": 1009
+        },
+        {
+          "id": "replay",
+          "status": "passed",
+          "timeout_seconds": 180,
+          "command": [
+            "node",
+            "first-use.test.cjs",
+            "replay"
+          ],
+          "exit_code": 0,
+          "cleanup": "not_needed",
+          "elapsed_seconds": 3.937,
+          "log_sha256": "1048dc740f5b1cfcd6fd13cf8f0fca09ec27884e4e992d2c0af85a60e1f22fda",
+          "log_bytes": 643,
+          "verified_assertions": 8
+        },
+        {
+          "id": "native_configure",
+          "status": "failed",
+          "timeout_seconds": 300,
+          "command": [
+            "cmake",
+            "-S",
+            "native",
+            "-B",
+            "native/build",
+            "-A",
+            "x64"
+          ],
+          "exit_code": 1,
+          "cleanup": "not_needed",
+          "elapsed_seconds": 3.937,
+          "log_sha256": "1ddc34ddfd1c88a8030d9422e7bf2ef96aa8738d819dbcb3a29998256e490346",
+          "log_bytes": 20003
+        },
+        {
+          "id": "native_build",
+          "status": "not_run",
+          "timeout_seconds": 300,
+          "command": [
+            "cmake",
+            "--build",
+            "native/build",
+            "--config",
+            "Release",
+            "--",
+            "/nodeReuse:false"
+          ]
+        },
+        {
+          "id": "native_ctest",
+          "status": "not_run",
+          "timeout_seconds": 180,
+          "command": [
+            "ctest",
+            "--test-dir",
+            "native/build",
+            "-C",
+            "Release",
+            "--output-on-failure",
+            "--no-tests=error",
+            "--timeout",
+            "60"
+          ]
+        },
+        {
+          "id": "unapproved",
+          "status": "not_run",
+          "timeout_seconds": 180,
+          "command": [
+            "node",
+            "first-use.test.cjs",
+            "unapproved"
+          ]
+        },
+        {
+          "id": "approve",
+          "status": "not_run",
+          "timeout_seconds": 60,
+          "command": [
+            "<repo>\\verification\\qualification\\first-use-67060d11e0f3\\fresh extraction\\Surge\\.venv\\Scripts\\python.exe",
+            "-B",
+            "scripts/native_capture.py",
+            "approve",
+            "--build",
+            "v2",
+            "--reason",
+            "Reviewed owned v2 fixture; isolated release check only"
+          ]
+        },
+        {
+          "id": "approved",
+          "status": "not_run",
+          "timeout_seconds": 180,
+          "command": [
+            "node",
+            "first-use.test.cjs",
+            "approved"
+          ]
+        },
+        {
+          "id": "library",
+          "status": "not_run",
+          "timeout_seconds": 180,
+          "command": [
+            "node",
+            "library-ui.test.cjs"
+          ]
+        },
+        {
+          "id": "deletion",
+          "status": "not_run",
+          "timeout_seconds": 180,
+          "command": [
+            "node",
+            "library-deletion.test.cjs"
+          ]
+        },
+        {
+          "id": "saved",
+          "status": "not_run",
+          "timeout_seconds": 180,
+          "command": [
+            "node",
+            "saved-flow.test.cjs"
+          ]
+        },
+        {
+          "id": "replays",
+          "status": "not_run",
+          "timeout_seconds": 60,
+          "command": [
+            "<repo>\\verification\\qualification\\first-use-67060d11e0f3\\fresh extraction\\Surge\\.venv\\Scripts\\python.exe",
+            "-B",
+            "scripts/verify_native_demo.py"
+          ]
+        },
+        {
+          "id": "hygiene",
+          "status": "not_run",
+          "timeout_seconds": 60,
+          "command": [
+            "<repo>\\verification\\qualification\\first-use-67060d11e0f3\\fresh extraction\\Surge\\.venv\\Scripts\\python.exe",
+            "-B",
+            "scripts/check_release.py"
+          ]
+        },
+        {
+          "id": "format",
+          "status": "not_run",
+          "timeout_seconds": 180,
+          "command": [
+            "powershell.exe",
+            "-NoProfile",
+            "-Command",
+            "pnpm run format:check"
+          ]
+        }
+      ],
+      "git": {
+        "head": "2b9e3c8bbfc22c7a82827f39e404fa87e7eb8fb5",
+        "clean": false
+      },
+      "initial_caches_absent": true,
+      "archive_sha256": "2c3a27df2d32d7a8b0a4d926ab9ee859c325ecb217f51d940d0f613b585b3c49",
+      "manifest_sha256": "ad50afa604ed30c5f00bf8223653e1a176eaaf1b7ff2233892b26f185cf19684",
+      "initial_artifacts_absent": {
+        ".venv": true,
+        "desktop/node_modules": true,
+        "desktop/dist": true,
+        "native/build": true,
+        "native/captures": true,
+        "native/baselines.json": true
+      },
+      "source_unchanged": true,
+      "finished_at_utc": "2026-10-23T18:35:05.803438+00:00",
+      "elapsed_seconds": 26.297
+    },
+    {
+      "schema": "surge-first-use-release-v1",
+      "status": "passed",
+      "human_acceptance": "pending",
+      "fuzzing": "incomplete_not_run",
+      "os": "Windows-11-10.0.26200-SP0",
+      "python": "3.12.14",
+      "started_at_utc": "2026-10-23T18:36:17.280844+00:00",
+      "workspace": "<user-home>\\AppData\\Local\\Temp\\surge-fu-u1u4e2bj",
+      "limits": [
+        "Unfamiliar-tester acceptance is pending; no human comprehension or uncoached usability claim.",
+        "Existing Windows host/user/toolchains; empty task-local dependency caches are not a fresh OS.",
+        "Isolated Electron entry wrappers and substituted native file dialogs; normal launcher not tested.",
+        "Original T1/T2/T3 fuzzing remains incomplete; no sanitizer, full qualification or endurance rerun.",
+        "Hosted CI execution and repository branch-protection settings are separate from local validation."
+      ],
+      "total_limit_seconds": 1800,
+      "steps": [
+        {
+          "id": "package",
+          "status": "passed",
+          "timeout_seconds": 60,
+          "command": [
+            "<python-runtime>/python.exe",
+            "-B",
+            "scripts/package_source.py"
+          ],
+          "exit_code": 0,
+          "cleanup": "not_needed",
+          "elapsed_seconds": 0.719,
+          "log_sha256": "04e7a5a2cf33e03e0db60d03bc3dd29c0ad12f2b876d43496b1d6d0b65ddcc12",
+          "log_bytes": 150
+        },
+        {
+          "id": "cache_path",
+          "status": "passed",
+          "timeout_seconds": 30,
+          "command": [
+            "powershell.exe",
+            "-NoProfile",
+            "-Command",
+            "pnpm store path"
+          ],
+          "exit_code": 0,
+          "cleanup": "not_needed",
+          "elapsed_seconds": 1.218,
+          "log_sha256": "110b9c7fb2770a3ac346ebd6e345c68636257ad95cd64340fd557621bf5f73f0",
+          "log_bytes": 68
+        },
+        {
+          "id": "setup",
+          "status": "passed",
+          "timeout_seconds": 600,
+          "command": [
+            "powershell.exe",
+            "-NoProfile",
+            "-ExecutionPolicy",
+            "Bypass",
+            "-File",
+            "Setup-Surge.ps1",
+            "-Python",
+            "<python-runtime>/python.exe"
+          ],
+          "exit_code": 0,
+          "cleanup": "not_needed",
+          "elapsed_seconds": 11.484,
+          "log_sha256": "089158e90eeceb0f9aef11751d4d083aa7bf04ffdac563e563df0dfb2bff8041",
+          "log_bytes": 928
+        },
+        {
+          "id": "replay",
+          "status": "passed",
+          "timeout_seconds": 180,
+          "command": [
+            "node",
+            "first-use.test.cjs",
+            "replay"
+          ],
+          "exit_code": 0,
+          "cleanup": "not_needed",
+          "elapsed_seconds": 4.453,
+          "log_sha256": "b4688b5fc218da93659a59b510a4639c4b23fa34fcfb9ffc2f51b00638554997",
+          "log_bytes": 559,
+          "verified_assertions": 8
+        },
+        {
+          "id": "native_configure",
+          "status": "passed",
+          "timeout_seconds": 300,
+          "command": [
+            "cmake",
+            "-S",
+            "native",
+            "-B",
+            "native/build",
+            "-A",
+            "x64"
+          ],
+          "exit_code": 0,
+          "cleanup": "not_needed",
+          "elapsed_seconds": 3.532,
+          "log_sha256": "ed0a797ff23ae21f1eaa366442317b437b5b6cc2d3e36f5a6d1e7f44992d14b4",
+          "log_bytes": 841
+        },
+        {
+          "id": "native_build",
+          "status": "passed",
+          "timeout_seconds": 300,
+          "command": [
+            "cmake",
+            "--build",
+            "native/build",
+            "--config",
+            "Release",
+            "--",
+            "/nodeReuse:false"
+          ],
+          "exit_code": 0,
+          "cleanup": "not_needed",
+          "elapsed_seconds": 14.109,
+          "log_sha256": "a928b38101b7328e31b20e18f42c20eb891cb0a413c30331e223189fe6dd35ac",
+          "log_bytes": 3184
+        },
+        {
+          "id": "native_ctest",
+          "status": "passed",
+          "timeout_seconds": 180,
+          "command": [
+            "ctest",
+            "--test-dir",
+            "native/build",
+            "-C",
+            "Release",
+            "--output-on-failure",
+            "--no-tests=error",
+            "--timeout",
+            "60"
+          ],
+          "exit_code": 0,
+          "cleanup": "not_needed",
+          "elapsed_seconds": 0.406,
+          "log_sha256": "d8e141769d754ac66c23b74cf175747aacc5db9c4d506570f1407dfa9f8a48fd",
+          "log_bytes": 484,
+          "tests": 3
+        },
+        {
+          "id": "unapproved",
+          "status": "passed",
+          "timeout_seconds": 180,
+          "command": [
+            "node",
+            "first-use.test.cjs",
+            "unapproved"
+          ],
+          "exit_code": 0,
+          "cleanup": "not_needed",
+          "elapsed_seconds": 3.344,
+          "log_sha256": "27cda18e11ca260b59ad51d6cea003584dedeb6d095f01cc05e5c04b52c9a821",
+          "log_bytes": 400,
+          "verified_assertions": 5
+        },
+        {
+          "id": "approve",
+          "status": "passed",
+          "timeout_seconds": 60,
+          "command": [
+            "<user-home>\\AppData\\Local\\Temp\\surge-fu-u1u4e2bj\\fresh extraction\\Surge\\.venv\\Scripts\\python.exe",
+            "-B",
+            "scripts/native_capture.py",
+            "approve",
+            "--build",
+            "v2",
+            "--reason",
+            "Reviewed owned v2 fixture; isolated release check only"
+          ],
+          "exit_code": 0,
+          "cleanup": "not_needed",
+          "elapsed_seconds": 0.422,
+          "log_sha256": "4a1a31615a60d9580dbc612d55a7c7aec1ed9b9472f5c4e36786c1ff336942e7",
+          "log_bytes": 29
+        },
+        {
+          "id": "approved",
+          "status": "passed",
+          "timeout_seconds": 180,
+          "command": [
+            "node",
+            "first-use.test.cjs",
+            "approved"
+          ],
+          "exit_code": 0,
+          "cleanup": "not_needed",
+          "elapsed_seconds": 3.641,
+          "log_sha256": "82e7629d3d96239923b563c134921247af91e866f512ba3818c0bfa624f64e8e",
+          "log_bytes": 457,
+          "verified_assertions": 6
+        },
+        {
+          "id": "library",
+          "status": "passed",
+          "timeout_seconds": 180,
+          "command": [
+            "node",
+            "library-ui.test.cjs"
+          ],
+          "exit_code": 0,
+          "cleanup": "not_needed",
+          "elapsed_seconds": 3.64,
+          "log_sha256": "a53606bc8e23b7c04807e76862b71842a0a8eb708eb1cf07d0a0d756f8558cb2",
+          "log_bytes": 512,
+          "verified_assertions": 9
+        },
+        {
+          "id": "deletion",
+          "status": "passed",
+          "timeout_seconds": 180,
+          "command": [
+            "node",
+            "library-deletion.test.cjs"
+          ],
+          "exit_code": 0,
+          "cleanup": "not_needed",
+          "elapsed_seconds": 2.437,
+          "log_sha256": "7e90e9cc1418114892a0079098484090fe134ac53ca1bcf02bc8d1ef290abc13",
+          "log_bytes": 287,
+          "verified_assertions": 3
+        },
+        {
+          "id": "saved",
+          "status": "passed",
+          "timeout_seconds": 180,
+          "command": [
+            "node",
+            "saved-flow.test.cjs"
+          ],
+          "exit_code": 0,
+          "cleanup": "not_needed",
+          "elapsed_seconds": 5.047,
+          "log_sha256": "82baa6dbc038f693e16a47e41176aa888bf2e9f90900be1f69afb2ca32f15063",
+          "log_bytes": 901,
+          "verified_assertions": 10
+        },
+        {
+          "id": "replays",
+          "status": "passed",
+          "timeout_seconds": 60,
+          "command": [
+            "<user-home>\\AppData\\Local\\Temp\\surge-fu-u1u4e2bj\\fresh extraction\\Surge\\.venv\\Scripts\\python.exe",
+            "-B",
+            "scripts/verify_native_demo.py"
+          ],
+          "exit_code": 0,
+          "cleanup": "not_needed",
+          "elapsed_seconds": 0.313,
+          "log_sha256": "19ef6159f6001109a7e74fd47d32337bff2ca4da2033e21c5390787a3b6adb08",
+          "log_bytes": 419
+        },
+        {
+          "id": "hygiene",
+          "status": "passed",
+          "timeout_seconds": 60,
+          "command": [
+            "<user-home>\\AppData\\Local\\Temp\\surge-fu-u1u4e2bj\\fresh extraction\\Surge\\.venv\\Scripts\\python.exe",
+            "-B",
+            "scripts/check_release.py"
+          ],
+          "exit_code": 0,
+          "cleanup": "not_needed",
+          "elapsed_seconds": 0.406,
+          "log_sha256": "a9841f32824bb7d4f092ece99c47eed0832b958a0539aabb5269cf58b4968b61",
+          "log_bytes": 102
+        },
+        {
+          "id": "format",
+          "status": "passed",
+          "timeout_seconds": 180,
+          "command": [
+            "powershell.exe",
+            "-NoProfile",
+            "-Command",
+            "pnpm run format:check"
+          ],
+          "exit_code": 0,
+          "cleanup": "not_needed",
+          "elapsed_seconds": 2.437,
+          "log_sha256": "4abe21ecf85b6530437dbf64db4b2a4930475daeb68ef57f6ce0607ccdd48f5e",
+          "log_bytes": 132
+        }
+      ],
+      "git": {
+        "head": "2b9e3c8bbfc22c7a82827f39e404fa87e7eb8fb5",
+        "clean": false
+      },
+      "initial_caches_absent": true,
+      "archive_sha256": "93a00ab8455e4415b1dd0cc3380572e34ffd3dedeab143b01b009e7aa9a7e1bf",
+      "manifest_sha256": "ae67152c53212eda8c1808ce63908ab7b4cadcbc967b9432bfe2ae77dcd62952",
+      "initial_artifacts_absent": {
+        ".venv": true,
+        "desktop/node_modules": true,
+        "desktop/dist": true,
+        "native/build": true,
+        "native/captures": true,
+        "native/baselines.json": true
+      },
+      "baseline_sha256": "afc359b94d4e628e3b2fa8400908dfe45938a3fbf883beada19aa6365d94cc73",
+      "source_unchanged": true,
+      "finished_at_utc": "2026-10-23T18:37:21.049489+00:00",
+      "elapsed_seconds": 63.766
+    }
+  ],
+  "unit_tests": {
+    "latest_count": 32,
+    "passed": true,
+    "first_attempt": "32 tests, one evidence-set indexing error; retained",
+    "logs": [
+      "first-use-runner-unit-attempt-1.log",
+      "first-use-runner-unit-attempt-2.log",
+      "first-use-runner-unit-attempt-3.log"
+    ]
+  },
+  "workflow_yaml": "parsed with Prettier YAML parser; not a hosted Actions run",
+  "artifact_upload": "configured with always() and pinned action; actual service upload untested"
+}

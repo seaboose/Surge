@@ -106,7 +106,7 @@ class InspectorTests(unittest.TestCase):
     def setUp(self):
         from app import Workbench
 
-        self.window = Workbench()
+        self.window = Workbench(start_hidden=True)
         self.window.withdraw()
 
     def tearDown(self):
@@ -216,14 +216,14 @@ class InspectorTests(unittest.TestCase):
             path = Path(tmp) / "layout.json"
             with patch("app.UI_STATE", path):
                 path.write_text(json.dumps({"split": 0.61}), encoding="utf-8")
-                other = Workbench()
+                other = Workbench(start_hidden=True)
                 try:
                     other.withdraw()
                     self.assertEqual(other._split_ratio, 0.61)
                 finally:
                     other.destroy()
                 path.write_text('{"split": false}', encoding="utf-8")
-                other = Workbench()
+                other = Workbench(start_hidden=True)
                 try:
                     other.withdraw()
                     self.assertEqual(other._split_ratio, 0.5)

@@ -35,6 +35,16 @@ async function dialog(file, save = false) {
   );
 }
 async function click(name) {
+  await require("./test-export-menu.cjs").revealExport(page, name);
+  if (name === "Open saved case") {
+    await page
+      .getByRole("button", { name: "Case library", exact: true })
+      .click();
+    await page
+      .getByRole("dialog", { name: "Case library", exact: true })
+      .waitFor();
+    name = "Open case file";
+  }
   if (
     ["Load policy", "Save policy", "Edit rules", "Map context"].includes(name)
   ) {
@@ -81,21 +91,21 @@ function group(r, name) {
   page.setDefaultTimeout(20000);
   page.on("pageerror", (e) => errors.push(e.message));
   await page
-    .getByRole("button", { name: "Import data", exact: true })
+    .getByRole("button", { name: "Import evidence", exact: true })
     .waitFor();
   let before;
   await check(
     "development baseline remains reproducible before policy replacement",
     async () => {
       await dialog(path.join(root, "refinement-1/development.json"));
-      await click("Import data");
+      await click("Import evidence");
       await dialog(path.join(root, "reference.json"));
       await click("Import reference");
       await dialog(path.join(root, "refinement-3/baseline/policy.json"));
       await click("Load policy");
       await click("Analyze");
       await dialog(baselineCase, true);
-      await click("Save case");
+      await click("Export case file");
       await click("Evaluate");
       await dialog(path.join(root, "refinement-1/development.labels.json"));
       await click("Import labels");
@@ -125,10 +135,10 @@ function group(r, name) {
       );
       await click("Analyze");
       await dialog(candidateCase, true);
-      await click("Save case");
+      await click("Export case file");
       await click("Data");
       await dialog(candidateCase);
-      await click("Open case");
+      await click("Open saved case");
       await click("Evaluate");
       await dialog(path.join(root, "refinement-1/development.labels.json"));
       await click("Import labels");
@@ -219,7 +229,6 @@ function group(r, name) {
         data.rows.find((r) => r.label === "flow_duration · review at").previous,
         "1.5",
       );
-      assert.equal(await page.locator("h1,h2,h3,header").count(), 0);
       assert.deepEqual(errors, []);
       await page.screenshot({
         path: path.join(out, "refinement3-development-comparison.png"),

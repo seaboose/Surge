@@ -1,0 +1,14 @@
+# Bounded export-count and manifest-cardinality acceptance
+
+Defined before implementation/execution, 23 October 2026.
+
+Scope: owned, synthetic in-memory LabImage inputs; no generated image loading, process attachment, external targets or holdout access. Extend the existing deterministic pack, keeping at most 100 cases, at most 64 KiB/input, two repetitions with a 15-second outer limit each, existing 10 MiB command-log cap and 900-second pilot limit. The separate two-seed mutation pilot keeps its existing budget.
+
+1. Exercise function counts 0/4095/4096/4097 and name counts 0/4095/4096/4097. Positive counts resolve complete known ranges; zero functions and over-limit counts reject with the export-count diagnostic. Zero names rejects because a required symbol is absent. Allocate actual arrays and unique bounded filler names for positive name limits; required symbols occur at the tail. At function limits, required symbols use the final valid ordinal. This is not a claim that unused function entries are semantically validated.
+2. Exercise declared range counts 0/1/2/15/16/17. Counts 2/15/16 resolve every name, RVA, length and byte sequence exactly; 0/1/17 reject. Include a combined positive 4096-function/4096-name/16-range fixture within 64 KiB.
+3. Include a final sought ordinal one past the function table, separately truncated function/name/ordinal table spans, duplicate final manifest identifier, overlapping final range, missing final end export, and a nonempty unused declaration at count 15. Require explicit refusal diagnostics, not merely an exception.
+4. Require exact case identities, bounds, full positive-output comparisons and identical outputs/input hashes across both runs. Preserve every failed attempt and any fixture corrections. Unexpected ASan diagnostics, mismatches, missing cases or timeout fail this pack. No thresholds are relaxed after failure.
+5. Verify ASan using existing safe/error controls and source coverage. Retain the relocation requirements and require both outcomes of the function-count, name-count, ordinal and declaration-count guard expressions. Report deterministic-pack coverage separately from fuzz-corpus coverage; do not infer complete coverage from selected conditions.
+6. Run the complete 20-check qualification profile from a clean checkout, including unchanged Hypothesis deadlines. Record source/tool/binary/input/log hashes and any failed attempts, with measured coverage, counts and remaining limits.
+
+Limitations: these are parser-contract fixtures, not a loader-compatibility suite; export names need not be lexically ordered. Fixed boundary combinations are not exhaustive. No claim of interpreting all unused exports, all malformed encodings, executing relocated code, successful 1 MiB relocation traversal, retention-limit testing, independent-host reproducibility, comprehensive semantic validation or a held-back final phase. The original T1/T2/T3 campaign remains incomplete.
