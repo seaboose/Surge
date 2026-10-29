@@ -1,0 +1,227 @@
+{
+  "schema": "surge-saved-demo-flow-results-v1",
+  "generated_at": "2026-10-23T15:20:06.070053+00:00",
+  "scope": "Targeted working-tree checks on one Windows host; owned sample and isolated case libraries",
+  "status": "targeted checks passed",
+  "completed_desktop_checks": [
+    {
+      "check": "saved-flow-1-H46xdX",
+      "status": "passed",
+      "checks": [
+        "Normal saved case opens with observations; empty-filter recovery clears all filters"
+      ],
+      "evidence": {
+        "path": "verification/electron/saved-flow-1-H46xdX/results.json",
+        "sha256": "0df66537525e41739a6d02ec18ca9c513709d37922491b854109bde9858c3a1d"
+      }
+    },
+    {
+      "check": "saved-flow-2-pKSPi2",
+      "status": "passed",
+      "checks": [
+        "Normal saved case opens with observations; empty-filter recovery clears all filters",
+        "Reopen leaves demo panel and identifies saved case without runtime provenance"
+      ],
+      "evidence": {
+        "path": "verification/electron/saved-flow-2-pKSPi2/results.json",
+        "sha256": "e2d4ce2c918c8bbb769eaf07b4b4947272edd512476fc4786efb86023eb0e3e4"
+      }
+    },
+    {
+      "check": "saved-flow-3-p3QC3z",
+      "status": "passed",
+      "checks": [
+        "Normal saved case opens with observations; empty-filter recovery clears all filters",
+        "Reopen leaves demo panel and identifies saved case without runtime provenance",
+        "Historical summary reflects verified approved evidence and limits scope",
+        "Concurrent capture stays separate and cannot change saved summary"
+      ],
+      "evidence": {
+        "path": "verification/electron/saved-flow-3-p3QC3z/results.json",
+        "sha256": "f03b90c5fddd347112cf425debed38580cc859bcaa5a1cf204b91c5b45a5c6f2"
+      }
+    },
+    {
+      "check": "saved-flow-4-ttoPg1",
+      "status": "passed",
+      "checks": [
+        "Stop is primary after inspection; newer inspection is secondary",
+        "Normal saved case opens with observations; empty-filter recovery clears all filters",
+        "Reopen leaves demo panel and identifies saved case without runtime provenance",
+        "Historical summary reflects verified approved evidence and limits scope",
+        "Concurrent capture stays separate and cannot change saved summary"
+      ],
+      "evidence": {
+        "path": "verification/electron/saved-flow-4-ttoPg1/results.json",
+        "sha256": "175a7aa2a9889e82a5bb9b921122541da5fc26dc30f95e96d0f0664f5e280829"
+      }
+    },
+    {
+      "check": "saved-flow-5-hU3bFm",
+      "status": "passed",
+      "checks": [
+        "Stop is primary after inspection; newer inspection is secondary",
+        "Footer follows demo steps and table says Observations",
+        "Normal saved case opens with observations; empty-filter recovery clears all filters",
+        "Reopen leaves demo panel and identifies saved case without runtime provenance",
+        "Historical summary reflects verified approved evidence and limits scope",
+        "Concurrent capture stays separate and cannot change saved summary"
+      ],
+      "evidence": {
+        "path": "verification/electron/saved-flow-5-hU3bFm/results.json",
+        "sha256": "f3e94a5cefb6147625f819afde42672a68a457542908ca952452e9f7c1b218d1"
+      }
+    },
+    {
+      "check": "saved-flow-6-nc8uqw",
+      "status": "passed",
+      "checks": [
+        "Stop is primary after inspection; newer inspection is secondary",
+        "Footer follows demo steps and table says Observations",
+        "Save confirmation opens exact saved case directly",
+        "Normal saved case opens with observations; empty-filter recovery clears all filters",
+        "Reopen leaves demo panel and identifies saved case without runtime provenance",
+        "Historical summary reflects verified approved evidence and limits scope",
+        "Concurrent capture stays separate and cannot change saved summary"
+      ],
+      "evidence": {
+        "path": "verification/electron/saved-flow-6-nc8uqw/results.json",
+        "sha256": "25bf608162446749bf92e8865512a1561192e2fb230e4d293ade5150e2ef3c18"
+      }
+    },
+    {
+      "check": "saved-flow-6-D609oA",
+      "status": "passed",
+      "checks": [
+        "Stop is primary after inspection; newer inspection is secondary",
+        "Footer follows demo steps and table says Observations",
+        "Save confirmation opens exact saved case directly",
+        "Normal saved case opens with observations; empty-filter recovery clears all filters",
+        "Reopen leaves demo panel and identifies saved case without runtime provenance",
+        "Historical summary reflects verified approved evidence and limits scope",
+        "Concurrent capture stays separate and cannot change saved summary",
+        "After app restart, case reopens with its verified observations and no collector",
+        "Minimum window retains reachable observations without horizontal overflow",
+        "Renaming the open case updates its label without changing verified evidence"
+      ],
+      "evidence": {
+        "path": "verification/electron/saved-flow-6-D609oA/results.json",
+        "sha256": "d4505efece05f8cdbab21ed9502674c94e183c1d9a4a334e9169bd6ad1b85268"
+      }
+    },
+    {
+      "check": "saved-context-DOJlkk",
+      "status": "passed",
+      "checks": [
+        "Out-of-band stop leaves earlier displayed snapshot explicitly non-final",
+        "Explicit final inspection matches stopped endpoint and enables save emphasis",
+        "UI-edited case export retains original-case modification label and leaves library bytes unchanged"
+      ],
+      "evidence": {
+        "path": "verification/electron/saved-context-DOJlkk/results.json",
+        "sha256": "5d345a44ccce4a33cac95e0777700f0e83c7ccb7a355a0c60ca7529bb9bfddc6"
+      }
+    }
+  ],
+  "other_completed_checks": [
+    {
+      "check": "focused Python",
+      "passed": 37,
+      "evidence": {
+        "path": "work/saved-flow-python-final.log",
+        "sha256": "0869c5656c3a4e1a1cfcafe5444eb30adf5da8c4a1a19c4b28c8820c8c4ac196"
+      }
+    },
+    {
+      "check": "library units",
+      "passed": 6,
+      "evidence": {
+        "path": "work/saved-flow-library-attempt-3.log",
+        "sha256": "140328f0dc743e08c216e9f04dfe759468eab94ad8e14cc8297e91b1689dab1f"
+      }
+    },
+    {
+      "check": "library UI",
+      "passed": 9,
+      "evidence": {
+        "path": "verification/electron/case-library-B4b8xD/results.json",
+        "sha256": "cd441bde2c8165a1b5488834a71eb6f2ce57ef1a36dd8919855a4dcec5039a33"
+      }
+    },
+    {
+      "check": "earlier broad UI regressions",
+      "evidence": {
+        "path": "verification/qualification/usability-930a6b40b7/report.json",
+        "sha256": "46b347b4f7c19acedb1faeeb0d2cccd8d3c52689574459a5ad85c1fa42655822"
+      },
+      "note": "stream, demo flow, parity passed before final narrow state-label fixes"
+    },
+    {
+      "check": "earlier reliability smoke",
+      "evidence": {
+        "path": "verification/qualification/inspect-label-smoke-4a1d28c189/report.json",
+        "sha256": "4394a8411a18c773e7cb28ede95d47ff43850a83c53f18239dc6fd0c8c91f2d7"
+      },
+      "note": "smoke only; before final narrow state-label fixes"
+    }
+  ],
+  "final_production_sources": [
+    {
+      "path": "desktop/src/main.jsx",
+      "sha256": "10d3a9f8170af2d277ce76b4d4b2920b02ca937b03cb8a428407583d7c25988e"
+    },
+    {
+      "path": "desktop/src/style.css",
+      "sha256": "a32be36ca28192130b1b58184577c67763f85e81f2c0620254297146ca7bffa1"
+    },
+    {
+      "path": "desktop/case-library.cjs",
+      "sha256": "07ecde910ba51e8cfbc03009bfa8db25d84d32126c54f5ab9521ca4c44ca5951"
+    },
+    {
+      "path": "desktop_worker.py",
+      "sha256": "6239f73520a2652c51d43e3118b4d8a2d4fa7821bd47291a1d2030f0851159e1"
+    }
+  ],
+  "retained_failures": [
+    {
+      "path": "work/saved-flow-library-attempt-1.txt",
+      "sha256": "c3a385ecadd66b66d3197b8af95e0c218e44d4eb1046ed5d3e6a2cdfdea79227"
+    },
+    {
+      "path": "work/saved-flow-library-attempt-2.log",
+      "sha256": "eb7b29c9cb3476d164242d1a02bdc70e4aee91c705b6bc852c611f05ea5c1eb4"
+    },
+    {
+      "path": "verification/qualification/usability-7c952acbaa/report.json",
+      "sha256": "d039cef28aff6a7cc159fab5efc129f5b33a6c71575552f3e05ac78a51902570"
+    },
+    {
+      "path": "verification/qualification/usability-d15ea17ffc/report.json",
+      "sha256": "93017d64df49a9dcdf5ed3b0139157750fb6fda214bceb6a515d53adccb1f113"
+    },
+    {
+      "path": "verification/electron/saved-context-Hw915X",
+      "reason": "test harness sample timing"
+    },
+    {
+      "path": "verification/electron/saved-context-tvNih7",
+      "reason": "test harness sample timing"
+    },
+    {
+      "path": "../work/saved-summary-attempt-1-temp-denied.log",
+      "reason": "sandbox temporary directory"
+    },
+    {
+      "path": "../work/saved-context-provenance.log",
+      "reason": "incorrect assumption about recorded fixture state"
+    }
+  ],
+  "limitations": [
+    "Saved verification is consistency checking, not attestation or proof of trustworthy capture.",
+    "Summary scope is the recorded build and configured ranges, not the whole application or its present state.",
+    "Automatic-stop display simulated by an owned collector stop outside the renderer action; ten-minute timer not waited out.",
+    "No clean checkout or full qualification run in this milestone.",
+    "No new ASan/Hypothesis/libFuzzer campaign; broader unfinished fuzzing remains unfinished."
+  ]
+}

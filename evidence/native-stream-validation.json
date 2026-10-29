@@ -1,0 +1,273 @@
+{
+  "scope": "Owned-app synthetic software validation; not real-cheat accuracy",
+  "seed": "5b9d27d955a44bc69e8268e918a97f3f",
+  "checks": [
+    {
+      "build": "v1",
+      "action": "change-primary",
+      "sequence": 3,
+      "statuses": [
+        "Review",
+        "No finding"
+      ],
+      "command_to_observation_ms": 47.0
+    },
+    {
+      "build": "v1",
+      "action": "restore",
+      "sequence": 5,
+      "statuses": [
+        "No finding",
+        "No finding"
+      ],
+      "command_to_observation_ms": 94.0
+    },
+    {
+      "build": "v1",
+      "action": "change-outside",
+      "sequence": 7,
+      "statuses": [
+        "No finding",
+        "No finding"
+      ],
+      "command_to_observation_ms": 46.0
+    },
+    {
+      "build": "v1",
+      "action": "restore",
+      "sequence": 9,
+      "statuses": [
+        "No finding",
+        "No finding"
+      ],
+      "command_to_observation_ms": 62.0
+    },
+    {
+      "build": "v1",
+      "action": "change-secondary",
+      "sequence": 11,
+      "statuses": [
+        "No finding",
+        "Review"
+      ],
+      "command_to_observation_ms": 16.0
+    },
+    {
+      "build": "v1",
+      "action": "restore",
+      "sequence": 13,
+      "statuses": [
+        "No finding",
+        "No finding"
+      ],
+      "command_to_observation_ms": 78.0
+    },
+    {
+      "build": "v1",
+      "action": "unreadable",
+      "sequence": 15,
+      "statuses": [
+        "Unknown",
+        "No finding"
+      ],
+      "command_to_observation_ms": 31.0
+    },
+    {
+      "build": "v1",
+      "action": "restore",
+      "sequence": 17,
+      "statuses": [
+        "No finding",
+        "No finding"
+      ],
+      "command_to_observation_ms": 16.0
+    },
+    {
+      "build": "v1",
+      "action": "unload",
+      "sequence": 19,
+      "statuses": [
+        "Unknown",
+        "Unknown"
+      ],
+      "command_to_observation_ms": 63.0
+    },
+    {
+      "build": "v1",
+      "action": "load",
+      "sequence": 21,
+      "statuses": [
+        "No finding",
+        "No finding"
+      ],
+      "command_to_observation_ms": 47.0
+    },
+    {
+      "build": "v1",
+      "action": "between-sample change",
+      "sequence": 22,
+      "expected_limitation": "not observed"
+    },
+    {
+      "build": "v1",
+      "action": "approved v1",
+      "rows": 44
+    },
+    {
+      "build": "v2",
+      "action": "unapproved update",
+      "rows": 2
+    },
+    {
+      "build": "v2",
+      "action": "change-primary",
+      "sequence": 3,
+      "statuses": [
+        "Review",
+        "No finding"
+      ],
+      "command_to_observation_ms": 94.0
+    },
+    {
+      "build": "v2",
+      "action": "restore",
+      "sequence": 5,
+      "statuses": [
+        "No finding",
+        "No finding"
+      ],
+      "command_to_observation_ms": 109.0
+    },
+    {
+      "build": "v2",
+      "action": "change-outside",
+      "sequence": 8,
+      "statuses": [
+        "No finding",
+        "No finding"
+      ],
+      "command_to_observation_ms": 109.0
+    },
+    {
+      "build": "v2",
+      "action": "restore",
+      "sequence": 10,
+      "statuses": [
+        "No finding",
+        "No finding"
+      ],
+      "command_to_observation_ms": 78.0
+    },
+    {
+      "build": "v2",
+      "action": "change-secondary",
+      "sequence": 13,
+      "statuses": [
+        "No finding",
+        "Review"
+      ],
+      "command_to_observation_ms": 93.0
+    },
+    {
+      "build": "v2",
+      "action": "restore",
+      "sequence": 15,
+      "statuses": [
+        "No finding",
+        "No finding"
+      ],
+      "command_to_observation_ms": 94.0
+    },
+    {
+      "build": "v2",
+      "action": "unreadable",
+      "sequence": 17,
+      "statuses": [
+        "Unknown",
+        "No finding"
+      ],
+      "command_to_observation_ms": 93.0
+    },
+    {
+      "build": "v2",
+      "action": "restore",
+      "sequence": 20,
+      "statuses": [
+        "No finding",
+        "No finding"
+      ],
+      "command_to_observation_ms": 110.0
+    },
+    {
+      "build": "v2",
+      "action": "unload",
+      "sequence": 22,
+      "statuses": [
+        "Unknown",
+        "Unknown"
+      ],
+      "command_to_observation_ms": 15.0
+    },
+    {
+      "build": "v2",
+      "action": "load",
+      "sequence": 25,
+      "statuses": [
+        "No finding",
+        "No finding"
+      ],
+      "command_to_observation_ms": 93.0
+    },
+    {
+      "build": "v2",
+      "action": "between-sample change",
+      "sequence": 26,
+      "expected_limitation": "not observed"
+    },
+    {
+      "build": "v2",
+      "action": "approved update",
+      "rows": 52
+    },
+    {
+      "action": "stdin EOF stops owned app"
+    },
+    {
+      "action": "closed consumer stops owned app"
+    }
+  ],
+  "false_positives": 0,
+  "missed_changes": 0,
+  "clean_range_observations": 38,
+  "changed_range_observations": 4,
+  "unavailable_range_observations": 6,
+  "replay_records": 98,
+  "backpressure": {
+    "generated": 64,
+    "received": 35,
+    "dropped": 29,
+    "cpu_seconds": 0.125,
+    "working_set_bytes": 6131712,
+    "peak_working_set_bytes": 6193152,
+    "private_bytes": 1179648
+  },
+  "sustained": {
+    "seconds": 90.031,
+    "samples": 817,
+    "interval_ms": 100,
+    "median_range_collection_ms": 0.0795,
+    "p95_range_collection_ms": 0.1326,
+    "cpu_percent_one_core": 0.577,
+    "first_private_bytes": 1040384,
+    "last_private_bytes": 995328,
+    "peak_working_set_bytes": 6180864
+  },
+  "limits": [
+    "Only the two configured routines are covered; other bytes are outside coverage.",
+    "Changes wholly between samples may be missed; this is periodic observation.",
+    "The collector and evidence are locally controlled and unsigned, not remote attestation.",
+    "This bounded run does not establish long-term leak freedom or real-cheat detection accuracy."
+  ],
+  "missed_changes_scope": "Persistent changes present during an observation within the two configured ranges. Outside-range and between-sample controls are documented limitations, excluded from this count.",
+  "command_latency_note": "Approximate host monotonic-clock measurements in this run. These are not end-to-end interface latency; the runner now uses the higher-resolution performance clock."
+}

@@ -1,0 +1,428 @@
+{
+  "attempts": [
+    {
+      "artifact_manifest_sha256": "271dc63e181c4eab96393d4a94c161e144be4ad05b4c0780cf315a73c2810da7",
+      "campaign_seconds": 379.047,
+      "final_freeze_sha256": "6874dc7c92b354963a75fb8327231e4b3db1b96ab04dfe82587de21e31ffac2c",
+      "final_recipes_sha256": "b1789d61b11ee22d39ac9b79ce60af87d05798ba69d6281c1de66f9f975fc22c",
+      "final_variant_status": "post_freeze_synthetic_variants",
+      "id": "stream-model-98d93a4f4d38",
+      "limits": {
+        "boundary_seconds": 15,
+        "development_seconds": 900,
+        "final_seconds": 600,
+        "log_bytes": 10485760,
+        "ordinary_input_bytes": 262144,
+        "ordinary_seconds": 5,
+        "process_memory_bytes": 1073741824,
+        "replay_seconds": 900,
+        "total_seconds": 5400
+      },
+      "maximum_boundary_seconds": 7.734,
+      "maximum_ordinary_seconds": 0.984,
+      "maximum_reported_encoded_bytes": null,
+      "outcomes": {
+        "accepted": 20,
+        "accepted_empty": 4,
+        "accepted_framing": 12,
+        "boundary_passed": 48,
+        "rejected_framing": 28,
+        "rejected_live": 116,
+        "rejected_replay": 24
+      },
+      "phases": [
+        {
+          "cases": 51,
+          "name": "development",
+          "seconds": 37.907
+        },
+        {
+          "cases": 24,
+          "name": "boundary-development",
+          "seconds": 51.359
+        },
+        {
+          "cases": 51,
+          "name": "final",
+          "seconds": 56.422
+        },
+        {
+          "cases": 51,
+          "name": "replay-1",
+          "seconds": 71.984
+        },
+        {
+          "cases": 51,
+          "name": "replay-2",
+          "seconds": 84.766
+        },
+        {
+          "cases": 24,
+          "name": "boundary-replay",
+          "seconds": 72.781
+        }
+      ],
+      "rejection_reason_counts": {
+        "A sample must include every configured range.": 4,
+        "Collection did not declare its ranges.": 8,
+        "Collection ending and health loss counters differ.": 8,
+        "Collection ending does not account for all samples.": 4,
+        "Collection health belongs to a different session.": 8,
+        "Collection health counters disagree.": 8,
+        "Collection loss counter decreased.": 8,
+        "Collection sequence gap is not accounted for.": 12,
+        "Collection snapshot ending is inconsistent.": 8,
+        "Failed collection cannot claim a verdict.": 8,
+        "Incomplete collection needs its health record.": 8,
+        "Invalid elapsed collection time.": 12,
+        "Invalid live range identity.": 4,
+        "Invalid process creation identity.": 4,
+        "Invalid stream counter.": 12,
+        "Monotonic collection time went backwards.": 4,
+        "Process identity changed within a sample.": 20,
+        "Scenario labels cannot enter continuous collection.": 4,
+        "Unexpected stream start.": 4,
+        "Unknown collection frame.": 4,
+        "Unsupported live build identity.": 4,
+        "Unsupported or closed collection stream.": 8
+      },
+      "report_sha256": "b4049048250c887c750cea8da3009681dc7c9628c56600da5153fd8daef8fd1e",
+      "revalidation_of": null,
+      "source_sha256": {
+        "docs/stream-model-acceptance.md": "d3008ddb5374a9ee8925d036daee41946282d9b711cb965a9f7e53e316e9afa4",
+        "engine.py": "6355ce177ce225b25bf276c8f9a4329b31bda47f37792cce7e0e39a17a81e850",
+        "integrity_manifest.py": "753e0ddaa6d65e5af0c57f1b124f52b200a5fc9d88b7188e15101f3052d1e8a6",
+        "native_integrity.py": "83b66adac52977303d8822f7897d7b417797b44de05c8a40186670a1d30ca117",
+        "native_stream.py": "d3f281409f879d8be3415d8d279912cd477636af1e4d530e94fb6108da0a8915",
+        "scripts/check_approval_contract.py": "cb912a5891605d32cb5b6f36a0ee77135e697720c2d20b201bb58667bcad05ec",
+        "scripts/check_retention.py": "2dd69e741ad1ef6b8095d5d56fbc1f85d005634abd8eaf6738855dc56343bc7f",
+        "scripts/retention_contract.py": "74268e7ce0fb301f597bf3681fffd9150db705f7a91d30009a1e053cba2fe62e",
+        "scripts/run_stream_model.py": "b5659bd41d29fa058081d9e2421f93a2d3165ce421508c75d74f42ab49da7bb6",
+        "scripts/stream_model_worker.py": "96461c753bf7d075df6348b11af775a33a5f6e7851e3422623e69ed2eb4923e4",
+        "test_native_integrity.py": "35e988e68af5ef5e1e833ba85af0f1ffc9b882a5c00eb7ebd0623d442e3244fd",
+        "test_native_manifest_security.py": "e4572a3a284bddc37c197dfca90b1806ad9a711ad523c6f485947a731fb3e4a0",
+        "test_native_replay_contract.py": "4012a4db9a3546867310746da4b56ecbb0394ba59e69cf1ffa16858c94bead60",
+        "test_native_window.py": "b4ecaaff3333a446e96114a12bf20ee9b19b5ef621fb912c61caffecf82d588b"
+      },
+      "status": "passed",
+      "verification": {
+        "completed_cases": 252,
+        "coverage": {
+          "engine.py": {
+            "executed_arcs": 313,
+            "executed_lines": 306,
+            "functions": [
+              "<genexpr>",
+              "__init__",
+              "_decode_source",
+              "_flatten",
+              "_identity",
+              "_invalid_constant",
+              "_pairs",
+              "_rule",
+              "_source_object",
+              "_timestamp",
+              "accept",
+              "analyze",
+              "canonical",
+              "case_document",
+              "decode",
+              "manifest",
+              "number",
+              "open_case",
+              "parse_bytes",
+              "reference_profiles",
+              "restore",
+              "save_case",
+              "sha",
+              "source",
+              "validate_config"
+            ]
+          },
+          "integrity_manifest.py": {
+            "executed_arcs": 57,
+            "executed_lines": 53,
+            "functions": [
+              "<genexpr>",
+              "integer",
+              "spans",
+              "validate"
+            ]
+          },
+          "native_integrity.py": {
+            "executed_arcs": 376,
+            "executed_lines": 320,
+            "functions": [
+              "<genexpr>",
+              "<lambda>",
+              "approve",
+              "attach_coverage",
+              "check_observation",
+              "convert_observation",
+              "coverage",
+              "default_policy",
+              "digest",
+              "hex_bytes",
+              "validate_baselines",
+              "validate_capture",
+              "validate_coverage",
+              "validate_manifest"
+            ]
+          },
+          "native_stream.py": {
+            "executed_arcs": 298,
+            "executed_lines": 265,
+            "functions": [
+              "<genexpr>",
+              "__init__",
+              "_health_error",
+              "_read",
+              "accept",
+              "append",
+              "convert_frame",
+              "finite",
+              "integer",
+              "live_identity",
+              "snapshot",
+              "snapshot_rows",
+              "utc",
+              "validate_export",
+              "validate_health"
+            ]
+          }
+        },
+        "evidence_files": 1037,
+        "final_variant_status": "post_freeze_synthetic_variants",
+        "log_bytes": 3182305,
+        "maximum_case_seconds": 7.734,
+        "maximum_private_bytes": 201388032,
+        "ordinary_recipe_bytes": 87931,
+        "original_campaign": "incomplete",
+        "retained_bytes": 37514540,
+        "schema": "surge-stream-model-v1",
+        "status": "passed"
+      }
+    },
+    {
+      "artifact_manifest_sha256": "e02c00225faa53d7313d72577cc7f4a31c7b5547303f7cd3a343da3e1970f0fb",
+      "campaign_seconds": 371.375,
+      "final_freeze_sha256": "035bc69c8b1fe5943a50a3d66a1fa4ea36fc6b2346247a093295b8e734b75814",
+      "final_recipes_sha256": "b1789d61b11ee22d39ac9b79ce60af87d05798ba69d6281c1de66f9f975fc22c",
+      "final_variant_status": "known_variants_revalidation",
+      "id": "stream-model-1f358369d5e8",
+      "limits": {
+        "boundary_seconds": 15,
+        "development_seconds": 900,
+        "final_seconds": 600,
+        "log_bytes": 10485760,
+        "ordinary_input_bytes": 262144,
+        "ordinary_seconds": 5,
+        "process_memory_bytes": 1073741824,
+        "replay_seconds": 900,
+        "total_seconds": 5400
+      },
+      "maximum_boundary_seconds": 7.609,
+      "maximum_ordinary_seconds": 0.953,
+      "maximum_reported_encoded_bytes": null,
+      "outcomes": {
+        "accepted": 20,
+        "accepted_empty": 4,
+        "accepted_framing": 12,
+        "boundary_passed": 48,
+        "rejected_framing": 28,
+        "rejected_live": 116,
+        "rejected_replay": 24
+      },
+      "phases": [
+        {
+          "cases": 51,
+          "name": "development",
+          "seconds": 37.453
+        },
+        {
+          "cases": 24,
+          "name": "boundary-development",
+          "seconds": 50.375
+        },
+        {
+          "cases": 51,
+          "name": "final",
+          "seconds": 53.687
+        },
+        {
+          "cases": 51,
+          "name": "replay-1",
+          "seconds": 69.297
+        },
+        {
+          "cases": 51,
+          "name": "replay-2",
+          "seconds": 84.484
+        },
+        {
+          "cases": 24,
+          "name": "boundary-replay",
+          "seconds": 72.312
+        }
+      ],
+      "rejection_reason_counts": {
+        "A sample must include every configured range.": 4,
+        "Collection did not declare its ranges.": 8,
+        "Collection ending and health loss counters differ.": 8,
+        "Collection ending does not account for all samples.": 4,
+        "Collection health belongs to a different session.": 8,
+        "Collection health counters disagree.": 8,
+        "Collection loss counter decreased.": 8,
+        "Collection sequence gap is not accounted for.": 12,
+        "Collection snapshot ending is inconsistent.": 8,
+        "Failed collection cannot claim a verdict.": 8,
+        "Incomplete collection needs its health record.": 8,
+        "Invalid elapsed collection time.": 12,
+        "Invalid live range identity.": 4,
+        "Invalid process creation identity.": 4,
+        "Invalid stream counter.": 12,
+        "Monotonic collection time went backwards.": 4,
+        "Process identity changed within a sample.": 20,
+        "Scenario labels cannot enter continuous collection.": 4,
+        "Unexpected stream start.": 4,
+        "Unknown collection frame.": 4,
+        "Unsupported live build identity.": 4,
+        "Unsupported or closed collection stream.": 8
+      },
+      "report_sha256": "88b27888932139e8511e33a4539543595d7ea502b145c9082ebc5b4021f46a9d",
+      "revalidation_of": "stream-model-98d93a4f4d38",
+      "source_sha256": {
+        "docs/stream-model-acceptance.md": "d3008ddb5374a9ee8925d036daee41946282d9b711cb965a9f7e53e316e9afa4",
+        "engine.py": "6355ce177ce225b25bf276c8f9a4329b31bda47f37792cce7e0e39a17a81e850",
+        "integrity_manifest.py": "753e0ddaa6d65e5af0c57f1b124f52b200a5fc9d88b7188e15101f3052d1e8a6",
+        "native_integrity.py": "d71208557ef100d0dde3e02ff06dd838179030103f600c82ed6567cbd954e60f",
+        "native_stream.py": "d3f281409f879d8be3415d8d279912cd477636af1e4d530e94fb6108da0a8915",
+        "scripts/check_approval_contract.py": "cb912a5891605d32cb5b6f36a0ee77135e697720c2d20b201bb58667bcad05ec",
+        "scripts/check_retention.py": "2dd69e741ad1ef6b8095d5d56fbc1f85d005634abd8eaf6738855dc56343bc7f",
+        "scripts/retention_contract.py": "74268e7ce0fb301f597bf3681fffd9150db705f7a91d30009a1e053cba2fe62e",
+        "scripts/run_stream_model.py": "d09107a76d8515d96e9cb971d4d7a2cb202062a9243848a77ea2e69230059b05",
+        "scripts/stream_model_worker.py": "96461c753bf7d075df6348b11af775a33a5f6e7851e3422623e69ed2eb4923e4",
+        "test_native_integrity.py": "35e988e68af5ef5e1e833ba85af0f1ffc9b882a5c00eb7ebd0623d442e3244fd",
+        "test_native_manifest_security.py": "e4572a3a284bddc37c197dfca90b1806ad9a711ad523c6f485947a731fb3e4a0",
+        "test_native_replay_contract.py": "4012a4db9a3546867310746da4b56ecbb0394ba59e69cf1ffa16858c94bead60",
+        "test_native_window.py": "b4ecaaff3333a446e96114a12bf20ee9b19b5ef621fb912c61caffecf82d588b"
+      },
+      "status": "passed",
+      "verification": {
+        "completed_cases": 252,
+        "coverage": {
+          "engine.py": {
+            "executed_arcs": 313,
+            "executed_lines": 306,
+            "functions": [
+              "<genexpr>",
+              "__init__",
+              "_decode_source",
+              "_flatten",
+              "_identity",
+              "_invalid_constant",
+              "_pairs",
+              "_rule",
+              "_source_object",
+              "_timestamp",
+              "accept",
+              "analyze",
+              "canonical",
+              "case_document",
+              "decode",
+              "manifest",
+              "number",
+              "open_case",
+              "parse_bytes",
+              "reference_profiles",
+              "restore",
+              "save_case",
+              "sha",
+              "source",
+              "validate_config"
+            ]
+          },
+          "integrity_manifest.py": {
+            "executed_arcs": 57,
+            "executed_lines": 53,
+            "functions": [
+              "<genexpr>",
+              "integer",
+              "spans",
+              "validate"
+            ]
+          },
+          "native_integrity.py": {
+            "executed_arcs": 377,
+            "executed_lines": 321,
+            "functions": [
+              "<genexpr>",
+              "<lambda>",
+              "approve",
+              "attach_coverage",
+              "check_observation",
+              "convert_observation",
+              "coverage",
+              "default_policy",
+              "digest",
+              "hex_bytes",
+              "validate_baselines",
+              "validate_capture",
+              "validate_coverage",
+              "validate_manifest"
+            ]
+          },
+          "native_stream.py": {
+            "executed_arcs": 298,
+            "executed_lines": 265,
+            "functions": [
+              "<genexpr>",
+              "__init__",
+              "_health_error",
+              "_read",
+              "accept",
+              "append",
+              "convert_frame",
+              "finite",
+              "integer",
+              "live_identity",
+              "snapshot",
+              "snapshot_rows",
+              "utc",
+              "validate_export",
+              "validate_health"
+            ]
+          }
+        },
+        "evidence_files": 1037,
+        "final_variant_status": "known_variants_revalidation",
+        "log_bytes": 3185637,
+        "maximum_case_seconds": 7.609,
+        "maximum_private_bytes": 202125312,
+        "ordinary_recipe_bytes": 87931,
+        "original_campaign": "incomplete",
+        "retained_bytes": 37555055,
+        "schema": "surge-stream-model-v1",
+        "status": "passed"
+      }
+    }
+  ],
+  "component": "stream-model",
+  "current_verifier_followup": {
+    "historical_archives_unchanged": true,
+    "historical_sealed_verifier_tests": 8,
+    "model_results_unchanged": true,
+    "receipt": "model-verifier-import-path-validation.json",
+    "status": "passed",
+    "verifier_tests": 9
+  },
+  "evidence_authenticity": "Content hashes only; hosted source/artifact binding is separate",
+  "evidence_sealing_failure": "First packaging helper assumed the historical stream report contained final_variant_status; preserved before correcting its historical default. No report or frozen source changed.",
+  "original_combined_campaign": "incomplete",
+  "schema": "surge-isolated-model-validation-v1",
+  "scope": "Finite owned-data Python model component; no native target extension or external collection",
+  "status": "passed",
+  "unfamiliar_tester_acceptance": "pending",
+  "verifier_development_failure": "Windows newline reconstruction mismatch, preserved and corrected without changing artifacts",
+  "verifier_regressions": "8 passed; CLI invalid-report rejection included"
+}

@@ -1,0 +1,12 @@
+{
+  "FileVersion": 3,
+  "Category": "Portfolio Lab",
+  "Description": "Survive: original skillshot survival arena and server-authoritative telemetry lab, verified with Unreal Engine 5.8.4.",
+  "Modules": [{"Name": "SurgeMovementLab", "Type": "Runtime", "LoadingPhase": "Default"}],
+  "Plugins": [
+    {"Name": "AndroidFileServer", "Enabled": false},
+    {"Name": "UdpMessaging", "Enabled": false},
+    {"Name": "TcpMessaging", "Enabled": false},
+    {"Name": "TraceUtilities", "Enabled": false}
+  ]
+}

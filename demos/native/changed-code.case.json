@@ -1,0 +1,167 @@
+{
+  "schema": "detection-workbench-case-v1",
+  "created_at": "2026-01-01T00:00:00+00:00",
+  "payload_sha256": "1e2df7c5f2071e11772641d4664ee8c71b24b9c9dc059c9786539e04d80f3fff",
+  "payload": {
+    "current": {
+      "name": "changed-code.jsonl",
+      "format": "jsonl",
+      "sha256": "c224e68b102a3860ece39dd804bc081d0e182e49e3838a837d774a803a1bce1c",
+      "records": 4,
+      "fields": [
+        "approval_reason",
+        "approved_at",
+        "baseline_approved",
+        "baseline_sha256",
+        "build",
+        "captured_at",
+        "collection_ms",
+        "coverage_changed_ranges",
+        "coverage_compared_ranges",
+        "coverage_expected_bytes",
+        "coverage_expected_ranges",
+        "coverage_read_bytes",
+        "coverage_read_ranges",
+        "coverage_unapproved_ranges",
+        "coverage_unavailable_ranges",
+        "error_code",
+        "event_id",
+        "expected_sha256",
+        "memory_matches",
+        "memory_status",
+        "module_base",
+        "module_path",
+        "module_sha256",
+        "module_size",
+        "observed_hex",
+        "observed_sha256",
+        "page_protection",
+        "phase",
+        "pid",
+        "process_started",
+        "protection_matches",
+        "range_manifest",
+        "range_manifest_sha256",
+        "range_name",
+        "range_rva",
+        "range_size",
+        "reference_hex",
+        "reference_sha256",
+        "schema",
+        "session_id",
+        "stream_capture_state",
+        "stream_dropped_samples",
+        "stream_elapsed_ms",
+        "stream_evicted_samples",
+        "stream_final_dropped",
+        "stream_final_sequence",
+        "stream_interval_ms",
+        "stream_sequence"
+      ],
+      "text": "{\"approval_reason\":\"Reviewed owned demo build v1\",\"approved_at\":\"2026-01-01T00:00:00+00:00\",\"baseline_approved\":true,\"baseline_sha256\":\"47883ec8e48faa240863ac3eae5d2d9b5e7809d1cff7573e0dd02e37430becf9\",\"build\":\"v1\",\"captured_at\":\"2026-01-01T00:00:00+00:00\",\"collection_ms\":0,\"coverage_changed_ranges\":0,\"coverage_compared_ranges\":2,\"coverage_expected_bytes\":15,\"coverage_expected_ranges\":2,\"coverage_read_bytes\":15,\"coverage_read_ranges\":2,\"coverage_unapproved_ranges\":0,\"coverage_unavailable_ranges\":0,\"error_code\":0,\"event_id\":\"1:LabCodeProbe\",\"expected_sha256\":\"c3b77923d3a5658d92604aadb057c8a3c288f09563d15cf084d6f54ff8ed425d\",\"memory_matches\":true,\"memory_status\":\"complete\",\"module_base\":268435456,\"module_path\":\"lab_module.dll\",\"module_sha256\":\"2ed903e63fce45cc0647d52d10cd51bb055e22fc48ca3cb014ef07439c35280d\",\"module_size\":13824,\"observed_hex\":\"8bc183f03583c011c3\",\"observed_sha256\":\"c3b77923d3a5658d92604aadb057c8a3c288f09563d15cf084d6f54ff8ed425d\",\"page_protection\":32,\"phase\":\"live\",\"pid\":1,\"process_started\":\"1\",\"protection_matches\":true,\"range_manifest\":\"[{\\\"range_name\\\":\\\"LabCodeProbe\\\",\\\"range_rva\\\":4112,\\\"range_size\\\":9,\\\"reference_hex\\\":\\\"8bc183f03583c011c3\\\",\\\"reference_sha256\\\":\\\"c3b77923d3a5658d92604aadb057c8a3c288f09563d15cf084d6f54ff8ed425d\\\"},{\\\"range_name\\\":\\\"LabCodeSecondary\\\",\\\"range_rva\\\":8217,\\\"range_size\\\":6,\\\"reference_hex\\\":\\\"8bc183c017c3\\\",\\\"reference_sha256\\\":\\\"6e01eebb4f5db796ce6217ced80b34ee77722eddb038ef5e64c481c109185002\\\"}]\",\"range_manifest_sha256\":\"79ff358a730138f1034427a1a1a4de317b471982cbc406fb5e0e1b39e274b94a\",\"range_name\":\"LabCodeProbe\",\"range_rva\":4112,\"range_size\":9,\"reference_hex\":\"8bc183f03583c011c3\",\"reference_sha256\":\"c3b77923d3a5658d92604aadb057c8a3c288f09563d15cf084d6f54ff8ed425d\",\"schema\":\"surge-native-integrity-v1\",\"session_id\":\"demo-changed-code\",\"stream_capture_state\":\"stopped\",\"stream_dropped_samples\":0,\"stream_elapsed_ms\":0,\"stream_evicted_samples\":0,\"stream_final_dropped\":0,\"stream_final_sequence\":2,\"stream_interval_ms\":500,\"stream_sequence\":1}\n{\"approval_reason\":\"Reviewed owned demo build v1\",\"approved_at\":\"2026-01-01T00:00:00+00:00\",\"baseline_approved\":true,\"baseline_sha256\":\"47883ec8e48faa240863ac3eae5d2d9b5e7809d1cff7573e0dd02e37430becf9\",\"build\":\"v1\",\"captured_at\":\"2026-01-01T00:00:00+00:00\",\"collection_ms\":0,\"coverage_changed_ranges\":0,\"coverage_compared_ranges\":2,\"coverage_expected_bytes\":15,\"coverage_expected_ranges\":2,\"coverage_read_bytes\":15,\"coverage_read_ranges\":2,\"coverage_unapproved_ranges\":0,\"coverage_unavailable_ranges\":0,\"error_code\":0,\"event_id\":\"1:LabCodeSecondary\",\"expected_sha256\":\"6e01eebb4f5db796ce6217ced80b34ee77722eddb038ef5e64c481c109185002\",\"memory_matches\":true,\"memory_status\":\"complete\",\"module_base\":268435456,\"module_path\":\"lab_module.dll\",\"module_sha256\":\"2ed903e63fce45cc0647d52d10cd51bb055e22fc48ca3cb014ef07439c35280d\",\"module_size\":13824,\"observed_hex\":\"8bc183c017c3\",\"observed_sha256\":\"6e01eebb4f5db796ce6217ced80b34ee77722eddb038ef5e64c481c109185002\",\"page_protection\":32,\"phase\":\"live\",\"pid\":1,\"process_started\":\"1\",\"protection_matches\":true,\"range_manifest\":\"[{\\\"range_name\\\":\\\"LabCodeProbe\\\",\\\"range_rva\\\":4112,\\\"range_size\\\":9,\\\"reference_hex\\\":\\\"8bc183f03583c011c3\\\",\\\"reference_sha256\\\":\\\"c3b77923d3a5658d92604aadb057c8a3c288f09563d15cf084d6f54ff8ed425d\\\"},{\\\"range_name\\\":\\\"LabCodeSecondary\\\",\\\"range_rva\\\":8217,\\\"range_size\\\":6,\\\"reference_hex\\\":\\\"8bc183c017c3\\\",\\\"reference_sha256\\\":\\\"6e01eebb4f5db796ce6217ced80b34ee77722eddb038ef5e64c481c109185002\\\"}]\",\"range_manifest_sha256\":\"79ff358a730138f1034427a1a1a4de317b471982cbc406fb5e0e1b39e274b94a\",\"range_name\":\"LabCodeSecondary\",\"range_rva\":8217,\"range_size\":6,\"reference_hex\":\"8bc183c017c3\",\"reference_sha256\":\"6e01eebb4f5db796ce6217ced80b34ee77722eddb038ef5e64c481c109185002\",\"schema\":\"surge-native-integrity-v1\",\"session_id\":\"demo-changed-code\",\"stream_capture_state\":\"stopped\",\"stream_dropped_samples\":0,\"stream_elapsed_ms\":0,\"stream_evicted_samples\":0,\"stream_final_dropped\":0,\"stream_final_sequence\":2,\"stream_interval_ms\":500,\"stream_sequence\":1}\n{\"approval_reason\":\"Reviewed owned demo build v1\",\"approved_at\":\"2026-01-01T00:00:00+00:00\",\"baseline_approved\":true,\"baseline_sha256\":\"47883ec8e48faa240863ac3eae5d2d9b5e7809d1cff7573e0dd02e37430becf9\",\"build\":\"v1\",\"captured_at\":\"2026-01-01T00:00:00.500000+00:00\",\"collection_ms\":0,\"coverage_changed_ranges\":1,\"coverage_compared_ranges\":2,\"coverage_expected_bytes\":15,\"coverage_expected_ranges\":2,\"coverage_read_bytes\":15,\"coverage_read_ranges\":2,\"coverage_unapproved_ranges\":0,\"coverage_unavailable_ranges\":0,\"error_code\":0,\"event_id\":\"2:LabCodeProbe\",\"expected_sha256\":\"c3b77923d3a5658d92604aadb057c8a3c288f09563d15cf084d6f54ff8ed425d\",\"memory_matches\":false,\"memory_status\":\"complete\",\"module_base\":268435456,\"module_path\":\"lab_module.dll\",\"module_sha256\":\"2ed903e63fce45cc0647d52d10cd51bb055e22fc48ca3cb014ef07439c35280d\",\"module_size\":13824,\"observed_hex\":\"8ac183f03583c011c3\",\"observed_sha256\":\"a2b00a104e9bc793552697cdeba557e26d2a8271166d3708843fa60062bbb84c\",\"page_protection\":32,\"phase\":\"live\",\"pid\":1,\"process_started\":\"1\",\"protection_matches\":true,\"range_manifest\":\"[{\\\"range_name\\\":\\\"LabCodeProbe\\\",\\\"range_rva\\\":4112,\\\"range_size\\\":9,\\\"reference_hex\\\":\\\"8bc183f03583c011c3\\\",\\\"reference_sha256\\\":\\\"c3b77923d3a5658d92604aadb057c8a3c288f09563d15cf084d6f54ff8ed425d\\\"},{\\\"range_name\\\":\\\"LabCodeSecondary\\\",\\\"range_rva\\\":8217,\\\"range_size\\\":6,\\\"reference_hex\\\":\\\"8bc183c017c3\\\",\\\"reference_sha256\\\":\\\"6e01eebb4f5db796ce6217ced80b34ee77722eddb038ef5e64c481c109185002\\\"}]\",\"range_manifest_sha256\":\"79ff358a730138f1034427a1a1a4de317b471982cbc406fb5e0e1b39e274b94a\",\"range_name\":\"LabCodeProbe\",\"range_rva\":4112,\"range_size\":9,\"reference_hex\":\"8bc183f03583c011c3\",\"reference_sha256\":\"c3b77923d3a5658d92604aadb057c8a3c288f09563d15cf084d6f54ff8ed425d\",\"schema\":\"surge-native-integrity-v1\",\"session_id\":\"demo-changed-code\",\"stream_capture_state\":\"stopped\",\"stream_dropped_samples\":0,\"stream_elapsed_ms\":500,\"stream_evicted_samples\":0,\"stream_final_dropped\":0,\"stream_final_sequence\":2,\"stream_interval_ms\":500,\"stream_sequence\":2}\n{\"approval_reason\":\"Reviewed owned demo build v1\",\"approved_at\":\"2026-01-01T00:00:00+00:00\",\"baseline_approved\":true,\"baseline_sha256\":\"47883ec8e48faa240863ac3eae5d2d9b5e7809d1cff7573e0dd02e37430becf9\",\"build\":\"v1\",\"captured_at\":\"2026-01-01T00:00:00.500000+00:00\",\"collection_ms\":0,\"coverage_changed_ranges\":1,\"coverage_compared_ranges\":2,\"coverage_expected_bytes\":15,\"coverage_expected_ranges\":2,\"coverage_read_bytes\":15,\"coverage_read_ranges\":2,\"coverage_unapproved_ranges\":0,\"coverage_unavailable_ranges\":0,\"error_code\":0,\"event_id\":\"2:LabCodeSecondary\",\"expected_sha256\":\"6e01eebb4f5db796ce6217ced80b34ee77722eddb038ef5e64c481c109185002\",\"memory_matches\":true,\"memory_status\":\"complete\",\"module_base\":268435456,\"module_path\":\"lab_module.dll\",\"module_sha256\":\"2ed903e63fce45cc0647d52d10cd51bb055e22fc48ca3cb014ef07439c35280d\",\"module_size\":13824,\"observed_hex\":\"8bc183c017c3\",\"observed_sha256\":\"6e01eebb4f5db796ce6217ced80b34ee77722eddb038ef5e64c481c109185002\",\"page_protection\":32,\"phase\":\"live\",\"pid\":1,\"process_started\":\"1\",\"protection_matches\":true,\"range_manifest\":\"[{\\\"range_name\\\":\\\"LabCodeProbe\\\",\\\"range_rva\\\":4112,\\\"range_size\\\":9,\\\"reference_hex\\\":\\\"8bc183f03583c011c3\\\",\\\"reference_sha256\\\":\\\"c3b77923d3a5658d92604aadb057c8a3c288f09563d15cf084d6f54ff8ed425d\\\"},{\\\"range_name\\\":\\\"LabCodeSecondary\\\",\\\"range_rva\\\":8217,\\\"range_size\\\":6,\\\"reference_hex\\\":\\\"8bc183c017c3\\\",\\\"reference_sha256\\\":\\\"6e01eebb4f5db796ce6217ced80b34ee77722eddb038ef5e64c481c109185002\\\"}]\",\"range_manifest_sha256\":\"79ff358a730138f1034427a1a1a4de317b471982cbc406fb5e0e1b39e274b94a\",\"range_name\":\"LabCodeSecondary\",\"range_rva\":8217,\"range_size\":6,\"reference_hex\":\"8bc183c017c3\",\"reference_sha256\":\"6e01eebb4f5db796ce6217ced80b34ee77722eddb038ef5e64c481c109185002\",\"schema\":\"surge-native-integrity-v1\",\"session_id\":\"demo-changed-code\",\"stream_capture_state\":\"stopped\",\"stream_dropped_samples\":0,\"stream_elapsed_ms\":500,\"stream_evicted_samples\":0,\"stream_final_dropped\":0,\"stream_final_sequence\":2,\"stream_interval_ms\":500,\"stream_sequence\":2}\n"
+    },
+    "reference": null,
+    "config": {
+      "features": [],
+      "session": "session_id",
+      "event_id": "event_id",
+      "time": "captured_at",
+      "time_format": "iso8601",
+      "threshold": 6,
+      "context": {
+        "Process": "pid"
+      },
+      "rules": [
+        {
+          "name": "Build is not approved",
+          "field": "baseline_approved",
+          "op": "eq",
+          "value": false,
+          "priority": "Warning"
+        },
+        {
+          "name": "Code differs from approved baseline",
+          "field": "memory_matches",
+          "op": "eq",
+          "value": false,
+          "priority": "Error"
+        },
+        {
+          "name": "Code page is not execute-read",
+          "field": "protection_matches",
+          "op": "eq",
+          "value": false,
+          "priority": "Warning"
+        }
+      ]
+    },
+    "result": {
+      "engine": "0.1.0",
+      "method": "reference-deviation-and-field-rules-v1",
+      "profiles": {},
+      "records": [
+        {
+          "row": 1,
+          "session": "demo-changed-code",
+          "event_id": "1:LabCodeProbe",
+          "time_ms": 1767225600000.0,
+          "status": "No finding",
+          "max_deviation": null,
+          "scores": {},
+          "evidence": [],
+          "gaps": []
+        },
+        {
+          "row": 2,
+          "session": "demo-changed-code",
+          "event_id": "1:LabCodeSecondary",
+          "time_ms": 1767225600000.0,
+          "status": "No finding",
+          "max_deviation": null,
+          "scores": {},
+          "evidence": [],
+          "gaps": []
+        },
+        {
+          "row": 3,
+          "session": "demo-changed-code",
+          "event_id": "2:LabCodeProbe",
+          "time_ms": 1767225600500.0,
+          "status": "Review",
+          "max_deviation": null,
+          "scores": {},
+          "evidence": [
+            {
+              "kind": "rule",
+              "name": "Code differs from approved baseline",
+              "field": "memory_matches",
+              "value": false,
+              "operator": "eq",
+              "expected": false
+            }
+          ],
+          "gaps": []
+        },
+        {
+          "row": 4,
+          "session": "demo-changed-code",
+          "event_id": "2:LabCodeSecondary",
+          "time_ms": 1767225600500.0,
+          "status": "No finding",
+          "max_deviation": null,
+          "scores": {},
+          "evidence": [],
+          "gaps": []
+        }
+      ],
+      "summary": {
+        "total": 4,
+        "Review": 1,
+        "Unknown": 0,
+        "No finding": 3,
+        "rows_with_gaps": 0
+      },
+      "meaning": "Review leads and deviations, not proof of malicious behavior. No measured detection accuracy is available without independent labels."
+    }
+  }
+}

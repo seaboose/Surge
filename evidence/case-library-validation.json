@@ -1,0 +1,94 @@
+{
+  "date": "2026-10-23",
+  "scope": "Existing working tree; isolated local profiles and owned fixtures; no broadened capture targets",
+  "ui_checks": [
+    {
+      "name": "combined opening and keyboard focus",
+      "passed": true
+    },
+    {
+      "name": "import case into empty library",
+      "passed": true
+    },
+    {
+      "name": "open verified case",
+      "passed": true
+    },
+    {
+      "name": "save a named independent snapshot",
+      "passed": true
+    },
+    {
+      "name": "rename keeps case bytes intact",
+      "passed": true
+    },
+    {
+      "name": "export and import portable copy",
+      "passed": true
+    },
+    {
+      "name": "delete confirmation cancellation and evidence preservation",
+      "passed": true
+    },
+    {
+      "name": "invalid import and renderer path rejection preserve state",
+      "passed": true
+    },
+    {
+      "name": "library persists across desktop restart",
+      "passed": true
+    }
+  ],
+  "passed": {
+    "library_storage": 6,
+    "desktop_boundary_runtime_and_storage": 10,
+    "python_discovery_before_new_test": 321,
+    "new_worker_test_separately": 1,
+    "final_worker_module": 15,
+    "desktop_parity": 16,
+    "evaluation": 4,
+    "demo_case_replay": 5,
+    "accessibility_combinations": 24,
+    "continuous_capture_journey": true,
+    "native_desktop_journey": true,
+    "usability_stage_7": true,
+    "renderer_build": true,
+    "format_check": true
+  },
+  "attempts": [
+    {
+      "stage": "initial storage",
+      "outcome": "failed",
+      "detail": "2 tests failed: EPERM on staging directory rename under sandbox temporary directory. Identical tests passed unsandboxed."
+    },
+    {
+      "stage": "initial build",
+      "outcome": "failed",
+      "detail": "Could not resolve src/main.jsx: invoked from workspace root. Correct desktop working directory passed."
+    },
+    {
+      "stage": "sandboxed Python formatting",
+      "outcome": "interrupted",
+      "detail": "Two no-output attempts, including workers=1, interrupted with exit 1. Workers=1 completed unsandboxed."
+    }
+  ],
+  "not_run": [
+    "clean-checkout qualification for this source",
+    "power-loss recovery",
+    "disk-full fault injection",
+    "large-library performance",
+    "ASan",
+    "Hypothesis",
+    "libFuzzer",
+    "unfinished broader fuzzing campaign"
+  ],
+  "source_sha256": {
+    "desktop/case-library.cjs": "33a7b859099fd59d8a0e60e28af3ccf99d0b26bd95dcca8e798691036ebad285",
+    "desktop/boundary.cjs": "5ccb99ccb5032537323ee692726063c03cfaf3333867b25174ca27eef6f9aede",
+    "desktop/main.cjs": "50fd1e8e6aa8181fafecb5cdcdf7b6a786c53166449fa996a306ae7e3c086b2a",
+    "desktop/src/main.jsx": "7ca34477a2bf5ba244630cf9333719acad0c13af1fb37607ae8fbb592d4b24c6",
+    "desktop/src/style.css": "d3244bb1727a00e746fef2b5fbb0fe97d3504ee8b2d9d1317a0114b1699b0601",
+    "desktop_worker.py": "a18c2f9cbcfbccd68a34e75fcae9dc5b03b9e13d9d7f1211b84549ac42dc0782"
+  },
+  "final_ui_artifacts": "verification/electron/case-library-EDmoTI"
+}
