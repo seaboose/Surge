@@ -1,0 +1,22 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; img-src 'self'; style-src 'self'; script-src 'self'; base-uri 'none'; form-action 'none'">
+<link rel="stylesheet" href="assets/reviewer.css"><title>Surge</title></head><body><main>
+<header><h1>Code walkthrough</h1><a href="index.html">Back to demo</a></header>
+<p class="lead">Follow one recording from the game to a report.</p>
+<div class="table"><table><thead><tr><th>Step</th><th>Start here</th><th>What to look for</th></tr></thead><tbody>
+<tr><td>Gameplay</td><td><code>unreal/SurgeMovementLab/Source/SurgeMovementLab/LabPlayerController.cpp</code></td><td>Movement requests and accepted movement are recorded separately.</td></tr>
+<tr><td>Recording</td><td><code>survive_workspace.py</code> → <code>survive_capture.py</code></td><td>Recording starts before launch; interrupted captures stay visible.</td></tr>
+<tr><td>Analysis</td><td><code>unreal/SurgeMovementLab/telemetry/prepare_v3.py</code> → <code>engine.py</code></td><td>A versioned movement profile defines the checks.</td></tr>
+<tr><td>Review</td><td><code>desktop/src/SurviveWorkspace.jsx</code> → <code>desktop/src/survive/</code></td><td>Selected evidence stays connected to the replay.</td></tr>
+<tr><td>Report</td><td><code>survive_investigations.py</code></td><td>Citations identify source records; saved revisions remain available.</td></tr>
+</tbody></table></div>
+<h2>Decisions and tradeoffs</h2><ul>
+<li>Explicit movement rules are easy to inspect, but cannot identify every automated behavior.</li>
+<li>Missing evidence stays distinct from a clean observation.</li>
+<li>Hashes detect changed evidence; they do not prove an untrusted client told the truth.</li>
+<li>Unreal, Python and Electron suit different parts of the project, at the cost of a larger download.</li></ul>
+<p>Read <code>test_survive_capture.py</code> and <code>test_survive_investigations.py</code>, then trace the corresponding code.</p>
+<details><summary>Source and release identity</summary><p>Release 0.4.4 publishes the current source and reviewer guide. The Windows download reuses the verified 0.4.3 application and game binaries; it is not a rebuilt runtime. The source includes later packaging and documentation changes.</p><p><a href="https://github.com/seaboose/Surge/archive/refs/tags/v0.4.4.zip">Source snapshot</a> · <a href="validation.json">Validation details</a></p></details>
+<footer><a href="https://github.com/seaboose/Surge/blob/main/docs/development.md">Build and test</a> · <a href="https://github.com/seaboose/Surge/blob/main/SECURITY.md">Security scope</a> · <a href="index.html">Demo</a></footer>
+</main></body></html>

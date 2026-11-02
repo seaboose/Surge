@@ -1,0 +1,32 @@
+{
+  "schema": "surge-release-validation-v1",
+  "release": "0.4.4",
+  "publication_date": "2026-11-02",
+  "runtime_code_version": "0.4.3",
+  "runtime_sha256": "d4cdde7771032de41191feba66448e01b7adf125ff2e1d24455d2058316636e0",
+  "clean_machine": {
+    "date": "2026-11-01",
+    "status": "passed",
+    "environment": "One fresh Windows 11 VMware guest without development tools",
+    "workflow": [
+      "gameplay",
+      "recording",
+      "analysis",
+      "report export",
+      "reopening"
+    ],
+    "tested_archive_sha256": "dc135a0348a3ee85b9360b0e7151230df419d79436b0f79658134b1a9048c005",
+    "scope": "Earlier package with byte-identical application executables and game assets."
+  },
+  "current_package_host_test": {
+    "date": "2026-11-02",
+    "status": "passed",
+    "journey_checks": 9,
+    "reopening_checks": 3,
+    "tested_archive_sha256": "d4cdde7771032de41191feba66448e01b7adf125ff2e1d24455d2058316636e0"
+  },
+  "limits": [
+    "The current package has not been retested in a clean VM.",
+    "Human acceptance, real-cheat detection accuracy and human false-positive rates are not established."
+  ]
+}

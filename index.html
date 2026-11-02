@@ -1,0 +1,20 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; img-src 'self'; style-src 'self'; script-src 'self'; base-uri 'none'; form-action 'none'">
+<link rel="stylesheet" href="assets/reviewer.css"><title>Surge</title></head><body><main>
+<header><h1>Surge</h1><span class="muted">0.4.4 · 2 November 2026</span></header>
+<p class="lead">Record gameplay. Inspect a finding. Explain the evidence.</p>
+<p>Surge is a student project for exploring gameplay telemetry and anti-cheat investigation. Its companion game, Survive, produces controlled movement data. The desktop app connects movement checks to replays and reports.</p>
+<nav class="links" aria-label="Review options"><a href="https://github.com/seaboose/Surge/releases/download/v0.4.4/Surge-0.4.4-Windows-x64.zip">Download for Windows</a><a href="Example/report.html">Example report</a><a href="ENGINEERING.html">Code walkthrough</a></nav>
+<p class="muted">Extract the full Windows ZIP and open <code>Surge.exe</code>. No Unreal, Python or Node installation is needed. The build is unsigned.</p>
+<h2>See the workflow</h2><p>Five captured screens from the app. This tour is not a live game or gameplay video.</p>
+<div class="tourcontrol"><button id="autoplay" type="button" aria-pressed="false">Play two-minute tour</button><span id="position" aria-live="polite">1 / 5</span></div>
+<section class="tour" aria-label="Recording-to-report walkthrough"><div class="tournav" aria-label="Walkthrough steps"><button type="button" aria-pressed="true">1 Play</button><button type="button" aria-pressed="false">2 Record</button><button type="button" aria-pressed="false">3 Review</button><button type="button" aria-pressed="false">4 Explain</button><button type="button" aria-pressed="false">5 Export</button></div>
+<img id="screen" src="assets/play.png" width="1360" height="860" alt="Set up a round — captured Surge interface">
+<div class="caption"><h3 id="title">Set up a round</h3><p id="caption">Choose a movement profile and seed. Survive provides right-click movement, dashes, blinks and mixed attack patterns.</p></div></section>
+<details><summary>Tests and limits</summary>
+<p>Gameplay, recording, analysis, report export and reopening passed on one fresh Windows 11 VM on 1 November. The current Windows ZIP passed the same workflow on the development host on 2 November. Application executables and game assets are unchanged; this package has not received a new clean-VM test.</p>
+<p>This is a controlled research project. It does not inspect League of Legends, interact with Vanguard or establish real-cheat detection accuracy. Human acceptance and false-positive rates remain unmeasured.</p>
+<p><a href="validation.json">Validation details</a> · <a href="https://github.com/seaboose/Surge/blob/main/docs/validation.md">Test notes</a></p></details>
+<footer><a href="https://github.com/seaboose/Surge">Source</a> · <a href="https://github.com/seaboose/Surge/releases/tag/v0.4.4">Release</a> · <a href="LICENSE">License</a></footer>
+</main><script src="assets/tour.js"></script></body></html>
