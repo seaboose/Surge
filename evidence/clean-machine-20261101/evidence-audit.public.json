@@ -1,0 +1,262 @@
+{
+  "schema": "surge-independent-evidence-audit-v1",
+  "created_utc": "2026-11-02T00:52:52.714100+00:00",
+  "scope": "Independent local inspection of preserved guest evidence; no new guest operations or external human acceptance.",
+  "artifact_integrity": "passed",
+  "archive": {
+    "file": "evidence.zip",
+    "bytes": 2344423,
+    "sha256": "2ed75f7b73ab8194018d2365b94b103ad0152df8b912ed4d1a6a419aae1e04b8",
+    "included_members_verified": 482,
+    "excluded_runtime_files": 5000,
+    "top_report_equals_separate_receipt": true
+  },
+  "product_sha256": "dc135a0348a3ee85b9360b0e7151230df419d79436b0f79658134b1a9048c005",
+  "package_manifest_sha256": "53c31dbe09c869f4134ba5ed89be7ff4ec4406612cdda96a9c31a7b18f04db51",
+  "tooling_manifest_sha256": "3c99a795c45f2ed509dffeae57e484340fbbff14f7d4e4a471c2323fcd32ac3e",
+  "clean_precondition_issues": [],
+  "full_clean_machine_acceptance": true,
+  "qualification_elapsed_seconds": 368.399,
+  "nested_receipt_hashes_verified": 2,
+  "non_elevated_application_launches_verified": 5,
+  "gameplay_to_report": {
+    "status": "passed",
+    "consumer_elapsed_seconds": 260.656,
+    "journey_checks": 9,
+    "reopen_checks": 3,
+    "renderer_errors": [],
+    "immutable_payload": {
+      "unchanged": true,
+      "files": 1250
+    },
+    "archive_unchanged": true,
+    "runs": [
+      {
+        "condition": "scripted",
+        "partial_capture": false,
+        "source_records": 2091,
+        "raw_records": 2091,
+        "run_end_game_seconds": 60,
+        "run_end_monotonic_seconds": 60.00897080078721,
+        "exit_code": 0,
+        "capture_state": "complete",
+        "finding_counts": {
+          "Review": 0,
+          "Unknown": 56,
+          "No finding": 1807
+        },
+        "retained_file_hashes_verified": 8,
+        "capture_is_exact_prefix": true,
+        "capture_equals_entire_source": true,
+        "capture_contains_run_end": true
+      },
+      {
+        "condition": "speed_probe",
+        "partial_capture": false,
+        "source_records": 2066,
+        "raw_records": 2066,
+        "run_end_game_seconds": 60,
+        "run_end_monotonic_seconds": 60.77525670081377,
+        "exit_code": 0,
+        "capture_state": "complete",
+        "finding_counts": {
+          "Review": 94,
+          "Unknown": 45,
+          "No finding": 1694
+        },
+        "retained_file_hashes_verified": 8,
+        "capture_is_exact_prefix": true,
+        "capture_equals_entire_source": true,
+        "capture_contains_run_end": true
+      },
+      {
+        "condition": "scripted",
+        "partial_capture": true,
+        "source_records": 137,
+        "raw_records": 2091,
+        "run_end_game_seconds": 60,
+        "run_end_monotonic_seconds": 60.00762049853802,
+        "exit_code": 0,
+        "capture_state": "stopped",
+        "finding_counts": null,
+        "retained_file_hashes_verified": 6,
+        "capture_is_exact_prefix": true,
+        "capture_equals_entire_source": false,
+        "capture_contains_run_end": false
+      }
+    ],
+    "module_network_samples": [
+      {
+        "age_seconds": 5.092,
+        "module_count": 106,
+        "external_modules": 0,
+        "tcp_endpoints": 0,
+        "udp_endpoints": 0,
+        "elevated": false
+      },
+      {
+        "age_seconds": 35.316,
+        "module_count": 106,
+        "external_modules": 0,
+        "tcp_endpoints": 0,
+        "udp_endpoints": 0,
+        "elevated": false
+      },
+      {
+        "age_seconds": 5.1,
+        "module_count": 106,
+        "external_modules": 0,
+        "tcp_endpoints": 0,
+        "udp_endpoints": 0,
+        "elevated": false
+      },
+      {
+        "age_seconds": 35.867,
+        "module_count": 106,
+        "external_modules": 0,
+        "tcp_endpoints": 0,
+        "udp_endpoints": 0,
+        "elevated": false
+      },
+      {
+        "age_seconds": 5.096,
+        "module_count": 106,
+        "external_modules": 0,
+        "tcp_endpoints": 0,
+        "udp_endpoints": 0,
+        "elevated": false
+      },
+      {
+        "age_seconds": 35.837,
+        "module_count": 106,
+        "external_modules": 0,
+        "tcp_endpoints": 0,
+        "udp_endpoints": 0,
+        "elevated": false
+      }
+    ],
+    "report": {
+      "archive_member": "results/s/consumer-f1fd896e7b26/standalone-demonstration.html",
+      "extracted_file": "standalone-demonstration.html",
+      "bytes": 22319,
+      "sha256": "2339600e16be42c787a93ecda498eb18835a73b93c98dbcbd715c07155f6ac09",
+      "script_tags": 0,
+      "revision": 3,
+      "review_status": "reviewed",
+      "evidence_sequence": 680,
+      "evidence_game_seconds": 20.001634910702705,
+      "evidence_equals_original_record": true,
+      "export_equals_retained_receipt": true
+    }
+  },
+  "compatibility": {
+    "status": "passed",
+    "consumer_elapsed_seconds": 90.557,
+    "criteria": {
+      "W2": "passed",
+      "W3": "passed",
+      "W4": "passed",
+      "W5": "passed",
+      "W6": "passed"
+    },
+    "passed_steps": [
+      "package_identity",
+      "extract_primary",
+      "packaged_journey",
+      "extract_replacement",
+      "packaged_replacement",
+      "approval_mismatch",
+      "missing_runtime",
+      "missing_backend",
+      "missing_sample",
+      "immutable_payloads"
+    ],
+    "negative_controls": [
+      {
+        "name": "missing_runtime",
+        "status": "passed",
+        "expected_code": "SURGE_BUNDLED_PYTHON_MISSING",
+        "code_present_in_dialog_and_diagnostic": true,
+        "close_button_refreshed_and_observed": true,
+        "exit_code": 1,
+        "seconds": 3.154,
+        "limit_seconds": 10,
+        "elevated": false,
+        "no_owned_survivors_check": "Retained startup-control harness requires an empty owned-process inventory before setting status=passed."
+      },
+      {
+        "name": "missing_backend",
+        "status": "passed",
+        "expected_code": "SURGE_BACKEND_MISSING",
+        "code_present_in_dialog_and_diagnostic": true,
+        "close_button_refreshed_and_observed": true,
+        "exit_code": 1,
+        "seconds": 2.696,
+        "limit_seconds": 10,
+        "elevated": false,
+        "no_owned_survivors_check": "Retained startup-control harness requires an empty owned-process inventory before setting status=passed."
+      },
+      {
+        "name": "missing_sample",
+        "status": "passed",
+        "expected_code": "SURGE_SAMPLE_MISSING",
+        "code_present_in_dialog_and_diagnostic": true,
+        "close_button_refreshed_and_observed": true,
+        "exit_code": 1,
+        "seconds": 2.637,
+        "limit_seconds": 10,
+        "elevated": false,
+        "no_owned_survivors_check": "Retained startup-control harness requires an empty owned-process inventory before setting status=passed."
+      }
+    ],
+    "immutable_payloads": {
+      "primary": {
+        "unchanged": true,
+        "files": 1250
+      },
+      "replacement": {
+        "unchanged": true,
+        "files": 1250
+      },
+      "restored_controls": {
+        "unchanged": true,
+        "files": 1250
+      }
+    },
+    "harness_source_unchanged": true,
+    "reported_evidence_file_hashes_verified": 59,
+    "reported_harness_source_hashes_verified": 7
+  },
+  "runtime_inventory_manifest_comparisons": [
+    {
+      "archive_inventory_prefix": "results/s/consumer-f1fd896e7b26/replacement-application/",
+      "manifest_files_verified": 1250,
+      "method": "Compare collection inventory hashes and sizes to sealed product manifest; extracted runtime bytes remain in guest."
+    },
+    {
+      "archive_inventory_prefix": "results/n/windows-consumer-fa40a8596735/workspace/first extraction é/",
+      "manifest_files_verified": 1250,
+      "method": "Compare collection inventory hashes and sizes to sealed product manifest; extracted runtime bytes remain in guest."
+    },
+    {
+      "archive_inventory_prefix": "results/n/windows-consumer-fa40a8596735/workspace/replacement folder 日本/",
+      "manifest_files_verified": 1250,
+      "method": "Compare collection inventory hashes and sizes to sealed product manifest; extracted runtime bytes remain in guest."
+    },
+    {
+      "archive_inventory_prefix": "results/n/windows-consumer-fa40a8596735/workspace/failure controls/",
+      "manifest_files_verified": 1250,
+      "method": "Compare collection inventory hashes and sizes to sealed product manifest; extracted runtime bytes remain in guest."
+    }
+  ],
+  "limitations": [
+    "One Windows 11 VMware guest, with operator-declared fresh provisioning; prior attempts occurred and no pre-product snapshot restoration is claimed.",
+    "Three scripted practice controls do not measure human false positives or general cheat detection.",
+    "Module/network observations are sampled, not continuous monitoring or a security audit.",
+    "Native import/save-dialog destinations are substituted by test tooling; native missing-component error dialogs are actually inspected and closed.",
+    "Nested consumer receipts retain generic developer-host disclaimers; the top guest inventory is the actual environment evidence.",
+    "Collection inventory hashes cover runtime files excluded from the ZIP; complete runtime files remain in the guest.",
+    "Unsigned hashes establish consistency, not authenticated authorship or client attestation.",
+    "Browser download warnings, SmartScreen reputation, unfamiliar-user usability and physical-machine GPU coverage were not established."
+  ]
+}

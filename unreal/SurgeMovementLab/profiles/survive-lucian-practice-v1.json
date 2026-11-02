@@ -1,0 +1,234 @@
+{
+  "schema": "survive-reference-profile-v1",
+  "id": "survive-lucian-practice-v1",
+  "status": "provisional-calibration-not-engine-equivalence",
+  "reviewed_on": "2026-10-25",
+  "reference_versions": {
+    "data_dragon": "16.21.1",
+    "community_dragon": "16.21",
+    "champion": "Lucian",
+    "ability_rank": 1
+  },
+  "units": {
+    "cm_per_reference_unit": 1,
+    "time": "simulation-seconds",
+    "note": "A chosen common coordinate scale, not a claim that Riot defines a unit as a physical centimeter."
+  },
+  "movement": {
+    "walk_speed_cm_s": 335,
+    "path_radius_cm": 41,
+    "hit_radius_cm": 65,
+    "visual_radius_cm": 50
+  },
+  "dash": {
+    "min_range_cm": 200,
+    "max_range_cm": 425,
+    "speed_cm_s": 1350,
+    "cast_delay_s": 0,
+    "cooldown_s": 4,
+    "reference_cooldown_s": 16,
+    "max_duration_s": 0.3148148148148148,
+    "duration_rule": "actual_distance_cm / speed_cm_s"
+  },
+  "blink": {
+    "reference": "SummonerFlash",
+    "max_range_cm": 400,
+    "cast_delay_s": 0,
+    "cooldown_s": 12,
+    "reference_cooldown_s": 300
+  },
+  "projectile": {
+    "reference": "LuxLightBindingMis",
+    "speed_cm_s": 1200,
+    "radius_cm": 70,
+    "diameter_cm": 140,
+    "cast_delay_s": 0.25,
+    "range_cm": 1300,
+    "flight_lifetime_s": 1.0833333333333333,
+    "lifetime_rule": "range_cm / speed_cm_s",
+    "homing": false,
+    "blocked_by_terrain": false
+  },
+  "circle": {
+    "reference": "XerathArcaneBarrage2",
+    "radius_cm": 250,
+    "delay_s": 0.75,
+    "cast_time_s": 0.25,
+    "damage_delay_s": 0.5,
+    "delay_interpretation": "provisional cast_time + DamageDelay; runtime script order and visual cue onset unmeasured"
+  },
+  "capture": {
+    "duration_s": 60,
+    "sample_hz_target": 30,
+    "seed": 1337,
+    "aimed_fraction": 0.5,
+    "projectile_fraction": 0.7,
+    "spawn_interval_s": 0.8
+  },
+  "provenance": {
+    "walk_speed": {
+      "source": "ddragon_lucian",
+      "field": "data.Lucian.stats.movespeed",
+      "corroboration": "cd_lucian: Characters/Lucian/CharacterRecords/Root.baseMoveSpeedModifiable.baseValue"
+    },
+    "path_radius": {
+      "source": "cd_lucian",
+      "field": "Characters/Lucian/CharacterRecords/Root.pathfindingCollisionRadius",
+      "raw_value": 40.68000030517578,
+      "change": "Rounded to 41 for the Survive profile."
+    },
+    "hit_radius": {
+      "source": "secondary_lucian_wiki",
+      "field": "Unit radius / Gameplay radius",
+      "note": "Provisional 65; absent from downloaded champion root and possibly inherited from shared defaults. Not independently extracted from shared defaults."
+    },
+    "visual_radius": {
+      "source": "survive_design",
+      "note": "Original display radius 50; geometry clearly distinguishes the 65 hit radius."
+    },
+    "dash": {
+      "source": "cd_lucian",
+      "field": "Characters/Lucian/Spells/LucianEAbility/LucianE.mSpell.DataValues",
+      "named_values": [
+        "MinDistance=200",
+        "MaxDistance=425",
+        "DashSpeed=1350"
+      ],
+      "cooldown_source": "ddragon_lucian: data.Lucian.spells[2].cooldown[0]=16",
+      "warning": "castRangeDisplayOverride and DataDragon range are 445, not the named MaxDistance425."
+    },
+    "blink_range": {
+      "source": "secondary_flash_wiki",
+      "note": "Provisional actual400; official DataDragon static range425 conflicts. Keep both explicit pending extracted shared spell or video validation."
+    },
+    "blink_cooldown": {
+      "source": "ddragon_summoner",
+      "field": "data.SummonerFlash.cooldown[0]"
+    },
+    "projectile": {
+      "source": "cd_lux",
+      "field": "Characters/Lux/Spells/LuxLightBindingAbility/LuxLightBindingMis.mSpell",
+      "named_values": [
+        "castRange=1300",
+        "mMissileSpec.mMissileWidth=70",
+        "mMissileSpec.movementComponent.mSpeed=1200",
+        "mMissileSpec.movementComponent.mTracksTarget=false"
+      ],
+      "warning": "The field named mMissileWidth is interpreted as collision radius70, not diameter70. DataDragon range1175 matches display override, not missile castRange1300. Cast delay.25 remains provisional because no explicit mCastTime appears on this downloaded spell."
+    },
+    "circle": {
+      "source": "cd_xerath",
+      "field": "Characters/Xerath/Spells/XerathArcaneBarrage2Ability/XerathArcaneBarrage2.mSpell",
+      "named_values": [
+        "mCastTime=.25",
+        "DataValues DamageDelay=.5",
+        "castRadiusSecondary=250",
+        "targeter overrideRadius=250"
+      ],
+      "warning": "Raw radius250 is adopted; secondary reported gameplay radius275 is not silently substituted. Total .75 assumes DamageDelay follows cast completion; server script evaluation and actual cue-to-hit delay remain unmeasured."
+    },
+    "cooldown_overrides": {
+      "source": "survive_design",
+      "note": "Practice uses dash4/blink12 for more samples. They are explicitly different from rank1 dash16/Flash300 reference cooldowns."
+    },
+    "projectile_terrain": {
+      "source": "survive_design",
+      "artifact_reference": "cd_lux: LuxLightBindingMis.mSpell.mMissileSpec",
+      "observed_fields": [
+        "FixedSpeedMovement",
+        "mTracksTarget=false",
+        "CastOnHit",
+        "DestroyOnMovementComplete"
+      ],
+      "note": "Selected Survive fidelity behavior: projectile passes terrain. Downloaded missile specification contains no explicit terrain-collision flag; absence does not prove runtime behavior. No official wall-crossing footage has been measured. Do not label this field raw-artifact verified."
+    }
+  },
+  "confidence": {
+    "walk_speed_cm_s": "high: official versioned static value and extracted record agree",
+    "path_radius_cm": "medium: named extracted record, rounded, not runtime measured",
+    "hit_radius_cm": "low: secondary provisional, inherited game default unresolved",
+    "dash_range_and_speed": "high artifact confidence: explicit named values in versioned extraction and DataDragon effects; runtime behavior not yet measured",
+    "dash_cast_delay_s": "medium: no cast-time field and secondary description; zero is selected approximation",
+    "blink_range_cm": "low: secondary400 conflicts with official static425; explicit chosen candidate",
+    "blink_cast_delay_s": "medium: official description teleport plus secondary instant behavior; actual input-to-teleport not measured",
+    "projectile_speed_range": "medium-high artifact confidence: explicit missile fields; source-bone offset and script endpoint may affect actual center travel",
+    "projectile_radius_cm": "medium: explicit raw70; radius interpretation needs collision/video validation",
+    "projectile_cast_delay_s": "low: selected .25 candidate, no explicit primary cast field found",
+    "circle_radius_cm": "medium: explicit raw targeter/secondary radius, actual gameplay edge unmeasured",
+    "circle_delay_s": "low: raw components known but their timing composition is an assumption",
+    "video_measurement": "official unversioned Xerath W clip visually inspected; apparent ground-cue-to-main-flash interval approximately .75-.90 seconds; not input/server timing",
+    "engine_parity": "not-validated",
+    "projectile_blocked_by_terrain": "provisional selected mechanic; raw specification lacks a decisive terrain flag and an official wall-crossing example has not been inspected"
+  },
+  "sources": {
+    "ddragon_lucian": {
+      "kind": "official-riot-static-json",
+      "url": "https://ddragon.leagueoflegends.com/cdn/16.21.1/data/en_US/champion/Lucian.json",
+      "local": "evidence/ddragon-16.21.1/Lucian.json",
+      "sha256": "865cea7cc7187f08b12c07811c38fa683a1b5d10a9fddaab65c85b1643b52b03"
+    },
+    "ddragon_lux": {
+      "kind": "official-riot-static-json",
+      "url": "https://ddragon.leagueoflegends.com/cdn/16.21.1/data/en_US/champion/Lux.json",
+      "local": "evidence/ddragon-16.21.1/Lux.json",
+      "sha256": "6a9f146c0ace25fdab822f890e992cd3e3f6757d49a51ee8c7771605797d8c29"
+    },
+    "ddragon_xerath": {
+      "kind": "official-riot-static-json",
+      "url": "https://ddragon.leagueoflegends.com/cdn/16.21.1/data/en_US/champion/Xerath.json",
+      "local": "evidence/ddragon-16.21.1/Xerath.json",
+      "sha256": "013f32d54612026a5bdf183d8668a28867ccaedcf75494310f087959d5ef75aa"
+    },
+    "ddragon_summoner": {
+      "kind": "official-riot-static-json",
+      "url": "https://ddragon.leagueoflegends.com/cdn/16.21.1/data/en_US/summoner.json",
+      "local": "evidence/ddragon-16.21.1/summoner.json",
+      "sha256": "2d319730ff02e71e01490b227665f60262cc85c21fef8a977e5d6bd299f176aa"
+    },
+    "cd_lucian": {
+      "kind": "community-hosted-extracted-game-artifact",
+      "url": "https://raw.communitydragon.org/16.21/game/data/characters/lucian/lucian.bin.json",
+      "local": "evidence/communitydragon-16.21/lucian.bin.json",
+      "sha256": "6b51705f1905a84a82455f33fc1676f9daa365b6d2a4ef7a4564ec474c110cf7"
+    },
+    "cd_lux": {
+      "kind": "community-hosted-extracted-game-artifact",
+      "url": "https://raw.communitydragon.org/16.21/game/data/characters/lux/lux.bin.json",
+      "local": "evidence/communitydragon-16.21/lux.bin.json",
+      "sha256": "97df23dfadf3606339841f08184e7cf24c88554d208ebc570195ff6488a6e16a"
+    },
+    "cd_xerath": {
+      "kind": "community-hosted-extracted-game-artifact",
+      "url": "https://raw.communitydragon.org/16.21/game/data/characters/xerath/xerath.bin.json",
+      "local": "evidence/communitydragon-16.21/xerath.bin.json",
+      "sha256": "f97e14ad7dbcd4e617fecc8567cca3b6ad121cc26b88ebcd648d1868081cfac4"
+    },
+    "secondary_lucian_wiki": {
+      "kind": "secondary-unverified-fallback",
+      "url": "https://wiki.leagueoflegends.com/en-us/Lucian",
+      "retrieved_on": "2026-10-25"
+    },
+    "secondary_flash_wiki": {
+      "kind": "secondary-unverified-fallback",
+      "url": "https://wiki.leagueoflegends.com/en-us/Flash",
+      "retrieved_on": "2026-10-25"
+    },
+    "official_xerath_video": {
+      "kind": "official-riot-ability-video-reference",
+      "url": "https://lol.dyn.riotcdn.net/x/videos/champion-abilities/0101/ability_0101_W1.mp4",
+      "measurement_status": "visual-interval-bounded-not-runtime-calibrated",
+      "local": "evidence/video/xerath-w-official.mp4",
+      "sha256": "5a29955cd2f52a820cb57411ebd3b98a1133e726b7f6797f7c808807dc65e38b"
+    },
+    "survive_design": {
+      "kind": "explicit-lab-design-choice"
+    }
+  },
+  "known_deviations": [
+    "Single original character and isolated arena, no champion combat/passive/cooldown refund rules.",
+    "Practice cooldowns are shortened; reference preset restores rank1 dash16 and Flash300.",
+    "Dash wall stops, blink landing projection, command buffering and post-ability path behavior are explicit Survive rules requiring comparison before claiming fidelity.",
+    "No authoritative Riot movement engine, input replication, server tick schedule, acceleration or turn-rate model is supplied by these static artifacts.",
+    "No direct League process interaction, memory collection or Vanguard access was performed."
+  ]
+}

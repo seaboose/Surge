@@ -1,0 +1,1025 @@
+{
+  "accepted": true,
+  "gates": {
+    "false_positives_lower": true,
+    "legitimate_unresolved_not_higher": true,
+    "misses_not_higher": true,
+    "no_legitimate_subgroup_false_positive_regression": true,
+    "no_legitimate_subgroup_unresolved_regression": true,
+    "no_previously_detected_targets_lost": true,
+    "targeted_subgroup_false_positives_lower": true,
+    "targeted_subgroup_present": true
+  },
+  "baseline": {
+    "counts": {
+      "Clear": 490,
+      "Detected": 9316,
+      "False positive": 193,
+      "Missed": 1,
+      "Unlabeled": 0,
+      "Unresolved": 0
+    },
+    "labeled": 10000,
+    "legitimate": 683,
+    "rates": {
+      "false_positive": {
+        "denominator": 683,
+        "numerator": 193,
+        "value": 0.28257686676427524
+      },
+      "missed": {
+        "denominator": 9317,
+        "numerator": 1,
+        "value": 0.00010733068584308254
+      },
+      "precision": {
+        "denominator": 9509,
+        "numerator": 9316,
+        "value": 0.9797034388474077
+      },
+      "recall": {
+        "denominator": 9317,
+        "numerator": 9316,
+        "value": 0.9998926693141569
+      }
+    },
+    "targets": 9317,
+    "total": 10000,
+    "unresolved_targets": 0
+  },
+  "candidate": {
+    "counts": {
+      "Clear": 516,
+      "Detected": 9316,
+      "False positive": 167,
+      "Missed": 1,
+      "Unlabeled": 0,
+      "Unresolved": 0
+    },
+    "labeled": 10000,
+    "legitimate": 683,
+    "rates": {
+      "false_positive": {
+        "denominator": 683,
+        "numerator": 167,
+        "value": 0.2445095168374817
+      },
+      "missed": {
+        "denominator": 9317,
+        "numerator": 1,
+        "value": 0.00010733068584308254
+      },
+      "precision": {
+        "denominator": 9483,
+        "numerator": 9316,
+        "value": 0.9823895391753664
+      },
+      "recall": {
+        "denominator": 9317,
+        "numerator": 9316,
+        "value": 0.9998926693141569
+      }
+    },
+    "targets": 9317,
+    "total": 10000,
+    "unresolved_targets": 0
+  },
+  "groups": {
+    "baseline": [
+      {
+        "counts": {
+          "Clear": 0,
+          "Detected": 654,
+          "False positive": 0,
+          "Missed": 1,
+          "Unlabeled": 0,
+          "Unresolved": 0
+        },
+        "group": "ARP_poisioning",
+        "labeled": 655,
+        "legitimate": 0,
+        "rates": {
+          "false_positive": {
+            "denominator": 0,
+            "numerator": 0,
+            "value": null
+          },
+          "missed": {
+            "denominator": 655,
+            "numerator": 1,
+            "value": 0.0015267175572519084
+          },
+          "precision": {
+            "denominator": 654,
+            "numerator": 654,
+            "value": 1.0
+          },
+          "recall": {
+            "denominator": 655,
+            "numerator": 654,
+            "value": 0.9984732824427481
+          }
+        },
+        "targets": 655,
+        "total": 655,
+        "unresolved_targets": 0
+      },
+      {
+        "counts": {
+          "Clear": 0,
+          "Detected": 32,
+          "False positive": 0,
+          "Missed": 0,
+          "Unlabeled": 0,
+          "Unresolved": 0
+        },
+        "group": "DDOS_Slowloris",
+        "labeled": 32,
+        "legitimate": 0,
+        "rates": {
+          "false_positive": {
+            "denominator": 0,
+            "numerator": 0,
+            "value": null
+          },
+          "missed": {
+            "denominator": 32,
+            "numerator": 0,
+            "value": 0.0
+          },
+          "precision": {
+            "denominator": 32,
+            "numerator": 32,
+            "value": 1.0
+          },
+          "recall": {
+            "denominator": 32,
+            "numerator": 32,
+            "value": 1.0
+          }
+        },
+        "targets": 32,
+        "total": 32,
+        "unresolved_targets": 0
+      },
+      {
+        "counts": {
+          "Clear": 0,
+          "Detected": 7963,
+          "False positive": 0,
+          "Missed": 0,
+          "Unlabeled": 0,
+          "Unresolved": 0
+        },
+        "group": "DOS_SYN_Hping",
+        "labeled": 7963,
+        "legitimate": 0,
+        "rates": {
+          "false_positive": {
+            "denominator": 0,
+            "numerator": 0,
+            "value": null
+          },
+          "missed": {
+            "denominator": 7963,
+            "numerator": 0,
+            "value": 0.0
+          },
+          "precision": {
+            "denominator": 7963,
+            "numerator": 7963,
+            "value": 1.0
+          },
+          "recall": {
+            "denominator": 7963,
+            "numerator": 7963,
+            "value": 1.0
+          }
+        },
+        "targets": 7963,
+        "total": 7963,
+        "unresolved_targets": 0
+      },
+      {
+        "counts": {
+          "Clear": 165,
+          "Detected": 0,
+          "False positive": 49,
+          "Missed": 0,
+          "Unlabeled": 0,
+          "Unresolved": 0
+        },
+        "group": "MQTT_Publish",
+        "labeled": 214,
+        "legitimate": 214,
+        "rates": {
+          "false_positive": {
+            "denominator": 214,
+            "numerator": 49,
+            "value": 0.22897196261682243
+          },
+          "missed": {
+            "denominator": 0,
+            "numerator": 0,
+            "value": null
+          },
+          "precision": {
+            "denominator": 49,
+            "numerator": 0,
+            "value": 0.0
+          },
+          "recall": {
+            "denominator": 0,
+            "numerator": 0,
+            "value": null
+          }
+        },
+        "targets": 0,
+        "total": 214,
+        "unresolved_targets": 0
+      },
+      {
+        "counts": {
+          "Clear": 0,
+          "Detected": 4,
+          "False positive": 0,
+          "Missed": 0,
+          "Unlabeled": 0,
+          "Unresolved": 0
+        },
+        "group": "Metasploit_Brute_Force_SSH",
+        "labeled": 4,
+        "legitimate": 0,
+        "rates": {
+          "false_positive": {
+            "denominator": 0,
+            "numerator": 0,
+            "value": null
+          },
+          "missed": {
+            "denominator": 4,
+            "numerator": 0,
+            "value": 0.0
+          },
+          "precision": {
+            "denominator": 4,
+            "numerator": 4,
+            "value": 1.0
+          },
+          "recall": {
+            "denominator": 4,
+            "numerator": 4,
+            "value": 1.0
+          }
+        },
+        "targets": 4,
+        "total": 4,
+        "unresolved_targets": 0
+      },
+      {
+        "counts": {
+          "Clear": 0,
+          "Detected": 1,
+          "False positive": 0,
+          "Missed": 0,
+          "Unlabeled": 0,
+          "Unresolved": 0
+        },
+        "group": "NMAP_FIN_SCAN",
+        "labeled": 1,
+        "legitimate": 0,
+        "rates": {
+          "false_positive": {
+            "denominator": 0,
+            "numerator": 0,
+            "value": null
+          },
+          "missed": {
+            "denominator": 1,
+            "numerator": 0,
+            "value": 0.0
+          },
+          "precision": {
+            "denominator": 1,
+            "numerator": 1,
+            "value": 1.0
+          },
+          "recall": {
+            "denominator": 1,
+            "numerator": 1,
+            "value": 1.0
+          }
+        },
+        "targets": 1,
+        "total": 1,
+        "unresolved_targets": 0
+      },
+      {
+        "counts": {
+          "Clear": 0,
+          "Detected": 186,
+          "False positive": 0,
+          "Missed": 0,
+          "Unlabeled": 0,
+          "Unresolved": 0
+        },
+        "group": "NMAP_OS_DETECTION",
+        "labeled": 186,
+        "legitimate": 0,
+        "rates": {
+          "false_positive": {
+            "denominator": 0,
+            "numerator": 0,
+            "value": null
+          },
+          "missed": {
+            "denominator": 186,
+            "numerator": 0,
+            "value": 0.0
+          },
+          "precision": {
+            "denominator": 186,
+            "numerator": 186,
+            "value": 1.0
+          },
+          "recall": {
+            "denominator": 186,
+            "numerator": 186,
+            "value": 1.0
+          }
+        },
+        "targets": 186,
+        "total": 186,
+        "unresolved_targets": 0
+      },
+      {
+        "counts": {
+          "Clear": 0,
+          "Detected": 94,
+          "False positive": 0,
+          "Missed": 0,
+          "Unlabeled": 0,
+          "Unresolved": 0
+        },
+        "group": "NMAP_TCP_scan",
+        "labeled": 94,
+        "legitimate": 0,
+        "rates": {
+          "false_positive": {
+            "denominator": 0,
+            "numerator": 0,
+            "value": null
+          },
+          "missed": {
+            "denominator": 94,
+            "numerator": 0,
+            "value": 0.0
+          },
+          "precision": {
+            "denominator": 94,
+            "numerator": 94,
+            "value": 1.0
+          },
+          "recall": {
+            "denominator": 94,
+            "numerator": 94,
+            "value": 1.0
+          }
+        },
+        "targets": 94,
+        "total": 94,
+        "unresolved_targets": 0
+      },
+      {
+        "counts": {
+          "Clear": 0,
+          "Detected": 216,
+          "False positive": 0,
+          "Missed": 0,
+          "Unlabeled": 0,
+          "Unresolved": 0
+        },
+        "group": "NMAP_UDP_SCAN",
+        "labeled": 216,
+        "legitimate": 0,
+        "rates": {
+          "false_positive": {
+            "denominator": 0,
+            "numerator": 0,
+            "value": null
+          },
+          "missed": {
+            "denominator": 216,
+            "numerator": 0,
+            "value": 0.0
+          },
+          "precision": {
+            "denominator": 216,
+            "numerator": 216,
+            "value": 1.0
+          },
+          "recall": {
+            "denominator": 216,
+            "numerator": 216,
+            "value": 1.0
+          }
+        },
+        "targets": 216,
+        "total": 216,
+        "unresolved_targets": 0
+      },
+      {
+        "counts": {
+          "Clear": 0,
+          "Detected": 166,
+          "False positive": 0,
+          "Missed": 0,
+          "Unlabeled": 0,
+          "Unresolved": 0
+        },
+        "group": "NMAP_XMAS_TREE_SCAN",
+        "labeled": 166,
+        "legitimate": 0,
+        "rates": {
+          "false_positive": {
+            "denominator": 0,
+            "numerator": 0,
+            "value": null
+          },
+          "missed": {
+            "denominator": 166,
+            "numerator": 0,
+            "value": 0.0
+          },
+          "precision": {
+            "denominator": 166,
+            "numerator": 166,
+            "value": 1.0
+          },
+          "recall": {
+            "denominator": 166,
+            "numerator": 166,
+            "value": 1.0
+          }
+        },
+        "targets": 166,
+        "total": 166,
+        "unresolved_targets": 0
+      },
+      {
+        "counts": {
+          "Clear": 325,
+          "Detected": 0,
+          "False positive": 131,
+          "Missed": 0,
+          "Unlabeled": 0,
+          "Unresolved": 0
+        },
+        "group": "Thing_Speak",
+        "labeled": 456,
+        "legitimate": 456,
+        "rates": {
+          "false_positive": {
+            "denominator": 456,
+            "numerator": 131,
+            "value": 0.28728070175438597
+          },
+          "missed": {
+            "denominator": 0,
+            "numerator": 0,
+            "value": null
+          },
+          "precision": {
+            "denominator": 131,
+            "numerator": 0,
+            "value": 0.0
+          },
+          "recall": {
+            "denominator": 0,
+            "numerator": 0,
+            "value": null
+          }
+        },
+        "targets": 0,
+        "total": 456,
+        "unresolved_targets": 0
+      },
+      {
+        "counts": {
+          "Clear": 0,
+          "Detected": 0,
+          "False positive": 13,
+          "Missed": 0,
+          "Unlabeled": 0,
+          "Unresolved": 0
+        },
+        "group": "Wipro_bulb",
+        "labeled": 13,
+        "legitimate": 13,
+        "rates": {
+          "false_positive": {
+            "denominator": 13,
+            "numerator": 13,
+            "value": 1.0
+          },
+          "missed": {
+            "denominator": 0,
+            "numerator": 0,
+            "value": null
+          },
+          "precision": {
+            "denominator": 13,
+            "numerator": 0,
+            "value": 0.0
+          },
+          "recall": {
+            "denominator": 0,
+            "numerator": 0,
+            "value": null
+          }
+        },
+        "targets": 0,
+        "total": 13,
+        "unresolved_targets": 0
+      }
+    ],
+    "candidate": [
+      {
+        "counts": {
+          "Clear": 0,
+          "Detected": 654,
+          "False positive": 0,
+          "Missed": 1,
+          "Unlabeled": 0,
+          "Unresolved": 0
+        },
+        "group": "ARP_poisioning",
+        "labeled": 655,
+        "legitimate": 0,
+        "rates": {
+          "false_positive": {
+            "denominator": 0,
+            "numerator": 0,
+            "value": null
+          },
+          "missed": {
+            "denominator": 655,
+            "numerator": 1,
+            "value": 0.0015267175572519084
+          },
+          "precision": {
+            "denominator": 654,
+            "numerator": 654,
+            "value": 1.0
+          },
+          "recall": {
+            "denominator": 655,
+            "numerator": 654,
+            "value": 0.9984732824427481
+          }
+        },
+        "targets": 655,
+        "total": 655,
+        "unresolved_targets": 0
+      },
+      {
+        "counts": {
+          "Clear": 0,
+          "Detected": 32,
+          "False positive": 0,
+          "Missed": 0,
+          "Unlabeled": 0,
+          "Unresolved": 0
+        },
+        "group": "DDOS_Slowloris",
+        "labeled": 32,
+        "legitimate": 0,
+        "rates": {
+          "false_positive": {
+            "denominator": 0,
+            "numerator": 0,
+            "value": null
+          },
+          "missed": {
+            "denominator": 32,
+            "numerator": 0,
+            "value": 0.0
+          },
+          "precision": {
+            "denominator": 32,
+            "numerator": 32,
+            "value": 1.0
+          },
+          "recall": {
+            "denominator": 32,
+            "numerator": 32,
+            "value": 1.0
+          }
+        },
+        "targets": 32,
+        "total": 32,
+        "unresolved_targets": 0
+      },
+      {
+        "counts": {
+          "Clear": 0,
+          "Detected": 7963,
+          "False positive": 0,
+          "Missed": 0,
+          "Unlabeled": 0,
+          "Unresolved": 0
+        },
+        "group": "DOS_SYN_Hping",
+        "labeled": 7963,
+        "legitimate": 0,
+        "rates": {
+          "false_positive": {
+            "denominator": 0,
+            "numerator": 0,
+            "value": null
+          },
+          "missed": {
+            "denominator": 7963,
+            "numerator": 0,
+            "value": 0.0
+          },
+          "precision": {
+            "denominator": 7963,
+            "numerator": 7963,
+            "value": 1.0
+          },
+          "recall": {
+            "denominator": 7963,
+            "numerator": 7963,
+            "value": 1.0
+          }
+        },
+        "targets": 7963,
+        "total": 7963,
+        "unresolved_targets": 0
+      },
+      {
+        "counts": {
+          "Clear": 165,
+          "Detected": 0,
+          "False positive": 49,
+          "Missed": 0,
+          "Unlabeled": 0,
+          "Unresolved": 0
+        },
+        "group": "MQTT_Publish",
+        "labeled": 214,
+        "legitimate": 214,
+        "rates": {
+          "false_positive": {
+            "denominator": 214,
+            "numerator": 49,
+            "value": 0.22897196261682243
+          },
+          "missed": {
+            "denominator": 0,
+            "numerator": 0,
+            "value": null
+          },
+          "precision": {
+            "denominator": 49,
+            "numerator": 0,
+            "value": 0.0
+          },
+          "recall": {
+            "denominator": 0,
+            "numerator": 0,
+            "value": null
+          }
+        },
+        "targets": 0,
+        "total": 214,
+        "unresolved_targets": 0
+      },
+      {
+        "counts": {
+          "Clear": 0,
+          "Detected": 4,
+          "False positive": 0,
+          "Missed": 0,
+          "Unlabeled": 0,
+          "Unresolved": 0
+        },
+        "group": "Metasploit_Brute_Force_SSH",
+        "labeled": 4,
+        "legitimate": 0,
+        "rates": {
+          "false_positive": {
+            "denominator": 0,
+            "numerator": 0,
+            "value": null
+          },
+          "missed": {
+            "denominator": 4,
+            "numerator": 0,
+            "value": 0.0
+          },
+          "precision": {
+            "denominator": 4,
+            "numerator": 4,
+            "value": 1.0
+          },
+          "recall": {
+            "denominator": 4,
+            "numerator": 4,
+            "value": 1.0
+          }
+        },
+        "targets": 4,
+        "total": 4,
+        "unresolved_targets": 0
+      },
+      {
+        "counts": {
+          "Clear": 0,
+          "Detected": 1,
+          "False positive": 0,
+          "Missed": 0,
+          "Unlabeled": 0,
+          "Unresolved": 0
+        },
+        "group": "NMAP_FIN_SCAN",
+        "labeled": 1,
+        "legitimate": 0,
+        "rates": {
+          "false_positive": {
+            "denominator": 0,
+            "numerator": 0,
+            "value": null
+          },
+          "missed": {
+            "denominator": 1,
+            "numerator": 0,
+            "value": 0.0
+          },
+          "precision": {
+            "denominator": 1,
+            "numerator": 1,
+            "value": 1.0
+          },
+          "recall": {
+            "denominator": 1,
+            "numerator": 1,
+            "value": 1.0
+          }
+        },
+        "targets": 1,
+        "total": 1,
+        "unresolved_targets": 0
+      },
+      {
+        "counts": {
+          "Clear": 0,
+          "Detected": 186,
+          "False positive": 0,
+          "Missed": 0,
+          "Unlabeled": 0,
+          "Unresolved": 0
+        },
+        "group": "NMAP_OS_DETECTION",
+        "labeled": 186,
+        "legitimate": 0,
+        "rates": {
+          "false_positive": {
+            "denominator": 0,
+            "numerator": 0,
+            "value": null
+          },
+          "missed": {
+            "denominator": 186,
+            "numerator": 0,
+            "value": 0.0
+          },
+          "precision": {
+            "denominator": 186,
+            "numerator": 186,
+            "value": 1.0
+          },
+          "recall": {
+            "denominator": 186,
+            "numerator": 186,
+            "value": 1.0
+          }
+        },
+        "targets": 186,
+        "total": 186,
+        "unresolved_targets": 0
+      },
+      {
+        "counts": {
+          "Clear": 0,
+          "Detected": 94,
+          "False positive": 0,
+          "Missed": 0,
+          "Unlabeled": 0,
+          "Unresolved": 0
+        },
+        "group": "NMAP_TCP_scan",
+        "labeled": 94,
+        "legitimate": 0,
+        "rates": {
+          "false_positive": {
+            "denominator": 0,
+            "numerator": 0,
+            "value": null
+          },
+          "missed": {
+            "denominator": 94,
+            "numerator": 0,
+            "value": 0.0
+          },
+          "precision": {
+            "denominator": 94,
+            "numerator": 94,
+            "value": 1.0
+          },
+          "recall": {
+            "denominator": 94,
+            "numerator": 94,
+            "value": 1.0
+          }
+        },
+        "targets": 94,
+        "total": 94,
+        "unresolved_targets": 0
+      },
+      {
+        "counts": {
+          "Clear": 0,
+          "Detected": 216,
+          "False positive": 0,
+          "Missed": 0,
+          "Unlabeled": 0,
+          "Unresolved": 0
+        },
+        "group": "NMAP_UDP_SCAN",
+        "labeled": 216,
+        "legitimate": 0,
+        "rates": {
+          "false_positive": {
+            "denominator": 0,
+            "numerator": 0,
+            "value": null
+          },
+          "missed": {
+            "denominator": 216,
+            "numerator": 0,
+            "value": 0.0
+          },
+          "precision": {
+            "denominator": 216,
+            "numerator": 216,
+            "value": 1.0
+          },
+          "recall": {
+            "denominator": 216,
+            "numerator": 216,
+            "value": 1.0
+          }
+        },
+        "targets": 216,
+        "total": 216,
+        "unresolved_targets": 0
+      },
+      {
+        "counts": {
+          "Clear": 0,
+          "Detected": 166,
+          "False positive": 0,
+          "Missed": 0,
+          "Unlabeled": 0,
+          "Unresolved": 0
+        },
+        "group": "NMAP_XMAS_TREE_SCAN",
+        "labeled": 166,
+        "legitimate": 0,
+        "rates": {
+          "false_positive": {
+            "denominator": 0,
+            "numerator": 0,
+            "value": null
+          },
+          "missed": {
+            "denominator": 166,
+            "numerator": 0,
+            "value": 0.0
+          },
+          "precision": {
+            "denominator": 166,
+            "numerator": 166,
+            "value": 1.0
+          },
+          "recall": {
+            "denominator": 166,
+            "numerator": 166,
+            "value": 1.0
+          }
+        },
+        "targets": 166,
+        "total": 166,
+        "unresolved_targets": 0
+      },
+      {
+        "counts": {
+          "Clear": 351,
+          "Detected": 0,
+          "False positive": 105,
+          "Missed": 0,
+          "Unlabeled": 0,
+          "Unresolved": 0
+        },
+        "group": "Thing_Speak",
+        "labeled": 456,
+        "legitimate": 456,
+        "rates": {
+          "false_positive": {
+            "denominator": 456,
+            "numerator": 105,
+            "value": 0.23026315789473684
+          },
+          "missed": {
+            "denominator": 0,
+            "numerator": 0,
+            "value": null
+          },
+          "precision": {
+            "denominator": 105,
+            "numerator": 0,
+            "value": 0.0
+          },
+          "recall": {
+            "denominator": 0,
+            "numerator": 0,
+            "value": null
+          }
+        },
+        "targets": 0,
+        "total": 456,
+        "unresolved_targets": 0
+      },
+      {
+        "counts": {
+          "Clear": 0,
+          "Detected": 0,
+          "False positive": 13,
+          "Missed": 0,
+          "Unlabeled": 0,
+          "Unresolved": 0
+        },
+        "group": "Wipro_bulb",
+        "labeled": 13,
+        "legitimate": 13,
+        "rates": {
+          "false_positive": {
+            "denominator": 13,
+            "numerator": 13,
+            "value": 1.0
+          },
+          "missed": {
+            "denominator": 0,
+            "numerator": 0,
+            "value": null
+          },
+          "precision": {
+            "denominator": 13,
+            "numerator": 0,
+            "value": 0.0
+          },
+          "recall": {
+            "denominator": 0,
+            "numerator": 0,
+            "value": null
+          }
+        },
+        "targets": 0,
+        "total": 13,
+        "unresolved_targets": 0
+      }
+    ]
+  },
+  "targeted_subgroup": "Thing_Speak",
+  "unknown_counts": {
+    "baseline": 0,
+    "candidate": 0
+  },
+  "long_duration": {
+    "baseline": {
+      "false_positives": 9,
+      "records": 35,
+      "unresolved": 0
+    },
+    "candidate": {
+      "false_positives": 9,
+      "records": 35,
+      "unresolved": 0
+    },
+    "cutoff": 62.049075
+  },
+  "limits": "Fresh rows and projected vectors from the same public IoT capture; not independent sessions, anti-cheat, or AI-attack validation. No future miss-rate guarantee. No holdout-guided retuning.",
+  "original_artifact_sha256": "18971504eff0298f31a43ef96209754c36458b9a46948da403ef67d401455e60"
+}

@@ -1,0 +1,2 @@
+# Optional source formatter; the application and tests use the standard library.
+black==26.10.1

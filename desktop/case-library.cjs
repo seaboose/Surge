@@ -1,0 +1,281 @@
+"use strict";
+const fs = require("node:fs/promises");
+const path = require("node:path");
+const { randomUUID } = require("node:crypto");
+const { setTimeout: delay } = require("node:timers/promises");
+
+function caseName(name) {
+  if (
+    typeof name !== "string" ||
+    !name.trim() ||
+    name.trim().length > 100 ||
+    /[\x00-\x1f\x7f]/.test(name)
+  )
+    throw new Error(
+      "Enter a case name of 1–100 characters without control characters.",
+    );
+  return name.trim();
+}
+function cleanupFailure(error, detail) {
+  const failure = new Error(`${error.message} ${detail}`, { cause: error });
+  if (error.code) failure.code = error.code;
+  return failure;
+}
+async function publishCase(staging, destination) {
+  const retryDelays = [25, 50, 100, 200];
+  for (let attempt = 0; ; attempt++) {
+    try {
+      await fs.rename(staging, destination);
+      return;
+    } catch (error) {
+      // Windows can briefly deny directory publication after file handles close.
+      // Retry only this atomic rename; never repeat writes or change permissions.
+      if (
+        process.platform !== "win32" ||
+        !["EPERM", "EBUSY"].includes(error.code) ||
+        attempt === retryDelays.length
+      )
+        throw error;
+      await delay(retryDelays[attempt]);
+    }
+  }
+}
+async function copyCase(source, destination) {
+  let input,
+    output,
+    created = false;
+  try {
+    input = await fs.open(source, "r");
+    if (!(await input.stat()).isFile()) throw new Error("Choose a case file.");
+    output = await fs.open(destination, "wx");
+    created = true;
+    const buffer = Buffer.alloc(64 * 1024);
+    let total = 0;
+    for (;;) {
+      const { bytesRead } = await input.read(buffer, 0, buffer.length, null);
+      if (!bytesRead) break;
+      total += bytesRead;
+      if (total > 64 * 1024 * 1024) throw new Error("Case exceeds 64 MiB.");
+      let offset = 0;
+      while (offset < bytesRead) {
+        const { bytesWritten } = await output.write(
+          buffer,
+          offset,
+          bytesRead - offset,
+        );
+        if (
+          !Number.isInteger(bytesWritten) ||
+          bytesWritten <= 0 ||
+          bytesWritten > bytesRead - offset
+        )
+          throw new Error("Case copy made invalid write progress.");
+        offset += bytesWritten;
+      }
+    }
+    await output.close();
+    output = null;
+    await input.close();
+    input = null;
+  } catch (error) {
+    let incomplete = false;
+    for (const handle of [output, input])
+      if (handle)
+        await handle.close().catch(() => {
+          incomplete = true;
+        });
+    if (created)
+      await fs.unlink(destination).catch(() => {
+        incomplete = true;
+      });
+    if (incomplete)
+      throw cleanupFailure(error, "Temporary copy cleanup is incomplete.");
+    throw error;
+  }
+}
+class CaseLibrary {
+  constructor(root, call) {
+    this.root = root;
+    this.call = call;
+  }
+  async init() {
+    await fs.mkdir(this.root, { recursive: true });
+    if ((await fs.lstat(this.root)).isSymbolicLink())
+      throw new Error("Case library must be a local directory, not a link.");
+  }
+  async entry(id) {
+    if (
+      typeof id !== "string" ||
+      !/^[a-f0-9]{8}-(?:[a-f0-9]{4}-){3}[a-f0-9]{12}$/.test(id)
+    )
+      throw new Error("Invalid case identifier.");
+    await this.init();
+    const dir = path.join(this.root, id);
+    const stat = await fs.lstat(dir);
+    if (!stat.isDirectory() || stat.isSymbolicLink())
+      throw new Error("Invalid library entry.");
+    for (const name of ["case.json", "metadata.json"]) {
+      const s = await fs.lstat(path.join(dir, name));
+      if (!s.isFile() || s.isSymbolicLink() || s.nlink !== 1)
+        throw new Error("Linked library files are not supported.");
+    }
+    if ((await fs.stat(path.join(dir, "metadata.json"))).size > 4096)
+      throw new Error("Invalid case metadata.");
+    const meta = JSON.parse(
+      await fs.readFile(path.join(dir, "metadata.json"), "utf8"),
+    );
+    caseName(meta.name);
+    if (meta.id !== id || typeof meta.created !== "string")
+      throw new Error("Invalid case metadata.");
+    return {
+      dir,
+      file: path.join(dir, "case.json"),
+      meta: { id, name: meta.name, created: meta.created },
+    };
+  }
+  async list() {
+    await this.init();
+    const entries = [],
+      unavailable = [];
+    for (const item of await fs.readdir(this.root, { withFileTypes: true })) {
+      if (item.name.startsWith(".")) continue;
+      try {
+        entries.push((await this.entry(item.name)).meta);
+      } catch {
+        unavailable.push(item.name);
+      }
+    }
+    entries.sort((a, b) => b.created.localeCompare(a.created));
+    return { entries, unavailable: unavailable.length };
+  }
+  async create(name, write) {
+    name = caseName(name);
+    await this.init();
+    const id = randomUUID(),
+      staging = path.join(this.root, `.pending-${id}`),
+      final = path.join(this.root, id);
+    await fs.mkdir(staging);
+    try {
+      await write(path.join(staging, "case.json"));
+      const meta = { id, name, created: new Date().toISOString() };
+      await fs.writeFile(
+        path.join(staging, "metadata.json"),
+        JSON.stringify(meta),
+        { flag: "wx" },
+      );
+      await publishCase(staging, final);
+      return { entry: meta, message: "Case saved to the local library." };
+    } catch (error) {
+      // Staging contains only files created by this operation, never source evidence.
+      await fs.rm(staging, { recursive: true, force: true }).catch(() => {});
+      throw error;
+    }
+  }
+  async save(name, revision) {
+    return this.create(name, (file) =>
+      this.call("library_snapshot", { path: file, revision }),
+    );
+  }
+  async open(id) {
+    const e = await this.entry(id);
+    const state = await this.call("open", { path: e.file });
+    return { ...state, library_case: { id: e.meta.id, name: e.meta.name } };
+  }
+  async rename(id, name) {
+    name = caseName(name);
+    const e = await this.entry(id),
+      // Keep interrupted metadata writes outside the published case directory.
+      tmp = path.join(this.root, `.name-${randomUUID()}`);
+    try {
+      await fs.writeFile(tmp, JSON.stringify({ ...e.meta, name }), {
+        flag: "wx",
+      });
+      await fs.rename(tmp, path.join(e.dir, "metadata.json"));
+    } finally {
+      await fs.unlink(tmp).catch(() => {});
+    }
+    return { message: "Case renamed." };
+  }
+  async delete(id) {
+    const e = await this.entry(id);
+    if (
+      (await fs.readdir(e.dir)).some(
+        (n) => !["case.json", "metadata.json"].includes(n),
+      )
+    )
+      throw new Error(
+        "Case folder contains unexpected files; deletion canceled.",
+      );
+    const removed = path.join(this.root, `.deleted-${id}-${randomUUID()}`);
+    await fs.rename(e.dir, removed);
+    try {
+      await fs.unlink(path.join(removed, "case.json"));
+      await fs.unlink(path.join(removed, "metadata.json"));
+      await fs.rmdir(removed);
+    } catch {
+      return {
+        message:
+          "Case removed from the library; local cleanup is incomplete. Original evidence is unchanged.",
+      };
+    }
+    return {
+      message:
+        "Case deleted. Original evidence and external files are unchanged.",
+    };
+  }
+  async import(source, name) {
+    return this.create(name, async (file) => {
+      await copyCase(source, file);
+      await this.call("library_verify", { path: file });
+    });
+  }
+  async export(id, destination) {
+    const e = await this.entry(id);
+    const staging = path.join(
+      path.dirname(destination),
+      `.surge-export-${randomUUID()}`,
+    );
+    await fs.mkdir(staging);
+    const file = path.join(staging, "case.json");
+    try {
+      await copyCase(e.file, file);
+      await this.call("library_verify", { path: file });
+      // A same-directory hard link publishes complete bytes without replacing
+      // a destination that appeared during verification. No unsafe copy fallback.
+      try {
+        await fs.link(file, destination);
+      } catch (error) {
+        if (["ENOTSUP", "EOPNOTSUPP"].includes(error.code))
+          throw Object.assign(
+            new Error(
+              "This location does not support safe case export. Choose another local folder. The library copy is unchanged.",
+              { cause: error },
+            ),
+            { code: error.code },
+          );
+        throw error;
+      }
+    } catch (error) {
+      try {
+        await fs.rm(staging, { recursive: true, force: true });
+      } catch {
+        throw cleanupFailure(
+          error,
+          "Export did not complete; temporary cleanup is incomplete.",
+        );
+      }
+      throw error;
+    }
+    try {
+      await fs.rm(staging, { recursive: true, force: true });
+    } catch {
+      return {
+        message:
+          "Portable case exported; temporary cleanup is incomplete. The library copy is unchanged.",
+      };
+    }
+    return {
+      message: "Portable case exported. The library copy is unchanged.",
+    };
+  }
+}
+module.exports = { CaseLibrary, caseName };

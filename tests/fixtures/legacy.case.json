@@ -1,0 +1,98 @@
+{
+  "schema": "detection-workbench-case-v1",
+  "created_at": "2026-10-21T04:33:16.430938+00:00",
+  "payload_sha256": "42d8c78635e55008ee5d658576c36357a20d1297cb8d433e3147eed5862ee228",
+  "payload": {
+    "current": {
+      "name": "current.json",
+      "format": "json",
+      "sha256": "a9a6a1ab1bcc8023e4369505a3597e1042d896155c9b4bbfef0f46ab9e09f9ec",
+      "records": 2,
+      "fields": [
+        "reading"
+      ],
+      "text": "[{\"reading\": 10}, {\"reading\": 90}]"
+    },
+    "reference": {
+      "name": "reference.json",
+      "format": "json",
+      "sha256": "2637fce86a10addcaacdb172dd36b61f7cfe74203c48e57a5643a0cbb82ff900",
+      "records": 5,
+      "fields": [
+        "reading"
+      ],
+      "text": "[{\"reading\": 8}, {\"reading\": 9}, {\"reading\": 10}, {\"reading\": 11}, {\"reading\": 12}]"
+    },
+    "config": {
+      "features": [
+        "reading"
+      ],
+      "event_id": null,
+      "session": null,
+      "time": null,
+      "time_format": "milliseconds",
+      "threshold": 6,
+      "rules": []
+    },
+    "result": {
+      "engine": "0.1.0",
+      "method": "reference-deviation-and-field-rules-v1",
+      "profiles": {
+        "reading": {
+          "center": 10.0,
+          "scale": 1.4826,
+          "method": "median absolute deviation",
+          "valid_reference_rows": 5,
+          "missing_reference_rows": 0
+        }
+      },
+      "records": [
+        {
+          "row": 1,
+          "session": "all records",
+          "event_id": "1",
+          "time_ms": null,
+          "status": "No finding",
+          "max_deviation": 0.0,
+          "scores": {
+            "reading": 0.0
+          },
+          "evidence": [],
+          "gaps": []
+        },
+        {
+          "row": 2,
+          "session": "all records",
+          "event_id": "2",
+          "time_ms": null,
+          "status": "Review",
+          "max_deviation": 53.95926075812762,
+          "scores": {
+            "reading": 53.95926075812762
+          },
+          "evidence": [
+            {
+              "kind": "deviation",
+              "field": "reading",
+              "value": 90.0,
+              "reference_center": 10.0,
+              "scale": 1.4826,
+              "score": 53.95926075812762,
+              "threshold": 6,
+              "method": "median absolute deviation"
+            }
+          ],
+          "gaps": []
+        }
+      ],
+      "summary": {
+        "total": 2,
+        "Review": 1,
+        "Unknown": 0,
+        "No finding": 1,
+        "rows_with_gaps": 0
+      },
+      "meaning": "Review leads and deviations, not proof of malicious behavior. No measured detection accuracy is available without independent labels."
+    }
+  }
+}

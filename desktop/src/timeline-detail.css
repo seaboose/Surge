@@ -1,0 +1,184 @@
+.survive-inline-help {
+  font-size: 0.86rem;
+  color: #aebfcb;
+}
+.survive-inline-help p {
+  line-height: 1.5;
+  margin: 8px 0;
+  max-width: 85ch;
+}
+.survive-inline-help dl {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 7px 16px;
+  margin: 10px 0;
+}
+.survive-inline-help dd {
+  margin: 0;
+}
+.survive-record-strip .survive-inline-help {
+  margin-top: 5px;
+}
+.survive-session-summary .survive-summary-metrics {
+  margin: 12px 0;
+}
+.survive-timeline-detail {
+  min-width: 0;
+}
+.survive-timeline-heading {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+.survive-timeline-heading > span {
+  color: #aabfcb;
+  font-size: 0.86rem;
+  font-variant-numeric: tabular-nums;
+}
+.survive-timeline-heading h4 {
+  margin: 0;
+}
+.survive-timeline-canvas {
+  min-width: 0;
+}
+.survive-timeline-canvas svg {
+  display: block;
+  max-width: 100%;
+}
+.survive-timeline-canvas svg text {
+  fill: #aec4d0;
+  font-size: 10px;
+}
+.survive-timeline-overview {
+  cursor: crosshair;
+  touch-action: none;
+  margin-top: 10px;
+}
+.survive-overview-bin {
+  fill: #38616f;
+}
+.survive-overview-review {
+  fill: #ffbd63;
+}
+.survive-overview-unknown {
+  fill: #a8aebc;
+}
+.survive-overview-window {
+  fill: #39c5d51a;
+  stroke: #57dae5;
+  stroke-width: 1.5;
+}
+.survive-timeline-actions,
+.survive-timeline-footer {
+  display: flex;
+  gap: 8px 12px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+.survive-timeline-actions {
+  margin: 8px 0 4px;
+}
+.survive-timeline-actions > span,
+.survive-timeline-footer > span {
+  color: #aebfcb;
+  font-size: 0.82rem;
+}
+.survive-timeline-actions button,
+.survive-timeline-footer > button {
+  padding: 5px 9px;
+  font-size: 0.85rem;
+}
+.survive-timeline-footer {
+  padding-top: 8px;
+  border-top: 1px solid #253f49;
+}
+.survive-timeline-footer details {
+  margin: 0;
+}
+.survive-timeline-footer details[open] {
+  flex-basis: 100%;
+}
+.survive-timeline-limited {
+  border-left: 2px solid #a8aebc;
+  padding-left: 10px;
+  color: #c2c8d4;
+  font-size: 0.86rem;
+  line-height: 1.5;
+}
+.survive-timeline-footer .survive-marker-filters {
+  margin: 8px 0;
+}
+.survive-timeline-canvas .survive-cluster-count {
+  fill: #08131b;
+  font-size: 9px;
+  font-weight: 700;
+  pointer-events: none;
+}
+.survive-range-settings {
+  margin: 0;
+}
+.survive-range-settings[open] {
+  flex-basis: 100%;
+}
+.survive-range-settings form {
+  display: flex;
+  align-items: end;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin: 7px 0;
+}
+.survive-range-settings label {
+  display: flex;
+  gap: 5px;
+  align-items: center;
+}
+.survive-range-settings input {
+  width: 7rem;
+  min-width: 0;
+}
+.survive-cluster-list {
+  margin-top: 12px;
+  border: 1px solid #2c4855;
+  border-radius: 6px;
+  padding: 12px;
+}
+.survive-cluster-rows {
+  max-height: 240px;
+  overflow: auto;
+  margin: 8px 0;
+}
+.survive-cluster-rows > button {
+  display: grid;
+  width: 100%;
+  grid-template-columns: 75px minmax(0, 1fr) 90px;
+  gap: 12px;
+  text-align: left;
+  border: 0;
+  border-bottom: 1px solid #243c47;
+  background: #0b1822;
+  padding: 8px;
+  font-size: 0.86rem;
+}
+.survive-cluster-rows > button:hover {
+  background: #18333e;
+}
+.survive-cluster-rows > button > span {
+  overflow-wrap: anywhere;
+}
+.survive-cluster-rows > button > span:first-child,
+.survive-cluster-rows > button > span:last-child {
+  color: #aac3cf;
+  font-variant-numeric: tabular-nums;
+}
+@media (max-width: 600px) {
+  .survive-cluster-rows > button {
+    grid-template-columns: 65px minmax(0, 1fr) 70px;
+    gap: 6px;
+  }
+  .survive-inline-help dl {
+    grid-template-columns: 1fr;
+    gap: 5px;
+  }
+}

@@ -1,0 +1,519 @@
+{
+  "accepted": false,
+  "candidate_created": false,
+  "decision": "Retain the round3 policy. No tested candidate met the development acceptance constraints.",
+  "baseline": {
+    "counts": {
+      "Detected": 9286,
+      "False positive": 175,
+      "Missed": 0,
+      "Clear": 539,
+      "Unresolved": 0,
+      "Unlabeled": 0
+    },
+    "total": 10000,
+    "labeled": 10000,
+    "targets": 9286,
+    "legitimate": 714,
+    "unresolved_targets": 0,
+    "rates": {
+      "precision": {
+        "value": 0.9815030123665575,
+        "numerator": 9286,
+        "denominator": 9461
+      },
+      "recall": {
+        "value": 1.0,
+        "numerator": 9286,
+        "denominator": 9286
+      },
+      "false_positive": {
+        "value": 0.24509803921568626,
+        "numerator": 175,
+        "denominator": 714
+      },
+      "missed": {
+        "value": 0.0,
+        "numerator": 0,
+        "denominator": 9286
+      }
+    }
+  },
+  "baseline_groups": [
+    {
+      "group": "ARP_poisioning",
+      "counts": {
+        "Detected": 656,
+        "False positive": 0,
+        "Missed": 0,
+        "Clear": 0,
+        "Unresolved": 0,
+        "Unlabeled": 0
+      },
+      "total": 656,
+      "labeled": 656,
+      "targets": 656,
+      "legitimate": 0,
+      "unresolved_targets": 0,
+      "rates": {
+        "precision": {
+          "value": 1.0,
+          "numerator": 656,
+          "denominator": 656
+        },
+        "recall": {
+          "value": 1.0,
+          "numerator": 656,
+          "denominator": 656
+        },
+        "false_positive": {
+          "value": null,
+          "numerator": 0,
+          "denominator": 0
+        },
+        "missed": {
+          "value": 0.0,
+          "numerator": 0,
+          "denominator": 656
+        }
+      }
+    },
+    {
+      "group": "DDOS_Slowloris",
+      "counts": {
+        "Detected": 49,
+        "False positive": 0,
+        "Missed": 0,
+        "Clear": 0,
+        "Unresolved": 0,
+        "Unlabeled": 0
+      },
+      "total": 49,
+      "labeled": 49,
+      "targets": 49,
+      "legitimate": 0,
+      "unresolved_targets": 0,
+      "rates": {
+        "precision": {
+          "value": 1.0,
+          "numerator": 49,
+          "denominator": 49
+        },
+        "recall": {
+          "value": 1.0,
+          "numerator": 49,
+          "denominator": 49
+        },
+        "false_positive": {
+          "value": null,
+          "numerator": 0,
+          "denominator": 0
+        },
+        "missed": {
+          "value": 0.0,
+          "numerator": 0,
+          "denominator": 49
+        }
+      }
+    },
+    {
+      "group": "DOS_SYN_Hping",
+      "counts": {
+        "Detected": 7968,
+        "False positive": 0,
+        "Missed": 0,
+        "Clear": 0,
+        "Unresolved": 0,
+        "Unlabeled": 0
+      },
+      "total": 7968,
+      "labeled": 7968,
+      "targets": 7968,
+      "legitimate": 0,
+      "unresolved_targets": 0,
+      "rates": {
+        "precision": {
+          "value": 1.0,
+          "numerator": 7968,
+          "denominator": 7968
+        },
+        "recall": {
+          "value": 1.0,
+          "numerator": 7968,
+          "denominator": 7968
+        },
+        "false_positive": {
+          "value": null,
+          "numerator": 0,
+          "denominator": 0
+        },
+        "missed": {
+          "value": 0.0,
+          "numerator": 0,
+          "denominator": 7968
+        }
+      }
+    },
+    {
+      "group": "MQTT_Publish",
+      "counts": {
+        "Detected": 0,
+        "False positive": 56,
+        "Missed": 0,
+        "Clear": 194,
+        "Unresolved": 0,
+        "Unlabeled": 0
+      },
+      "total": 250,
+      "labeled": 250,
+      "targets": 0,
+      "legitimate": 250,
+      "unresolved_targets": 0,
+      "rates": {
+        "precision": {
+          "value": 0.0,
+          "numerator": 0,
+          "denominator": 56
+        },
+        "recall": {
+          "value": null,
+          "numerator": 0,
+          "denominator": 0
+        },
+        "false_positive": {
+          "value": 0.224,
+          "numerator": 56,
+          "denominator": 250
+        },
+        "missed": {
+          "value": null,
+          "numerator": 0,
+          "denominator": 0
+        }
+      }
+    },
+    {
+      "group": "Metasploit_Brute_Force_SSH",
+      "counts": {
+        "Detected": 3,
+        "False positive": 0,
+        "Missed": 0,
+        "Clear": 0,
+        "Unresolved": 0,
+        "Unlabeled": 0
+      },
+      "total": 3,
+      "labeled": 3,
+      "targets": 3,
+      "legitimate": 0,
+      "unresolved_targets": 0,
+      "rates": {
+        "precision": {
+          "value": 1.0,
+          "numerator": 3,
+          "denominator": 3
+        },
+        "recall": {
+          "value": 1.0,
+          "numerator": 3,
+          "denominator": 3
+        },
+        "false_positive": {
+          "value": null,
+          "numerator": 0,
+          "denominator": 0
+        },
+        "missed": {
+          "value": 0.0,
+          "numerator": 0,
+          "denominator": 3
+        }
+      }
+    },
+    {
+      "group": "NMAP_FIN_SCAN",
+      "counts": {
+        "Detected": 2,
+        "False positive": 0,
+        "Missed": 0,
+        "Clear": 0,
+        "Unresolved": 0,
+        "Unlabeled": 0
+      },
+      "total": 2,
+      "labeled": 2,
+      "targets": 2,
+      "legitimate": 0,
+      "unresolved_targets": 0,
+      "rates": {
+        "precision": {
+          "value": 1.0,
+          "numerator": 2,
+          "denominator": 2
+        },
+        "recall": {
+          "value": 1.0,
+          "numerator": 2,
+          "denominator": 2
+        },
+        "false_positive": {
+          "value": null,
+          "numerator": 0,
+          "denominator": 0
+        },
+        "missed": {
+          "value": 0.0,
+          "numerator": 0,
+          "denominator": 2
+        }
+      }
+    },
+    {
+      "group": "NMAP_OS_DETECTION",
+      "counts": {
+        "Detected": 167,
+        "False positive": 0,
+        "Missed": 0,
+        "Clear": 0,
+        "Unresolved": 0,
+        "Unlabeled": 0
+      },
+      "total": 167,
+      "labeled": 167,
+      "targets": 167,
+      "legitimate": 0,
+      "unresolved_targets": 0,
+      "rates": {
+        "precision": {
+          "value": 1.0,
+          "numerator": 167,
+          "denominator": 167
+        },
+        "recall": {
+          "value": 1.0,
+          "numerator": 167,
+          "denominator": 167
+        },
+        "false_positive": {
+          "value": null,
+          "numerator": 0,
+          "denominator": 0
+        },
+        "missed": {
+          "value": 0.0,
+          "numerator": 0,
+          "denominator": 167
+        }
+      }
+    },
+    {
+      "group": "NMAP_TCP_scan",
+      "counts": {
+        "Detected": 83,
+        "False positive": 0,
+        "Missed": 0,
+        "Clear": 0,
+        "Unresolved": 0,
+        "Unlabeled": 0
+      },
+      "total": 83,
+      "labeled": 83,
+      "targets": 83,
+      "legitimate": 0,
+      "unresolved_targets": 0,
+      "rates": {
+        "precision": {
+          "value": 1.0,
+          "numerator": 83,
+          "denominator": 83
+        },
+        "recall": {
+          "value": 1.0,
+          "numerator": 83,
+          "denominator": 83
+        },
+        "false_positive": {
+          "value": null,
+          "numerator": 0,
+          "denominator": 0
+        },
+        "missed": {
+          "value": 0.0,
+          "numerator": 0,
+          "denominator": 83
+        }
+      }
+    },
+    {
+      "group": "NMAP_UDP_SCAN",
+      "counts": {
+        "Detected": 199,
+        "False positive": 0,
+        "Missed": 0,
+        "Clear": 0,
+        "Unresolved": 0,
+        "Unlabeled": 0
+      },
+      "total": 199,
+      "labeled": 199,
+      "targets": 199,
+      "legitimate": 0,
+      "unresolved_targets": 0,
+      "rates": {
+        "precision": {
+          "value": 1.0,
+          "numerator": 199,
+          "denominator": 199
+        },
+        "recall": {
+          "value": 1.0,
+          "numerator": 199,
+          "denominator": 199
+        },
+        "false_positive": {
+          "value": null,
+          "numerator": 0,
+          "denominator": 0
+        },
+        "missed": {
+          "value": 0.0,
+          "numerator": 0,
+          "denominator": 199
+        }
+      }
+    },
+    {
+      "group": "NMAP_XMAS_TREE_SCAN",
+      "counts": {
+        "Detected": 159,
+        "False positive": 0,
+        "Missed": 0,
+        "Clear": 0,
+        "Unresolved": 0,
+        "Unlabeled": 0
+      },
+      "total": 159,
+      "labeled": 159,
+      "targets": 159,
+      "legitimate": 0,
+      "unresolved_targets": 0,
+      "rates": {
+        "precision": {
+          "value": 1.0,
+          "numerator": 159,
+          "denominator": 159
+        },
+        "recall": {
+          "value": 1.0,
+          "numerator": 159,
+          "denominator": 159
+        },
+        "false_positive": {
+          "value": null,
+          "numerator": 0,
+          "denominator": 0
+        },
+        "missed": {
+          "value": 0.0,
+          "numerator": 0,
+          "denominator": 159
+        }
+      }
+    },
+    {
+      "group": "Thing_Speak",
+      "counts": {
+        "Detected": 0,
+        "False positive": 104,
+        "Missed": 0,
+        "Clear": 345,
+        "Unresolved": 0,
+        "Unlabeled": 0
+      },
+      "total": 449,
+      "labeled": 449,
+      "targets": 0,
+      "legitimate": 449,
+      "unresolved_targets": 0,
+      "rates": {
+        "precision": {
+          "value": 0.0,
+          "numerator": 0,
+          "denominator": 104
+        },
+        "recall": {
+          "value": null,
+          "numerator": 0,
+          "denominator": 0
+        },
+        "false_positive": {
+          "value": 0.23162583518930957,
+          "numerator": 104,
+          "denominator": 449
+        },
+        "missed": {
+          "value": null,
+          "numerator": 0,
+          "denominator": 0
+        }
+      }
+    },
+    {
+      "group": "Wipro_bulb",
+      "counts": {
+        "Detected": 0,
+        "False positive": 15,
+        "Missed": 0,
+        "Clear": 0,
+        "Unresolved": 0,
+        "Unlabeled": 0
+      },
+      "total": 15,
+      "labeled": 15,
+      "targets": 0,
+      "legitimate": 15,
+      "unresolved_targets": 0,
+      "rates": {
+        "precision": {
+          "value": 0.0,
+          "numerator": 0,
+          "denominator": 15
+        },
+        "recall": {
+          "value": null,
+          "numerator": 0,
+          "denominator": 0
+        },
+        "false_positive": {
+          "value": 1.0,
+          "numerator": 15,
+          "denominator": 15
+        },
+        "missed": {
+          "value": null,
+          "numerator": 0,
+          "denominator": 0
+        }
+      }
+    }
+  ],
+  "baseline_long_duration": {
+    "records": 40,
+    "false_positives": 7,
+    "unresolved": 0,
+    "cutoff": 62.049075
+  },
+  "diagnosis": [
+    "Five IRC Wipro development rows use a global fallback because their reference group has only seven rows, below the generic minimum20.",
+    "Four DNS Wipro rows have payload31 against reference median36 and zero MAD; the existing explicit relative tolerance is narrow.",
+    "Five SSL Wipro rows differ from their grouped duration/payload profiles; one additional TCP/no-service row has an undersupported reference group.",
+    "Clearing a fallback finding can create Unknown, which is unresolved evidence and must not be counted as a false-positive improvement."
+  ],
+  "limitations": [
+    "Bounded searches do not prove that no effective detector is possible.",
+    "Fifteen Wipro development rows provide weak coverage; repeatedly reused development data can overfit.",
+    "Port grouping was explored as untrusted reference context only; no identity/class allowlist or label-based runtime branch exists.",
+    "Prototype metrics do not establish production feature support or independent-capture/game/AI effectiveness."
+  ],
+  "original_artifact_sha256": "1fe83fe2bcd8c1dd70f65c1deddcfd6c9f5dbc79e62b844ddf40491bb60a78e3"
+}

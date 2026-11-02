@@ -1,0 +1,132 @@
+{
+  "schema": "surge-windows-package-consumer-v1",
+  "status": "passed",
+  "started": "2026-11-02T00:49:21.118575+00:00",
+  "finished": "2026-11-02T00:50:51.675226+00:00",
+  "elapsed_seconds": 90.557,
+  "limits": {
+    "total_seconds": 600,
+    "action_seconds": 30,
+    "shutdown_seconds": 15,
+    "startup_failure_seconds": 10,
+    "archive_bytes": 268435456,
+    "expanded_bytes": 805306368,
+    "files": 10000,
+    "input_bytes": 262144,
+    "log_bytes": 20971520,
+    "evidence_bytes": 134217728
+  },
+  "criteria": {
+    "W2": "passed",
+    "W3": "passed",
+    "W4": "passed",
+    "W5": "passed",
+    "W6": "passed"
+  },
+  "human_acceptance": "pending",
+  "limitations": [
+    "Automated owned-fixture check, not unfamiliar-user acceptance.",
+    "Native file dialogs select owned fixtures through main-process substitution.",
+    "Hosted tools are present; application lookup and runtime paths are isolated, not physically absent.",
+    "Identical ZIP folder replacement is not cross-version migration, an installer, or power-loss testing.",
+    "No Authenticode/SmartScreen reputation or pristine physical Windows desktop claim.",
+    "Separate standard-user hosted account launch is not verified; actual child token elevation is recorded."
+  ],
+  "archive": {
+    "name": "Surge-Survive-0.4.3-d4b50eb-dirty-windows-x64.zip",
+    "bytes": 398416618,
+    "sha256": "dc135a0348a3ee85b9360b0e7151230df419d79436b0f79658134b1a9048c005"
+  },
+  "manifest_sha256": "53c31dbe09c869f4134ba5ed89be7ff4ec4406612cdda96a9c31a7b18f04db51",
+  "harness_source_unchanged": true,
+  "harness_source_matches_package": false,
+  "steps": [
+    {
+      "name": "package_identity",
+      "status": "passed",
+      "seconds": 4.003
+    },
+    {
+      "name": "extract_primary",
+      "status": "passed",
+      "seconds": 4.891
+    },
+    {
+      "name": "packaged_journey",
+      "status": "passed",
+      "seconds": 18.026
+    },
+    {
+      "name": "extract_replacement",
+      "status": "passed",
+      "seconds": 4.829
+    },
+    {
+      "name": "packaged_replacement",
+      "status": "passed",
+      "seconds": 8.624
+    },
+    {
+      "name": "approval_mismatch",
+      "status": "passed",
+      "seconds": 18.578
+    },
+    {
+      "name": "missing_runtime",
+      "status": "passed",
+      "seconds": 3.157
+    },
+    {
+      "name": "missing_backend",
+      "status": "passed",
+      "seconds": 2.7
+    },
+    {
+      "name": "missing_sample",
+      "status": "passed",
+      "seconds": 2.64
+    },
+    {
+      "name": "immutable_payloads",
+      "status": "passed",
+      "seconds": 22.702
+    }
+  ],
+  "harness_source": [
+    {
+      "path": "harness-source/scripts/check_windows_package.py",
+      "bytes": 45884,
+      "sha256": "8db039ec782d22de3c2b399c7f74f1e25ac911da0c62c3938448838d36de0e57"
+    },
+    {
+      "path": "harness-source/desktop/packaged.test.cjs",
+      "bytes": 18109,
+      "sha256": "d7854390d951fb7485d11556c257cfafea4173c6e7ba4754194b0e55283b59e3"
+    },
+    {
+      "path": "harness-source/scripts/check_launcher.py",
+      "bytes": 14980,
+      "sha256": "201563613354fa21b0f28624ea8213dfb20ed49bd369f1f9339c1ddc86f90695"
+    },
+    {
+      "path": "harness-source/scripts/verify_windows_consumer.py",
+      "bytes": 979,
+      "sha256": "11b776ec7af9564ba99b605d0d67946abe8c8ad197cfe8fd8b487af9865894ae"
+    },
+    {
+      "path": "harness-source/scripts/release_files.py",
+      "bytes": 2762,
+      "sha256": "1e67d086150c2872940f53b5443d6faffa9101469d3ebab915828a0715a316b6"
+    },
+    {
+      "path": "harness-source/scripts/windows_owned_processes.py",
+      "bytes": 5391,
+      "sha256": "150581c0e14e77f8fa9bbd68b5d2daac99b6ec44ceefe9753d281e338294b1dd"
+    },
+    {
+      "path": "harness-source/scripts/survive_package.py",
+      "bytes": 10020,
+      "sha256": "4d7ee0c01b2de16d5b61f6baf943d9bc6fee8f4bba526677fc16bbb2bc1a5c73"
+    }
+  ]
+}

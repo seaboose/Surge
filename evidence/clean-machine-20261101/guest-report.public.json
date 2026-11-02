@@ -1,0 +1,74 @@
+{
+  "schema": "surge-clean-windows-qualification-v1",
+  "status": "passed",
+  "clean_machine_qualified": true,
+  "mode": "clean-windows-guest",
+  "created_utc": "2026-11-02T00:44:45.449083+00:00",
+  "steps": [
+    {
+      "name": "gameplay-to-report",
+      "status": "passed",
+      "receipt": "s\\consumer-f1fd896e7b26\\report.json",
+      "sha256": "99cb2a0f2acdd1846aa2d4cfa07a50b448fa4d4154d974e6901d698737536e06"
+    },
+    {
+      "name": "original-import-native",
+      "status": "passed",
+      "receipt": "n\\windows-consumer-fa40a8596735\\artifacts\\report.json",
+      "sha256": "4fdea68a161d37cadc31efddc338cd83f4905dad51ae824525e14b34abe65830"
+    }
+  ],
+  "limits": [
+    "Operator-declared fresh provisioning is not cryptographic attestation",
+    "Absence checks cover PATH, installed-product registration and known engine roots, not an exhaustive disk scan",
+    "Automated practice controls are not human or unfamiliar-user acceptance"
+  ],
+  "product_sha256": "dc135a0348a3ee85b9360b0e7151230df419d79436b0f79658134b1a9048c005",
+  "tooling_manifest_sha256": "3c99a795c45f2ed509dffeae57e484340fbbff14f7d4e4a471c2323fcd32ac3e",
+  "clean_precondition_issues": [],
+  "supervisor_runtime": {
+    "node": "24.22.0",
+    "electron": "44.9.1"
+  },
+  "elapsed_seconds": 368.399,
+  "environment": {
+    "os": {
+      "caption": "Microsoft Windows 11 Enterprise Evaluation",
+      "architecture": "64-bit",
+      "build": "26300",
+      "version": "10.0.26300"
+    },
+    "machine": {
+      "manufacturer": "VMware, Inc.",
+      "hypervisor_present": true,
+      "model": "VMware20,1"
+    },
+    "graphics": [
+      {
+        "Name": "VMware SVGA 3D",
+        "DriverVersion": "9.17.11.4"
+      }
+    ],
+    "installed_developer_products": [],
+    "installed_store_developer_products": [],
+    "known_engine_roots": [],
+    "registered_engines": [],
+    "windows_sandbox_available": false,
+    "hyperv_management_available": false,
+    "path_commands": [
+      {
+        "Name": "python.exe",
+        "windows_store_alias": true
+      },
+      {
+        "Name": "python3.exe",
+        "windows_store_alias": true
+      }
+    ]
+  },
+  "provisioning": {
+    "provisioning": "fresh-vm",
+    "image": "Windows 11 Enterprise Evaluation x64; verified ISO bc3f24086ebadc94489066b5ad78089e2cf5c3491e90e790bb81a2b199c10e38; fresh VMware guest",
+    "created_utc": "2026-11-01T20:43:34Z"
+  }
+}

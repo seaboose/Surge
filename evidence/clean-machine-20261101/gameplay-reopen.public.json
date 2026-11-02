@@ -1,0 +1,31 @@
+{
+  "schema": "surge-survive-packaged-ui-v1",
+  "status": "passed",
+  "mode": "reopen",
+  "elapsed_seconds": 5.598,
+  "renderer_errors": [],
+  "limitations": [
+    "Test tooling uses developer Playwright; application, Python and game come only from the extracted package.",
+    "Native save dialogs select a dedicated output through main-process substitution.",
+    "Automated practice sessions are not a human baseline or unfamiliar-user usability study.",
+    "This host has development tools installed; clean-environment/path checks are not a fresh-machine acceptance test."
+  ],
+  "checks": [
+    {
+      "name": "application and Python use extracted runtimes with isolated renderer",
+      "status": "passed",
+      "milliseconds": 1053
+    },
+    {
+      "name": "replacement package reopens existing recordings and exact report revisions",
+      "status": "passed",
+      "milliseconds": 3611
+    },
+    {
+      "name": "no renderer exceptions and graceful owned shutdown",
+      "status": "passed",
+      "milliseconds": 120
+    }
+  ],
+  "trial_count": 0
+}

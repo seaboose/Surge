@@ -1,0 +1,14 @@
+{
+  "features": [],
+  "session": "session_id",
+  "event_id": "event_id",
+  "time": "elapsed_s",
+  "time_format": "seconds",
+  "time_origin": "elapsed",
+  "threshold": 3,
+  "rules": [{
+    "name": "Server displacement exceeds walking envelope",
+    "field": "excess_cm", "op": "gt", "value": 0,
+    "priority": "Warning"
+  }]
+}
