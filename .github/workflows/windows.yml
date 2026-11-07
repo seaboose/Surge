@@ -1,0 +1,64 @@
+name: Windows release checks
+on:
+  push:
+    branches: [validation]
+permissions:
+  contents: read
+jobs:
+  windows:
+    runs-on: windows-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          path: kit
+          persist-credentials: false
+      - name: Read the matching software revision
+        id: source
+        shell: pwsh
+        run: |
+          $commit = (Get-Content kit/validation/product-commit.txt -Raw).Trim()
+          if ($commit -notmatch '^[a-f0-9]{40}$') { throw 'Invalid revision' }
+          "commit=$commit" >> $env:GITHUB_OUTPUT
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ steps.source.outputs.commit }}
+          path: product
+          persist-credentials: false
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065
+        with:
+          python-version: '3.12'
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+        with:
+          node-version: '24'
+      - uses: pnpm/action-setup@b906affcce14559ad1aafd4ab0e942779e9f58b1
+        with:
+          version: '11.25.0'
+          run_install: false
+      - name: Build the software-only checkout
+        working-directory: product/desktop
+        run: |
+          pnpm install --frozen-lockfile --ignore-scripts
+          if ($LASTEXITCODE) { exit $LASTEXITCODE }
+          pnpm run build
+      - name: Restore the matching tests
+        shell: pwsh
+        run: |
+          $zip = 'kit/validation/Surge-validation-addon.zip'
+          $expected = (Get-Content kit/validation/checksums.txt -Raw).Split(' ')[0]
+          if ((Get-FileHash $zip).Hash -ne $expected) { throw 'Kit checksum differs' }
+          Expand-Archive $zip kit/unpacked
+          Copy-Item -Path kit/unpacked/Surge/* -Destination product -Recurse -Force
+      - name: Check recording and evidence storage
+        working-directory: product
+        run: python -B -m unittest test_survive_investigations test_survive_investigation_integration
+      - name: Check replay and report navigation
+        working-directory: product/desktop
+        shell: pwsh
+        run: |
+          pnpm install --frozen-lockfile
+          if ($LASTEXITCODE) { exit $LASTEXITCODE }
+          node node_modules/electron/install.js
+          if ($LASTEXITCODE) { exit $LASTEXITCODE }
+          $env:SURGE_PYTHON = (Get-Command python).Source
+          node investigations.test.cjs
