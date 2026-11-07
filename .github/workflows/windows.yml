@@ -47,18 +47,25 @@ jobs:
           $zip = 'kit/validation/Surge-validation-addon.zip'
           $expected = (Get-Content kit/validation/checksums.txt -Raw).Split(' ')[0]
           if ((Get-FileHash $zip).Hash -ne $expected) { throw 'Kit checksum differs' }
+          git -C product archive --format=zip --output=../kit/source.zip HEAD
+          if ($LASTEXITCODE) { exit $LASTEXITCODE }
+          Expand-Archive kit/source.zip checked
           Expand-Archive $zip kit/unpacked
-          Copy-Item -Path kit/unpacked/Surge/* -Destination product -Recurse -Force
+          python -c "import shutil; shutil.copytree('kit/unpacked/Surge', 'checked', dirs_exist_ok=True)"
+          if ($LASTEXITCODE) { exit $LASTEXITCODE }
+          if (-not (Get-Content checked/desktop/package.json -Raw | ConvertFrom-Json).devDependencies.playwright) { throw 'Missing test dependencies' }
       - name: Check recording and evidence storage
-        working-directory: product
+        working-directory: checked
         run: python -B -m unittest test_survive_investigations test_survive_investigation_integration
       - name: Check replay and report navigation
-        working-directory: product/desktop
+        working-directory: checked/desktop
         shell: pwsh
         run: |
           pnpm install --frozen-lockfile
           if ($LASTEXITCODE) { exit $LASTEXITCODE }
           node node_modules/electron/install.js
+          if ($LASTEXITCODE) { exit $LASTEXITCODE }
+          pnpm run build
           if ($LASTEXITCODE) { exit $LASTEXITCODE }
           $env:SURGE_PYTHON = (Get-Command python).Source
           node investigations.test.cjs
