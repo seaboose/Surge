@@ -2,7 +2,7 @@
 
 Capture telemetry and investigate behavior on Windows. Open evidence, start a capture, or try a demo with the included Survive game or code integrity examples.
 
-**[Download Surge for Windows](https://github.com/seaboose/Surge/releases/download/v0.4.5/Surge-0.4.5-Windows-x64.zip)** · **[Watch the demo](https://seaboose.me/surge.html)** · **[Screenshot tour](https://seaboose.github.io/Surge/)**
+**[Download Surge for Windows](https://github.com/seaboose/Surge/releases/download/v0.4.5/Surge-0.4.5-Windows-x64.zip)** · **[Watch the demo](https://seaboose.me/investigation/#recorded-tour)** · **[Screenshot tour](https://seaboose.github.io/Surge/)**
 
 Extract the full ZIP and open **Surge.exe**.
 

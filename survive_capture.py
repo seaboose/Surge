@@ -36,7 +36,19 @@ GUID = re.compile(r"^[a-fA-F0-9]{32}$")
 RECORDING = re.compile(r"^[a-f0-9]{32}$")
 EXAMPLE_ID = "d126ce6b03854c9aae7e4e10b9460a45"
 EXAMPLE_PATH = ROOT / "demos" / "survive" / "standard-example.jsonl"
-PROFILE_IDS = frozenset({"survive-lucian-practice-v1", "survive-lucian-reference-v1"})
+# The original Windows package and source checkouts shipped these exact CRLF
+# and LF copies. Both define the same settings; their hashes appear in evidence.
+REVIEWED_PROFILE_HASHES = {
+    "survive-lucian-practice-v1": frozenset({
+        "52b6844a3881b64d0bdcbce021becaf8f25733ebb0d71d94f37e15b6e61a46de",
+        "4eff3b341dbf08c2e03efbac94b25123bcb752456b07c35671af9224d8570b91",
+    }),
+    "survive-lucian-reference-v1": frozenset({
+        "77201baca60f06cd072fc65bce8ef57e90169bdd983047b8044a834c56c20727",
+        "dd4fe00bd43b50af86d6ae2c05b93f22d16f393ffda8f6e13a74cfce7ce7b0ae",
+    }),
+}
+PROFILE_IDS = frozenset(REVIEWED_PROFILE_HASHES)
 _ADAPTER_LOCK = threading.Lock()
 _ADAPTERS = None
 
@@ -163,6 +175,8 @@ def _profile(profile_id):
     raw = _read(LAB / "profiles" / (profile_id + ".json"), 128 * 1024)
     if _sha(raw) != profile["file_sha256"]:
         raise ValueError("Profile changed while opening the recording")
+    if profile["file_sha256"] not in REVIEWED_PROFILE_HASHES[profile_id]:
+        raise ValueError("Local profile differs from reviewed bytes")
     policy = _read(TELEMETRY / "survive-policy.json", 64 * 1024)
     return profile, raw, policy
 
@@ -743,9 +757,12 @@ class CaptureManager:
             files[name] = _read(directory / name, maximum)
             if not isinstance(expected, str) or _sha(files[name]) != expected:
                 raise ValueError("Recording bytes differ from the saved fingerprint")
-        profile, profile_raw, policy_raw = _profile(capture.get("profile_id"))
-        if files["profile.json"] != profile_raw or files["policy.json"] != policy_raw:
+        profile, _, policy_raw = _profile(capture.get("profile_id"))
+        stored_profile_hash = manifest["files_sha256"]["profile.json"]
+        if stored_profile_hash not in REVIEWED_PROFILE_HASHES[profile["id"]] or files["policy.json"] != policy_raw:
             raise ValueError("Saved profile or policy differs from reviewed local bytes")
+        # Derived rows and summaries include the fingerprint that was recorded.
+        profile = dict(profile, file_sha256=stored_profile_hash)
         source_id = capture.get("source_id")
         rows = []
         raw = files["source.jsonl"]
@@ -769,7 +786,7 @@ class CaptureManager:
                 break
         if len(rows) != capture.get("records") or _sha(raw) != capture.get("source_sha256") or len(raw) != capture.get("bytes"):
             raise ValueError("Saved recording totals differ from source bytes")
-        if capture.get("profile_sha256") != _sha(profile_raw):
+        if capture.get("profile_sha256") != stored_profile_hash:
             raise ValueError("Saved profile fingerprint differs from reviewed bytes")
         if capture.get("session_id") != (rows[0]["session_id"] if rows else None):
             raise ValueError("Saved session identity differs from source records")
@@ -835,8 +852,8 @@ class CaptureManager:
         if cached["analysis_identity"] != identity:
             raise ValueError("Analysis code changed since verification; versioned reanalysis is required")
         self._verify_files(recording_id, cached["hashes"], "Recording changed since verification")
-        _, profile_raw, policy_raw = _profile(cached["summary"]["capture"]["profile_id"])
-        if _sha(profile_raw) != cached["hashes"]["profile.json"] or _sha(policy_raw) != cached["hashes"]["policy.json"]:
+        profile, _, policy_raw = _profile(cached["summary"]["capture"]["profile_id"])
+        if cached["hashes"]["profile.json"] not in REVIEWED_PROFILE_HASHES[profile["id"]] or _sha(policy_raw) != cached["hashes"]["policy.json"]:
             raise ValueError("Reviewed profile or policy changed since verification")
 
     def verified_summaries(self, max_new=4):
