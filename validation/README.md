@@ -2,7 +2,7 @@
 
 These files are for contributors who want to run the tests or inspect earlier qualification results.
 
-1. Download the [matching software source](https://github.com/seaboose/Surge/archive/bfd63904cdde76b8d792703bda179dbc91bf3c26.zip) and extract it.
+1. Download the [matching software source](https://github.com/seaboose/Surge/archive/8ec22fafec65c70f8150de9044ec51bb5c6dcfb1.zip) and extract it.
 2. Extract [the validation kit](Surge-validation-addon.zip) beside it. Copy the contents of the kit’s `Surge/` folder over the software source.
 3. Follow `docs/development.md` in that combined folder.
 

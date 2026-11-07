@@ -56,7 +56,7 @@ jobs:
           if (-not (Get-Content checked/desktop/package.json -Raw | ConvertFrom-Json).devDependencies.playwright) { throw 'Missing test dependencies' }
       - name: Check recording and evidence storage
         working-directory: checked
-        run: python -B -m unittest test_survive_investigations test_survive_investigation_integration
+        run: python -B -m unittest test_survive_capture.RecorderTests.test_reviewed_profile_line_endings_preserve_recordings_and_reject_other_bytes test_survive_investigations test_survive_investigation_integration
       - name: Check replay and report navigation
         working-directory: checked/desktop
         shell: pwsh
