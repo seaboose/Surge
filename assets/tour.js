@@ -1,5 +1,31 @@
 "use strict";
-const steps=[{"key": "play", "title": "Set up a round", "caption": "Choose a movement profile and seed. Survive provides right-click movement, dashes, blinks and mixed attack patterns."}, {"key": "record", "title": "Retain the observations", "caption": "Watch recording health and incoming events. Recording and gameplay have separate lifecycles; partial evidence stays identifiable."}, {"key": "review", "title": "Inspect a finding", "caption": "Compare observed movement with the configured constraint. Select the finding to connect replay time with its exact source record."}, {"key": "explain", "title": "Explain the evidence", "caption": "Attach the selection to a report. Keep observations, alternatives and conclusions separate, then save a revision."}, {"key": "export", "title": "Share a verifiable report", "caption": "Export a self-contained report. Citations identify retained evidence; a finding is a reason to review, not proof of cheating."}];
+const steps=[
+  {
+    "key": "play",
+    "title": "Set up a round",
+    "caption": "Choose an alias, a practice profile and a seed in Play & record."
+  },
+  {
+    "key": "record",
+    "title": "Watch the recorder",
+    "caption": "The recorder receives the original trial data. At 20 seconds, it has received 694 records."
+  },
+  {
+    "key": "review",
+    "title": "Inspect a finding",
+    "caption": "At 20.006 seconds, compare the recorded movement with its allowance."
+  },
+  {
+    "key": "explain",
+    "title": "Open the evidence card",
+    "caption": "Attached as E1 opens the cited card. Back to replay returns to the same moment."
+  },
+  {
+    "key": "export",
+    "title": "Export the report",
+    "caption": "Check the evidence, review the draft status and export the HTML report."
+  }
+];
 const buttons=[...document.querySelectorAll('.tournav button')];
 const toggle=document.getElementById('autoplay');
 let selected=0,timer=null;
