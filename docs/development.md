@@ -1,43 +1,47 @@
-# Development
+# Build and run
 
-The repository contains the app, game source, tests, and build tools. The Windows
-release contains the runnable app and game. Keep private recordings, installed
-dependencies, and generated output outside published source.
+This source distribution contains the software and its build dependencies.
+It does not contain the validation suite. Installing build dependencies does not
+install them into the packaged application.
 
-## Set up on Windows
+## Desktop
 
-Install Python 3.11+ with Tcl/Tk, Node.js 22.12+, and pnpm 11.25.0. Run:
+Use Windows, Python 3.11+, Node.js 22.12+, and pnpm 11.25.0:
 
 ```powershell
 powershell -NoProfile -ExecutionPolicy Bypass -File .\Setup-Surge.ps1
 .\Start-Surge.cmd
 ```
 
-Native checks need [CMake and Microsoft C++ tools](../native/README.md).
-Rebuilding Survive needs [Unreal Engine 5.8.4](../unreal/SurgeMovementLab/README.md).
-The packaged application needs neither toolchain.
+After changing the interface, run `pnpm --dir desktop build`.
+`pnpm --dir desktop dev` enables source maps and the development inspector.
+Generated dependencies and build output stay outside Git.
 
-## Run checks
+## Capture and game
+
+Build and approve the owned native sample using [native/README.md](../native/README.md).
+Build Survive with the documented Unreal toolchain in
+[its source guide](../unreal/SurgeMovementLab/README.md).
+Existing capture, import, replay, report, and comparison functionality remains
+part of this distribution. Compatibility adapters are required dependencies.
+
+## Windows distribution
+
+Build from a clean committed checkout. The package command needs the Microsoft
+C++ tools, Windows SDK, CMake, and the installed desktop build dependencies:
 
 ```powershell
-.\.venv\Scripts\python.exe -B scripts/test.py
-.\.venv\Scripts\python.exe -B scripts/verify_native_demo.py
-pnpm --dir desktop test
-.\.venv\Scripts\python.exe -B scripts/check_release.py
+python scripts/build_windows_package.py --without-backend-tests
 ```
 
-Windows CI runs the wider native, desktop, model, and package checks. See
-[qualification](qualification.md) and [package checks](windows-package-check.md)
-for local prerequisites. Use `pnpm --dir desktop dev` for the UI inspector and
-source maps; the product does not include those development controls.
+To include Survive, first build its standalone game and pass that build's attempt
+directory with `--survive-build <attempt-directory>`. See
+[runtime packaging](runtime-release-scope.md).
 
-## Make a change
+`--without-backend-tests` explicitly records that the separate backend validation
+suite was not run. Package construction is not release qualification. The builder
+still verifies runtime hashes, builds the renderer/native inputs, and checks an
+ordinary capture. Use the matching validation kit before publishing a release.
 
-Create a focused branch such as `feature/report-layout` or `fix/replay-selection`.
-Keep changes small, run the relevant checks, and explain the result in the commit.
-Use the [code guide](code-map.md) to locate each responsibility.
-
-Only reviewed paths in `scripts/source-files.txt` enter source packages. Update
-that sorted list when adding or removing source. Packaging rejects missing files,
-duplicates, links, and paths outside the project. An exported source package works
-without Git. Follow the [release checklist](release-checklist.md) before publishing.
+The kit restores tests, their development dependencies, and the complete source
+manifest. Use its recorded product fingerprint; do not mix different versions.

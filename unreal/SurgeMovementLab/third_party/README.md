@@ -2,7 +2,8 @@
 
 Only the ideal linear dodge-window calculation from `evaluate()` in
 [dcass5212/lol-dodge-calc index.html](https://github.com/dcass5212/lol-dodge-calc/blob/af8c5d40ff8eda343cc0e80af27f4304cf9343d5/index.html)
-is adapted in `../telemetry/dodge_window.py`. Upstream commit:
+is adapted in the calibration helper `telemetry/dodge_window.py`, which is
+distributed in the separate validation kit and is not a runtime dependency. Upstream commit:
 `af8c5d40ff8eda343cc0e80af27f4304cf9343d5`; reviewed October 25, 2026.
 The complete MIT notice is retained alongside this file. No upstream scripts,
 dependencies, game assets or repository setup commands were executed.

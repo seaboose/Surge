@@ -1,9 +1,14 @@
 import React, { useRef, useState } from "react";
 
-const DEFAULT = 55;
+const DEFAULT = 65;
 const clamp = (value) => Math.min(65, Math.max(35, value));
 
-export default function ResizableReview({ replay, evidence }) {
+export default function ResizableReview({
+  header,
+  replay,
+  timeline,
+  evidence,
+}) {
   const container = useRef(null);
   const [ratio, setRatio] = useState(DEFAULT);
   const [dragging, setDragging] = useState(false);
@@ -14,11 +19,11 @@ export default function ResizableReview({ replay, evidence }) {
   }
   return (
     <section
-      className="survive-split-review"
+      className="survive-panel survive-split-review survive-replay-studio"
       aria-label="Replay and evidence layout"
     >
       <div className="survive-layout-tools">
-        <small>Replay and selected evidence</small>
+        {header}
         <button onClick={() => setRatio(DEFAULT)}>Reset review layout</button>
       </div>
       <div
@@ -26,7 +31,10 @@ export default function ResizableReview({ replay, evidence }) {
         className="survive-review-grid"
         style={{ "--replay-share": `${ratio}%` }}
       >
-        <div className="survive-replay-pane">{replay}</div>
+        <div className="survive-replay-pane">
+          {replay}
+          {timeline}
+        </div>
         <div
           className="survive-resize-handle"
           role="separator"

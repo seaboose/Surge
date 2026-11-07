@@ -1,19 +1,35 @@
 import React, { useEffect, useRef, useState } from "react";
 import "./investigation-flow.css";
 import {
+  attachedEvidenceId,
   editableInvestigation,
+  findVisitedEvidence,
   formatEvidenceNumber as number,
   reportReadiness,
+  sameEvidenceSelection,
 } from "./survive/investigation-model.mjs";
 import {
   NarrativePreview,
   EvidenceCard,
 } from "./survive/InvestigationEvidence.jsx";
-import { NarrativeEditor, RevisionControls } from "./survive/ReportEditor.jsx";
+import { Info } from "./Info.jsx";
+import {
+  NarrativeEditor,
+  ReportField,
+  RevisionControls,
+} from "./survive/ReportEditor.jsx";
 import InvestigationReadiness from "./survive/InvestigationReadiness.jsx";
 
+const NEW_REPORT = "new";
 const OPERATION_WAIT =
   "Wait for the investigation operation to finish before leaving.";
+function recordingCaption(record) {
+  const id = record.recording_id.slice(0, 12);
+  return record.display_name && record.display_name !== id
+    ? `${record.display_name} (${id})`
+    : id;
+}
+
 async function api(method, args = {}) {
   const reply = await window.surge.request(method, args);
   if (!reply?.ok)
@@ -27,6 +43,8 @@ export default function SurviveInvestigations({
   leaveGuardRef,
   openRequest = 0,
   attachRequest = null,
+  cardVisit = null,
+  onReturnToReplay,
   onWorkflowState,
   viewMode = "explain",
   onRequestStage,
@@ -38,6 +56,8 @@ export default function SurviveInvestigations({
   const [loaded, setLoaded] = useState(null);
   const [form, setForm] = useState(null);
   const [base, setBase] = useState("");
+  const [creating, setCreating] = useState(false);
+  const [newAttachment, setNewAttachment] = useState(null);
   const [newTitle, setNewTitle] = useState("Movement investigation");
   const [newAuthor, setNewAuthor] = useState("");
   const [error, setError] = useState("");
@@ -55,6 +75,15 @@ export default function SurviveInvestigations({
   workflowCallback.current = onWorkflowState;
   const document = loaded?.document;
   const evidence = document?.evidence || [];
+  const visitedCard =
+    viewMode === "explain" &&
+    !creating &&
+    findVisitedEvidence(
+      cardVisit,
+      document?.investigation_id,
+      document?.revision,
+      evidence,
+    );
   const choices =
     document &&
     !inventory.some(
@@ -67,6 +96,8 @@ export default function SurviveInvestigations({
   const dirty = Boolean(form && JSON.stringify(form) !== base);
   const verification = loaded?.verification;
   const attachmentSelection = pendingSelection || selection;
+  const attachedId = attachedEvidenceId(evidence, attachmentSelection);
+  const newEvidence = newAttachment || attachmentSelection;
   const canAttach = Boolean(
     attachmentSelection?.recording_id &&
     Number.isInteger(attachmentSelection.seq) &&
@@ -95,6 +126,17 @@ export default function SurviveInvestigations({
             ready,
             dirty,
             investigationId: document?.investigation_id || null,
+            revision: creating ? null : (document?.revision ?? null),
+            evidence: creating
+              ? []
+              : (document?.evidence || []).map(
+                  ({ evidence_id, recording_id, seq, constraint_id }) => ({
+                    evidence_id,
+                    recording_id,
+                    seq,
+                    constraint_id,
+                  }),
+                ),
           }
         : null;
     const serialized = JSON.stringify(value);
@@ -102,7 +144,7 @@ export default function SurviveInvestigations({
       workflowValue.current = serialized;
       workflowCallback.current?.(value);
     }
-  }, [expanded, exported, ready, dirty, document?.investigation_id]);
+  }, [expanded, exported, ready, dirty, creating, document]);
 
   useEffect(() => () => workflowCallback.current?.(null), []);
   useEffect(() => {
@@ -167,11 +209,22 @@ export default function SurviveInvestigations({
       );
       return;
     }
+    setNewAttachment(pinned);
+    if (!creating && attachedEvidenceId(evidence, pinned)) {
+      setError("");
+      setNotice("");
+      return;
+    }
+    const additionalSource =
+      evidence.length > 0 &&
+      !evidence.some((item) => item.recording_id === pinned.recording_id);
     if (
       document &&
+      !creating &&
       form &&
       !dirty &&
       !historical &&
+      !additionalSource &&
       !lock.current &&
       evidence.length < 32 &&
       form.author.trim()
@@ -183,9 +236,13 @@ export default function SurviveInvestigations({
           ? "Selection pinned. Wait for the current report operation, then attach it."
           : historical
             ? "Selection pinned. Reload the latest revision before attaching it."
-            : document
-              ? "Selection pinned. Save or discard edits before attaching it."
-              : "Selection pinned. Choose an investigation, or create one with your name or alias and attach it.",
+            : creating || !document
+              ? "Selection pinned. Choose an investigation or create one."
+              : dirty
+                ? "Selection pinned. Save or discard edits before attaching it."
+                : additionalSource
+                  ? `This record is from another recording. Attach it to “${document.title}” below, or choose another investigation.`
+                  : "Selection pinned. Check the report author and evidence limit before attaching.",
       );
     }
   }, [attachRequest?.request_id]);
@@ -206,6 +263,7 @@ export default function SurviveInvestigations({
       throw new Error("Investigation reply did not include a saved document.");
     const next = editableInvestigation(value.document);
     setLoaded(value);
+    setCreating(false);
     setForm(next);
     setBase(JSON.stringify(next));
     setReading(false);
@@ -310,47 +368,26 @@ export default function SurviveInvestigations({
 
   function clearAttachedSelection(attached) {
     setPendingSelection((pending) =>
-      pending &&
-      (pending.recording_id !== attached.recording_id ||
-        pending.seq !== attached.seq ||
-        (pending.constraint_id || null) !== (attached.constraint_id || null))
-        ? pending
-        : null,
+      sameEvidenceSelection(pending, attached) ? null : pending,
     );
   }
 
   function attach(selected = attachmentSelection) {
     const pinnedSelection = { ...selected };
-    const existing = evidence.find(
-      (item) =>
-        item.recording_id === pinnedSelection.recording_id &&
-        item.seq === pinnedSelection.seq &&
-        (item.constraint_id || null) ===
-          (pinnedSelection.constraint_id || null),
-    );
-    if (existing) {
-      clearAttachedSelection(pinnedSelection);
-      setError("");
-      setNotice(
-        `This moment is already attached as ${existing.evidence_id}. Replay time and saved revisions are unchanged.`,
-      );
-      return;
-    }
+    if (attachedEvidenceId(evidence, pinnedSelection)) return;
     operation(async () => {
       const value = await attachTo(document, form.author, pinnedSelection);
       if (!alive.current) return;
       accept(value);
       clearAttachedSelection(pinnedSelection);
-      setNotice(
-        "Evidence snapshot attached in a new Draft revision. Recorded evidence was not changed.",
-      );
+      setNotice("Evidence attached in a new draft revision.");
       await refresh();
     });
   }
 
-  function create(attachSelection = false) {
+  function create(pinnedSelection) {
     if (!allowLeave()) return;
-    const pinnedSelection = { ...attachmentSelection };
+    if (pinnedSelection) setPendingSelection(pinnedSelection);
     operation(async () => {
       const created = await api("survive_investigation_create", {
         title: newTitle.trim(),
@@ -358,10 +395,8 @@ export default function SurviveInvestigations({
       });
       if (!alive.current) return;
       accept(created);
-      if (attachSelection) {
-        setNotice(
-          "Investigation created. Attaching the pinned evidence selection.",
-        );
+      if (pinnedSelection) {
+        setNotice("Investigation created. The selected record is pinned.");
         const attached = await attachTo(
           created.document,
           newAuthor,
@@ -371,7 +406,7 @@ export default function SurviveInvestigations({
         accept(attached);
         clearAttachedSelection(pinnedSelection);
         setNotice(
-          "Investigation created with the selected evidence. Replay time is unchanged; add your reasoning and cite the evidence.",
+          "Investigation created with the selected evidence. Cite it in your observations.",
         );
       } else {
         setNotice(
@@ -410,6 +445,19 @@ export default function SurviveInvestigations({
   }
 
   const exportView = viewMode === "export";
+  const showNew = creating && !exportView;
+  function chooseReport(value) {
+    if (value === NEW_REPORT) {
+      setCreating(true);
+      setNewAttachment(
+        pendingSelection && canAttach ? { ...pendingSelection } : null,
+      );
+    } else if (value === document?.investigation_id) {
+      setCreating(false);
+    } else {
+      open(value);
+    }
+  }
   function requestStage(stage) {
     onRequestStage?.(stage);
   }
@@ -424,20 +472,15 @@ export default function SurviveInvestigations({
       {expanded && (
         <div className="investigation-content">
           <div className="investigation-view-heading">
-            <div>
-              <h2>{exportView ? "Export report" : "Explain the evidence"}</h2>
-              <p>
-                {exportView
-                  ? "Check the saved report, then export a portable copy."
-                  : "Write what happened, support it with evidence, and state the limits."}
-              </p>
-            </div>
-            {document && (
-              <button
-                disabled={busy}
-                onClick={() => requestStage(exportView ? "explain" : "export")}
-              >
-                {exportView ? "Edit report" : "Continue to export"}
+            <h2>{exportView ? "Export report" : "Explain the evidence"}</h2>
+            <Info label={exportView ? "Export report" : "Explain the evidence"}>
+              {exportView
+                ? "Review the saved revision and its sources before exporting an HTML copy."
+                : "Open or create an investigation, attach recorded moments, then write what they show and where the evidence falls short."}
+            </Info>
+            {exportView && document && (
+              <button disabled={busy} onClick={() => requestStage("explain")}>
+                Edit report
               </button>
             )}
           </div>
@@ -452,20 +495,29 @@ export default function SurviveInvestigations({
               {notice}
             </p>
           )}
-          <details className="investigation-manager" open={!document}>
-            <summary>
-              {document ? "Switch or create report" : "Open or create report"}
-            </summary>
+          <div className="investigation-manager">
             <div className="investigation-picker survive-controls">
-              <label>
-                Saved investigation
+              <ReportField
+                label="Investigation"
+                help={
+                  exportView
+                    ? "Choose a saved report to check its latest revision and export it."
+                    : "Choose a saved report to open its latest revision, or choose New investigation to start a draft."
+                }
+              >
                 <select
-                  aria-label="Saved investigation"
-                  value={document?.investigation_id || ""}
+                  value={
+                    showNew ? NEW_REPORT : document?.investigation_id || ""
+                  }
                   disabled={busy}
-                  onChange={(event) => open(event.target.value)}
+                  onChange={(event) => chooseReport(event.target.value)}
                 >
-                  <option value="">Choose an investigation</option>
+                  <option value="" disabled>
+                    Choose an investigation
+                  </option>
+                  {!exportView && (
+                    <option value={NEW_REPORT}>New investigation…</option>
+                  )}
                   {choices.map((item) => (
                     <option
                       key={item.investigation_id}
@@ -476,9 +528,9 @@ export default function SurviveInvestigations({
                     </option>
                   ))}
                 </select>
-              </label>
+              </ReportField>
               <button disabled={busy} onClick={() => operation(refresh)}>
-                Refresh investigations
+                Refresh list
               </button>
             </div>
             {unavailable.length > 0 && (
@@ -493,12 +545,20 @@ export default function SurviveInvestigations({
                 ))}
               </details>
             )}
-            {!exportView && (
-              <details className="investigation-create" open={!document}>
-                <summary>Create an investigation</summary>
+            {showNew && (
+              <form
+                className="investigation-new"
+                onSubmit={(event) => {
+                  event.preventDefault();
+                  if (!busy && newTitle.trim() && newAuthor.trim())
+                    create(newAttachment);
+                }}
+              >
                 <div className="survive-controls">
-                  <label>
-                    New investigation title
+                  <ReportField
+                    label="Title"
+                    help="Name the question or incident so you can find this report later."
+                  >
                     <input
                       aria-label="New investigation title"
                       value={newTitle}
@@ -506,9 +566,11 @@ export default function SurviveInvestigations({
                       disabled={busy}
                       onChange={(e) => setNewTitle(e.target.value)}
                     />
-                  </label>
-                  <label>
-                    Your name or alias
+                  </ReportField>
+                  <ReportField
+                    label="Your name or alias"
+                    help="Your name appears beside the revision and any evidence you attach."
+                  >
                     <input
                       aria-label="New investigation author"
                       value={newAuthor}
@@ -516,39 +578,55 @@ export default function SurviveInvestigations({
                       disabled={busy}
                       onChange={(e) => setNewAuthor(e.target.value)}
                     />
-                  </label>
+                  </ReportField>
                   <button
+                    type="submit"
+                    className="primary"
                     disabled={busy || !newTitle.trim() || !newAuthor.trim()}
-                    onClick={() => create()}
                   >
                     Create investigation
                   </button>
-                  {canAttach && (
-                    <button
-                      className="primary"
-                      disabled={busy || !newTitle.trim() || !newAuthor.trim()}
-                      onClick={() => create(true)}
-                    >
-                      Create and attach selected evidence
-                    </button>
-                  )}
                 </div>
-              </details>
+                {(newAttachment || canAttach) && (
+                  <label
+                    className="investigation-include"
+                    title={newEvidence.recording_id}
+                  >
+                    <input
+                      type="checkbox"
+                      checked={Boolean(newAttachment)}
+                      disabled={busy}
+                      onChange={(event) =>
+                        setNewAttachment(
+                          event.target.checked
+                            ? { ...attachmentSelection }
+                            : null,
+                        )
+                      }
+                    />
+                    Attach record {newEvidence.seq} ·{" "}
+                    {number(newEvidence.time_s)} s ·{" "}
+                    {recordingCaption(newEvidence)}
+                  </label>
+                )}
+              </form>
             )}
             {exportView && !document && (
-              <p>
-                Select a saved investigation, or{" "}
-                <button onClick={() => requestStage("explain")}>
-                  write a report
-                </button>
-                .
-              </p>
+              <button onClick={() => requestStage("explain")}>
+                Create an investigation in Explain
+              </button>
             )}
-          </details>
-          {document && form && (
+          </div>
+          {document && form && !showNew && (
             <>
               <div className="investigation-document-heading">
-                <h3>{document.title}</h3>
+                <div className="report-heading">
+                  <h3>{document.title}</h3>
+                  <Info label="Investigation revision">
+                    This is the open revision. Saved revisions and their
+                    evidence remain available in revision history.
+                  </Info>
+                </div>
                 <span>
                   {historical
                     ? "Historical revision — read only"
@@ -575,8 +653,14 @@ export default function SurviveInvestigations({
                 </strong>
                 <span>
                   {" "}
-                  · {evidence.length} {evidence.length === 1 ? "item" : "items"}
+                  {evidence.length > 0 &&
+                    `· ${evidence.length} ${evidence.length === 1 ? "item" : "items"}`}
                 </span>
+                <Info label="Source verification">
+                  Opening an investigation checks its linked records against
+                  their saved fingerprints. Open a verified reference to return
+                  to the original moment.
+                </Info>
                 {document.status === "reviewed" &&
                   verification?.review_valid === false && (
                     <p>
@@ -615,11 +699,158 @@ export default function SurviveInvestigations({
               </div>
               {!exportView && (
                 <>
+                  <div className="investigation-grid">
+                    <section
+                      className="investigation-evidence"
+                      aria-label="Investigation evidence"
+                    >
+                      <div className="report-heading">
+                        <h3>Measured evidence</h3>
+                        <Info label="Measured evidence">
+                          Attach the selected record or movement interval to
+                          save a snapshot in the report. Open it to see the
+                          moment in replay, or cite it in your observations.
+                        </Info>
+                      </div>
+                      <div className="investigation-selection">
+                        <div className="report-heading">
+                          <strong>
+                            {pendingSelection
+                              ? "Pinned replay selection"
+                              : "Current replay selection"}
+                          </strong>
+                          <Info
+                            label={
+                              attachedId
+                                ? "Attached evidence"
+                                : "Record to attach"
+                            }
+                          >
+                            {attachedId
+                              ? `This revision already contains this exact selection as ${attachedId}. Use that ID to cite it in your observations.`
+                              : pendingSelection
+                                ? "Review pinned this exact record for the report. Use current replay selection to replace it with the moment now selected."
+                                : "This is the selected moment in Review. Attaching creates a new draft revision with a permanent evidence reference."}
+                          </Info>
+                        </div>
+                        <p title={attachmentSelection?.recording_id}>
+                          {attachmentSelection?.recording_id
+                            ? `Record ${attachmentSelection.seq ?? "—"} · ${number(attachmentSelection.time_s)} s · ${recordingCaption(attachmentSelection)}`
+                            : "Select a moment in Review to attach evidence."}
+                        </p>
+                        <div className="investigation-selection-actions">
+                          {attachedId ? (
+                            <span className="investigation-state" role="status">
+                              Attached as {attachedId}
+                            </span>
+                          ) : (
+                            <button
+                              disabled={
+                                busy ||
+                                dirty ||
+                                historical ||
+                                !canAttach ||
+                                evidence.length >= 32 ||
+                                !form.author.trim()
+                              }
+                              onClick={() => attach()}
+                            >
+                              Attach selected evidence
+                            </button>
+                          )}
+                          {pendingSelection && (
+                            <button
+                              disabled={busy}
+                              onClick={() => setPendingSelection(null)}
+                            >
+                              Use current replay selection
+                            </button>
+                          )}
+                        </div>
+                        {dirty && !attachedId && (
+                          <small>
+                            Save or discard edits before attaching evidence.
+                          </small>
+                        )}
+                        {!dirty && !canAttach && !attachedId && (
+                          <small>
+                            Attach evidence after recording is finalized.
+                          </small>
+                        )}
+                      </div>
+
+                      <div className="investigation-evidence-list">
+                        {evidence.map((item) => (
+                          <EvidenceCard
+                            key={item.evidence_id}
+                            item={item}
+                            verification={verification}
+                            busy={busy}
+                            historical={historical}
+                            navigate={navigate}
+                            cite={cite}
+                            visit={item === visitedCard ? cardVisit : null}
+                            onReturnToReplay={onReturnToReplay}
+                          />
+                        ))}
+                      </div>
+                    </section>
+                    <section
+                      aria-label="Investigation narrative"
+                      className="investigation-narrative"
+                    >
+                      <div className="investigation-writing-toolbar">
+                        <div className="report-heading">
+                          <h3>Your interpretation</h3>
+                          <Info label="Your interpretation">
+                            Write in each section and cite attached records with
+                            references such as [E1]. Read narrative shows the
+                            sections together. Save a revision to keep your
+                            edits.
+                          </Info>
+                        </div>
+                        {!historical && (
+                          <button onClick={() => setReading(!reading)}>
+                            {reading ? "Edit narrative" : "Read narrative"}
+                          </button>
+                        )}
+                      </div>
+                      {reading || historical ? (
+                        <NarrativePreview
+                          sections={form.sections}
+                          evidence={evidence}
+                          verification={verification}
+                          navigate={navigate}
+                          disabled={busy}
+                        />
+                      ) : (
+                        <NarrativeEditor
+                          sections={form.sections}
+                          section={section}
+                          disabled={busy}
+                          onSectionChange={setSection}
+                          onChange={(sections) => change("sections", sections)}
+                        />
+                      )}
+                      {!historical && (
+                        <RevisionControls
+                          form={form}
+                          busy={busy}
+                          dirty={dirty}
+                          onChange={change}
+                          onSave={saveRevision}
+                          onDiscard={discardEdits}
+                        />
+                      )}
+                    </section>
+                  </div>
                   <details className="investigation-report-details">
                     <summary>Report details and revision history</summary>
                     <div className="survive-controls">
-                      <label>
-                        Report title
+                      <ReportField
+                        label="Report title"
+                        help="Rename the report in your next saved revision."
+                      >
                         <input
                           aria-label="Report title"
                           value={form.title}
@@ -627,9 +858,11 @@ export default function SurviveInvestigations({
                           disabled={busy || historical}
                           onChange={(e) => change("title", e.target.value)}
                         />
-                      </label>
-                      <label>
-                        Author for this revision
+                      </ReportField>
+                      <ReportField
+                        label="Author for this revision"
+                        help="Identify who made these edits in the revision history."
+                      >
                         <input
                           aria-label="Revision author"
                           value={form.author}
@@ -637,9 +870,11 @@ export default function SurviveInvestigations({
                           disabled={busy || historical}
                           onChange={(e) => change("author", e.target.value)}
                         />
-                      </label>
-                      <label>
-                        Revision history
+                      </ReportField>
+                      <ReportField
+                        label="Revision history"
+                        help="Select a revision to read its saved narrative and evidence. Open the latest revision to continue editing."
+                      >
                         <select
                           aria-label="Investigation revision"
                           value={document.revision}
@@ -658,7 +893,7 @@ export default function SurviveInvestigations({
                             </option>
                           ))}
                         </select>
-                      </label>
+                      </ReportField>
                       <button
                         disabled={busy}
                         onClick={() => open(document.investigation_id)}
@@ -688,126 +923,13 @@ export default function SurviveInvestigations({
                       ))}
                     </ol>
                   </details>
-                  <div className="investigation-grid">
-                    <section
-                      aria-label="Investigation narrative"
-                      className="investigation-narrative"
-                    >
-                      <div className="investigation-writing-toolbar">
-                        <h3>Your interpretation</h3>
-                        <button onClick={() => setReading(!reading)}>
-                          {reading ? "Edit narrative" : "Read narrative"}
-                        </button>
-                      </div>
-                      <details className="investigation-help">
-                        <summary>Writing guidance</summary>
-                        <p>
-                          Use [E1] references to support a claim. Keep
-                          observations separate from hypotheses. State what the
-                          evidence cannot establish. Reviewed records analyst
-                          review, not a clean-play verdict.
-                        </p>
-                      </details>
-                      {reading || historical ? (
-                        <NarrativePreview
-                          sections={form.sections}
-                          evidence={evidence}
-                          verification={verification}
-                          navigate={navigate}
-                          disabled={busy}
-                        />
-                      ) : (
-                        <>
-                          <NarrativeEditor
-                            sections={form.sections}
-                            section={section}
-                            disabled={busy}
-                            onSectionChange={setSection}
-                            onChange={(sections) =>
-                              change("sections", sections)
-                            }
-                          />
-                        </>
-                      )}
-                      {!historical && (
-                        <RevisionControls
-                          form={form}
-                          busy={busy}
-                          dirty={dirty}
-                          onChange={change}
-                          onSave={saveRevision}
-                          onDiscard={discardEdits}
-                        />
-                      )}
-                    </section>
-                    <section
-                      className="investigation-evidence"
-                      aria-label="Investigation evidence"
-                    >
-                      <h3>Measured evidence</h3>
-                      <div className="investigation-selection">
-                        <strong>
-                          {pendingSelection
-                            ? "Pinned selection to attach"
-                            : "Current replay selection"}
-                        </strong>
-                        <p>
-                          {attachmentSelection?.recording_id
-                            ? `Record ${attachmentSelection.seq ?? "—"} · ${number(attachmentSelection.time_s)} s`
-                            : "Select a moment in Review to attach evidence."}
-                        </p>
-                        <div className="investigation-selection-actions">
-                          <button
-                            disabled={
-                              busy ||
-                              dirty ||
-                              historical ||
-                              !canAttach ||
-                              evidence.length >= 32 ||
-                              !form.author.trim()
-                            }
-                            onClick={() => attach()}
-                          >
-                            Attach selected evidence
-                          </button>
-                          {pendingSelection && (
-                            <button
-                              disabled={busy}
-                              onClick={() => setPendingSelection(null)}
-                            >
-                              Use current replay selection
-                            </button>
-                          )}
-                        </div>
-                        {dirty && (
-                          <small>
-                            Save or discard edits before attaching evidence.
-                          </small>
-                        )}
-                        {!dirty && !canAttach && (
-                          <small>
-                            Attach evidence after recording is finalized.
-                          </small>
-                        )}
-                      </div>
-                      {evidence.length === 0 && (
-                        <p>No evidence attached yet.</p>
-                      )}
-                      <div className="investigation-evidence-list">
-                        {evidence.map((item) => (
-                          <EvidenceCard
-                            key={item.evidence_id}
-                            item={item}
-                            verification={verification}
-                            busy={busy}
-                            historical={historical}
-                            navigate={navigate}
-                            cite={cite}
-                          />
-                        ))}
-                      </div>
-                    </section>
-                  </div>
+                  <button
+                    className="investigation-continue"
+                    disabled={busy}
+                    onClick={() => requestStage("export")}
+                  >
+                    Continue to export
+                  </button>
                 </>
               )}
               {exportView && (
@@ -863,6 +985,11 @@ export default function SurviveInvestigations({
                     >
                       Export investigation report
                     </button>
+                    <Info label="Export contents">
+                      Export rechecks the sources and saves the report, evidence
+                      snapshots, revision history, and source warnings in an
+                      HTML file.
+                    </Info>
                     <span>
                       {dirty
                         ? "Save changes in Explain before exporting."
@@ -899,15 +1026,6 @@ export default function SurviveInvestigations({
                         cite={cite}
                       />
                     ))}
-                  </details>
-                  <details className="investigation-help">
-                    <summary>What the export includes</summary>
-                    <p>
-                      Saved narrative, selected evidence snapshots, revision
-                      history and current source warnings. Export rechecks
-                      source consistency. It does not change detector results or
-                      include the complete original recording.
-                    </p>
                   </details>
                 </>
               )}

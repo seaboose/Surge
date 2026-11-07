@@ -148,18 +148,6 @@
 .survive-session-list > button span {
   color: var(--muted);
 }
-.survive-time-label {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  margin: 12px 0 6px;
-}
-.survive-time-label input {
-  flex: 1;
-  width: 100%;
-  min-width: 100px;
-  accent-color: var(--cyan);
-}
 .survive-review-grid {
   display: grid;
   grid-template-columns: minmax(0, 1.1fr) minmax(280px, 0.9fr);

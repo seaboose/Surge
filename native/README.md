@@ -1,17 +1,16 @@
 # Native evidence
 
-Surge recognizes `surge-native-integrity-v1` JSONL automatically. Use **Import evidence**, select a capture, then **Analyze**. No additional screen, plugin, or mapping is required. Select a finding to see its observed and expected code hashes. The record inspector's **Details** disclosure shows the range and baseline fingerprint; **Source values** retains the complete observation.
+Surge recognizes `surge-native-integrity-v1` JSONL automatically. Use **Open evidence**, select a capture, then **Analyze**. No additional screen, plugin, or mapping is required. Select a finding to see its observed and expected code hashes. The record inspector's **Record details** disclosure shows the range and baseline fingerprint; **Source values** retains the complete observation.
 
-The reusable `surge_collector` C++ library measures memory. The separate `fixture_runner.cpp` executable loads our owned DLL and creates test scenarios. The collector has no mutation or scenario API. `collector_smoke` verifies collection without linking the scenario runner. This is separation of responsibilities within an owned process, not a new security boundary. It loads only the two fixed fixture DLLs beside itself, reads its own process, and accepts no arbitrary PID, address, or DLL path. It does not attach to games or Vanguard. The controlled memory-change scenario changes one byte in the fixture's code range, never executes that altered code, and restores it before exit.
+The reusable `surge_collector` C++ library measures memory. The separate `fixture_runner.cpp` executable loads our owned DLL and creates test scenarios. The collector has no mutation or scenario API. The separate validation kit includes collection and parser checks. This is separation of responsibilities within an owned process, not a new security boundary. It loads only the two fixed fixture DLLs beside itself, reads its own process, and accepts no arbitrary PID, address, or DLL path. It does not attach to games or Vanguard. The controlled memory-change scenario changes one byte in the fixture's code range, never executes that altered code, and restores it before exit.
 
 ## Build once
 
 Install Visual Studio Build Tools with Desktop development with C++ and the Windows SDK, plus CMake 3.25 or newer. From the Surge folder:
 
 ```powershell
-cmake -S native -B native/build -A x64
+cmake -S native -B native/build -A x64 -DBUILD_TESTING=OFF
 cmake --build native/build --config Release
-ctest --test-dir native/build -C Release --output-on-failure
 ```
 
 ## Approve and collect
@@ -26,7 +25,7 @@ After building and reviewing the included v2 fixture, approve that exact build f
 
 This writes the local `native/baselines.json` registry. Approval binds this DLL's fingerprint, selected code bytes and complete coverage declaration; it does not approve every v2 build or the whole process. A different DLL fingerprint or coverage declaration requires a separate review and approval.
 
-Choose **Try Demo** in Surge, then **Start collection**. **Inspect snapshot** opens an analyzed snapshot without stopping collection or moving the records you are reading. **Stop collection** ends collection and opens its final retained snapshot. Complete observations of the unchanged approved ranges should show **No finding**. **Export captured records** saves the current window as JSONL; use **Save case** for the inspected investigation. Starting another session replaces the capture window, so export evidence you want to retain first. Existing imported evidence stays in place until **Inspect snapshot** or **Stop collection** supplies a new snapshot.
+Choose **Try Demo → Code integrity** in Surge, then **Start collection**. **Inspect snapshot** opens an analyzed snapshot without stopping collection or moving the records you are reading. **Stop collection** ends collection and opens its final retained snapshot. Complete observations of the unchanged approved ranges should show **No finding**. **Export captured records** saves the current window as JSONL; use **Save case** for the inspected investigation. Starting another session replaces the capture window, so export evidence you want to retain first. Existing imported evidence stays in place until **Inspect snapshot** or **Stop collection** supplies a new snapshot.
 
 The app samples every 500 ms, holds up to 500 full samples, and stops after ten minutes. An 8 MiB encoded-byte budget, including space reserved for snapshot metadata, keeps larger manifests within Surge's import limit. This is a bounded recent window, not an archive of the entire session. Removed older samples and transport drops produce an Unknown collection-health record. Failed collection and current staleness produce health evidence; readable ranges retain their own measured verdicts. After collection recovers, a pause remains visible in retained elapsed timestamps but is not guaranteed a health record in the final export. No baseline file means the build requires review. If approval changes while collection is running, stop and start another capture: each session freezes its baseline registry at startup.
 

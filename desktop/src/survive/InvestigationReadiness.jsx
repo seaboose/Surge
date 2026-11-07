@@ -1,4 +1,5 @@
 import React from "react";
+import { Info } from "../Info.jsx";
 
 export default function InvestigationReadiness({
   readiness,
@@ -11,7 +12,14 @@ export default function InvestigationReadiness({
   return (
     <section className="investigation-readiness" aria-label="Report readiness">
       <div className="investigation-readiness-heading">
-        <h3>Report readiness</h3>
+        <div className="report-heading">
+          <h3>Report readiness</h3>
+          <Info label="Report readiness">
+            Check the saved revision, source links, citations, and analyst
+            review. Recheck evidence updates the source checks for this
+            revision.
+          </Info>
+        </div>
         <span
           className={`investigation-state ${ready ? "is-verified" : "is-unknown"}`}
         >

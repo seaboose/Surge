@@ -33,8 +33,6 @@ and PowerShell 7. From this folder:
 
 ```powershell
 pwsh -NoProfile -File scripts/build-local.ps1
-pwsh -NoProfile -File scripts/run-engine-checks.ps1 -Mode Automation
-python -B -m unittest discover -s telemetry -p 'test_*.py'
 ```
 
 Use `-EngineRoot <installation-folder>` when Unreal is outside its standard
@@ -56,10 +54,8 @@ provisional values. This is not exact League of Legends behavior, a human-input
 classifier or a measured real-cheat detector. Local hashes establish consistency,
 not authenticity. Native DLL coverage in Surge remains a separate 15-byte demo.
 
-Read the [current design](docs/survive-design.md), [v3 telemetry contract](docs/telemetry-v3.md),
-[experiment protocol](docs/experiment-protocol.md), and
-[calibration sources](docs/calibration/README.md). Historical reports identify
-their original snapshots; private local captures are excluded from this source
-distribution. [Validation limits](../../docs/validation.md) remain explicit.
-[Third-party attribution](third_party/README.md) is retained; reference clips are
-not distributed as game assets.
+Read the [current design](docs/survive-design.md) and
+[v3 telemetry contract](docs/telemetry-v3.md). Tests, calibration notebooks and
+historical reports are provided in the separate validation kit.
+[Third-party attribution](third_party/README.md) is retained; reference clips
+are not distributed as game assets.

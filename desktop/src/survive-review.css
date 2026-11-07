@@ -1,0 +1,221 @@
+/* A single shared clock drives replay, timeline, and evidence selection. */
+.survive-workspace {
+  scrollbar-gutter: stable;
+}
+.survive-workspace[data-stage="review"] {
+  gap: 10px;
+}
+.survive-workspace .survive-live-session {
+  border: 1px solid var(--glass-edge, #ffffff12);
+  border-radius: 5px;
+  background: var(--glass-sheen), var(--glass-fill);
+  box-shadow: var(--glass-inset);
+}
+.survive-workspace .survive-live-session .survive-record-strip,
+.survive-workspace .survive-live-session .survive-record-view,
+.survive-workspace .survive-setup-disclosure > .survive-panel {
+  border: 0;
+  background: transparent;
+  box-shadow: none;
+}
+.survive-workspace .survive-live-session .survive-record-view {
+  border-top: 1px solid var(--glass-edge, #ffffff12);
+  padding-block: 0 12px;
+}
+.survive-workspace .survive-setup-disclosure {
+  margin-top: 0;
+  padding: 10px 14px;
+}
+.survive-workspace .survive-setup-disclosure > .survive-panel {
+  padding: 12px 0 0;
+}
+.survive-session-context {
+  display: block;
+}
+.survive-session-context > * {
+  min-width: 0;
+}
+.survive-workspace .survive-session-context details {
+  margin: 0;
+}
+.survive-workspace .survive-session-context .survive-library {
+  padding: 10px 14px;
+}
+.survive-workspace[data-stage="play"] .survive-session-context {
+  display: block;
+}
+.survive-workspace .survive-panel.survive-replay-studio {
+  padding: 0;
+  overflow: hidden;
+}
+.survive-replay-studio .survive-layout-tools {
+  margin: 0;
+  padding: 10px 14px;
+  border-bottom: 1px solid var(--glass-edge, #ffffff12);
+  gap: 12px;
+}
+.survive-workspace .survive-replay-studio .survive-studio-title h2 {
+  font-size: 16px;
+  letter-spacing: 0;
+}
+.survive-replay-studio .survive-layout-tools button {
+  border-color: transparent;
+  background: transparent;
+  color: var(--muted);
+  box-shadow: none;
+}
+.survive-replay-studio .survive-review-grid {
+  align-items: stretch;
+}
+.survive-workspace .survive-replay-studio .survive-replay-pane > .survive-panel,
+.survive-workspace .survive-replay-studio .survive-inspector {
+  height: auto;
+  padding: 12px 14px;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+  backdrop-filter: none;
+}
+.survive-workspace .survive-replay-studio details {
+  margin-top: 6px;
+}
+.survive-workspace .survive-replay-studio summary {
+  font-size: 12px;
+  padding: 3px 0;
+}
+.survive-workspace .survive-replay-studio .survive-evidence-pane {
+  display: flex;
+  flex-direction: column;
+  height: clamp(560px, 69vh, 760px);
+  min-height: 0;
+  overflow: auto;
+  scrollbar-gutter: stable;
+}
+.survive-replay-studio .survive-evidence-action {
+  margin-top: auto;
+  padding: 14px;
+  border-top: 1px solid var(--glass-edge, #ffffff12);
+}
+.survive-replay-studio .survive-evidence-action small {
+  display: none;
+}
+.survive-workspace .survive-replay-studio .survive-inspector h3 {
+  font-size: 14px;
+}
+.survive-replay-studio .survive-inspector p,
+.survive-replay-studio .survive-inspector dl {
+  font-size: 12px;
+  line-height: 1.5;
+}
+.survive-replay-studio .survive-inspector dd {
+  min-width: 0;
+  overflow-wrap: anywhere;
+  font-variant-numeric: tabular-nums;
+}
+.survive-replay-studio .survive-assessment-help {
+  color: var(--muted);
+}
+.survive-workspace .survive-transport {
+  padding: 6px 0 10px;
+}
+.survive-workspace .survive-transport-row {
+  gap: 8px 12px;
+  align-items: center;
+}
+.survive-time-readout {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+  flex: 0 0 auto;
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
+.survive-time-readout > strong {
+  display: inline-block;
+  inline-size: 10ch;
+  text-align: right;
+  flex: 0 0 auto;
+  font-size: 13px;
+}
+.survive-time-readout > span {
+  display: inline-block;
+  inline-size: 8ch;
+  font-size: 11px;
+  color: var(--muted);
+}
+.survive-workspace .survive-transport-row > button {
+  align-self: center;
+  min-height: 32px;
+  padding: 6px 10px;
+  font-size: 12px;
+}
+.survive-workspace .survive-transport-row > .survive-play-toggle {
+  width: 112px;
+  flex: 0 0 112px;
+}
+.survive-workspace .survive-transport-row > label {
+  flex-direction: row;
+  align-items: center;
+  font-size: 12px;
+  gap: 7px;
+}
+.survive-workspace .survive-transport-row > label select {
+  width: 68px;
+  min-height: 32px;
+  padding: 4px;
+}
+.survive-workspace .survive-transport .survive-record-actions {
+  flex-basis: 100%;
+  margin: 0;
+  order: 2;
+}
+.survive-workspace .survive-transport > small {
+  color: var(--muted);
+  font-size: 10px;
+}
+.survive-replay-studio .survive-timeline-detail {
+  border-top: 0;
+}
+.survive-workspace .survive-review-view > .survive-secondary {
+  margin-top: 10px;
+  padding: 8px 14px;
+}
+.survive-workspace .survive-review-view > .survive-secondary > summary {
+  font-size: 12px;
+}
+@media (max-width: 900px) {
+  .survive-session-context {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .survive-workspace .survive-replay-studio .survive-evidence-pane {
+    height: 430px;
+    border-top: 1px solid var(--glass-edge, #ffffff12);
+  }
+  .survive-replay-studio .survive-layout-tools {
+    flex-wrap: wrap;
+  }
+}
+@media (max-width: 500px) {
+  .survive-workspace .survive-workflow button {
+    white-space: nowrap;
+    overflow-wrap: normal;
+    padding: 8px 2px;
+    font-size: 11px;
+  }
+  .survive-workspace .survive-workflow button:first-child {
+    white-space: normal;
+  }
+  .survive-workspace .survive-transport-row {
+    gap: 8px;
+  }
+  .survive-time-readout {
+    width: 100%;
+  }
+  .survive-workspace .survive-transport-row > .survive-next-review {
+    flex-basis: auto;
+  }
+  .survive-workspace .survive-replay-studio .survive-arena {
+    height: 220px;
+  }
+}

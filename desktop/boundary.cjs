@@ -12,6 +12,8 @@ const operations = Object.freeze({
   survive_stop: [],
   survive_sessions: [],
   survive_open: ["recording_id"],
+  survive_template: [],
+  survive_rename: ["recording_id", "name"],
   survive_record: ["recording_id", "seq"],
   survive_trials: [],
   survive_trial_start: ["mode", "seed", "profile_id", "participant", "phase"],
@@ -109,6 +111,15 @@ function validate(method, args) {
     const required = method === "survive_status" ? [] : operations[method];
     if (required.some((key) => !Object.hasOwn(args, key)))
       throw new Error("Missing Survive setting.");
+    if (
+      method === "survive_rename" &&
+      (typeof args.name !== "string" ||
+        !args.name.trim() ||
+        Array.from(args.name.trim()).length > 80 ||
+        /[\x00-\x1f\x7f]/.test(args.name) ||
+        !args.name.isWellFormed())
+    )
+      throw new Error("Enter a recording name of 1–80 readable characters.");
     const profiles = [
       "survive-lucian-practice-v1",
       "survive-lucian-reference-v1",

@@ -37,24 +37,20 @@ export default function SavedCaseStatus({ openedCase, onShowCapture }) {
       )}
       {capture?.state === "running" && (
         <div className="actions">
-          <span>
-            {capture.state === "running"
-              ? "Live demo capture is running separately."
-              : "The previous demo capture is separate from this case."}
-          </span>
+          <span>Live capture is running separately.</span>
           {!captureVisible && (
             <Button disabled={working} onClick={onShowCapture}>
-              View demo capture
+              View capture
             </Button>
           )}
         </div>
       )}
       {capture && capture.state !== "running" && !captureVisible && (
         <details>
-          <summary>Previous demo capture</summary>
+          <summary>Previous capture</summary>
           <p>This stopped capture is separate from the saved case.</p>
           <Button disabled={working} onClick={onShowCapture}>
-            View demo capture
+            View capture
           </Button>
         </details>
       )}

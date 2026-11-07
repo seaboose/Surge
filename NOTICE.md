@@ -1,5 +1,12 @@
 # Third-party notices
 
-Surge's application code is covered by the accompanying MIT license. Installed dependencies keep their own licenses and notices, including Electron, Chromium, React, esbuild, and Playwright. Build output retains bundled legal comments. Dependency sources and licenses are available in their installed packages and upstream repositories.
+Surge application code is covered by the accompanying MIT license. Dependencies
+retain their own licenses, including Electron, Chromium, React, esbuild, and the
+bundled fonts. Build output retains legal comments and font notices.
 
-The external evaluation used RT-IoT2022 by B. S. and Nagapadma, R. (2023), UCI Machine Learning Repository, DOI 10.24432/C5P338, under Creative Commons Attribution 4.0. The benchmark adapter projects selected fields, separates labels, and partitions records. This source distribution contains outcome summaries rather than the raw dataset.
+Survive contains Unreal Engine runtime code. Unreal Engine and its dependencies
+are not covered by Surge's MIT license. Packaged games retain their required
+notices. See [Survive attribution](unreal/SurgeMovementLab/third_party/README.md).
+
+External benchmark data and benchmark results are not included in this software
+source distribution. Their provenance and notices accompany the validation kit.

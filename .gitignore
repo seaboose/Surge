@@ -8,11 +8,9 @@ desktop/dist/
 .env.*
 !.env.example
 *.log
-verification/electron/
-verification/temporary-test-files/
-verification/qualification/
-verification/survive-*/
-verification/*.json
+/verification/
+/output/
+/AGENTS.md
 benchmarks/rt-iot2022/
 dist/
 native/build/

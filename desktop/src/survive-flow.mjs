@@ -3,8 +3,8 @@ export const MARKER_FILTERS = {
   hits: "Hits",
   dashes: "Dashes",
   blinks: "Blinks",
-  findings: "Findings",
-  gaps: "Missing data",
+  findings: "Needs review",
+  gaps: "Coverage limits",
   commands: "Commands",
   threats: "Threats",
 };
@@ -71,28 +71,14 @@ export function timelineMarkers(
   return result.sort((a, b) => a.time - b.time || a.seq - b.seq);
 }
 
-export const TIMELINE_LANES = [
-  "Commands",
-  "Mobility",
-  "Threats",
-  "Hits",
-  "Findings",
-  "Coverage",
-];
+export const TIMELINE_LANES = ["Review", "Coverage", "Events"];
 
 export function markerLane(marker) {
-  return (
-    {
-      commands: 0,
-      dashes: 1,
-      blinks: 1,
-      threats: 2,
-      hits: 3,
-      findings: 4,
-      gaps: 5,
-      capture: 5,
-    }[marker.category] ?? 5
-  );
+  return marker.category === "findings"
+    ? 0
+    : marker.category === "gaps"
+      ? 1
+      : 2;
 }
 
 export function clampTimelineRange(range, duration) {

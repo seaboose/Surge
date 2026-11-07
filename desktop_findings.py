@@ -124,8 +124,19 @@ def handle(workspace, method, args):
         page = bounded_int(args.get("page", 0), 0, max((len(selected) - 1) // 100, 0))
         if args.get("locate") in [r["row"] for r in selected]:
             page = next(i for i, r in enumerate(selected) if r["row"] == args["locate"]) // 100
+        rows = selected[page * 100 : (page + 1) * 100]
+        for item in rows:
+            raw = workspace.current.rows[item["row"] - 1]
+            if raw.get("schema") == native_integrity.SCHEMA and not raw.get("stream_health"):
+                sample = raw.get("stream_sequence")
+                name = raw.get("range_name")
+                item["observation"] = dict(
+                    range_name=name[:160] if isinstance(name, str) else "Range unavailable",
+                    sample=str(sample) if type(sample) is int and sample > 0 else None,
+                    time=time_label(workspace.result["records"][item["row"] - 1], workspace.config, raw).split("\n", 1)[0][:200],
+                )
         return dict(
-            rows=selected[page * 100 : (page + 1) * 100],
+            rows=rows,
             total=len(selected),
             page=page,
             hidden_gaps=hidden_gaps,
@@ -263,6 +274,7 @@ def handle(workspace, method, args):
             priority=workflow.priority(record, workspace.config),
             groups=output,
             explanation=native_observation_explanation(raw, record["status"]),
+            reason=short_reason(record, raw),
             gaps=record["gaps"],
             time=time_label(record, workspace.config, raw),
             reference_group=record.get("reference_group"),

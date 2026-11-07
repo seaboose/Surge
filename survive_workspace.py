@@ -18,6 +18,8 @@ FIELDS = {
     "survive_stop": set(),
     "survive_sessions": set(),
     "survive_open": {"recording_id"},
+    "survive_template": set(),
+    "survive_rename": {"recording_id", "name"},
     "survive_record": {"recording_id", "seq"},
     "survive_trials": set(),
     "survive_trial_start": {"mode", "seed", "profile_id", "participant", "phase"},
@@ -49,6 +51,9 @@ def validate(method, args):
         raise ValueError("Missing Survive setting.")
     if "profile_id" in args and (not isinstance(args["profile_id"], str) or args["profile_id"] not in PROFILES):
         raise ValueError("Select a reviewed Survive profile.")
+    if method == "survive_rename":
+        from survive_capture import CaptureManager
+        CaptureManager._valid_name(args["name"])
     if "source_id" in args and args["source_id"] != "next":
         identifier(args["source_id"], "source identifier")
     for key in ("recording_id", "trial_id", "investigation_id"):
@@ -179,6 +184,10 @@ class SurviveWorkspace:
             return {"sessions": self.capture.sessions()}
         if method == "survive_open":
             return self.capture.open(args["recording_id"])
+        if method == "survive_template":
+            return self.capture.open_example()
+        if method == "survive_rename":
+            return self.capture.rename(args["recording_id"], args["name"])
         if method == "survive_record":
             return self.capture.record(args["recording_id"], args["seq"])
         if method == "survive_trials":

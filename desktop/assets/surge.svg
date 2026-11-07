@@ -1,0 +1,53 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="36 36 440 440">
+  <defs>
+    <linearGradient id="body" x2=".65" y2="1"><stop stop-color="#26323A"/><stop offset="1" stop-color="#0B1116"/></linearGradient>
+    <linearGradient id="silicon" x2="1" y2="1"><stop stop-color="#3D4B53"/><stop offset=".55" stop-color="#202B32"/><stop offset="1" stop-color="#111A20"/></linearGradient>
+    <linearGradient id="copper" x2="1" y2="1"><stop stop-color="#DFC495"/><stop offset=".48" stop-color="#A47F4D"/><stop offset="1" stop-color="#655337"/></linearGradient>
+  </defs>
+  <rect x='124' y='48' width='8' height='24' fill='url(#copper)'/>
+<rect x='124' y='440' width='8' height='24' fill='url(#copper)'/>
+<rect x='48' y='124' width='24' height='8' fill='url(#copper)'/>
+<rect x='440' y='124' width='24' height='8' fill='url(#copper)'/>
+<rect x='156' y='48' width='8' height='24' fill='url(#copper)'/>
+<rect x='156' y='440' width='8' height='24' fill='url(#copper)'/>
+<rect x='48' y='156' width='24' height='8' fill='url(#copper)'/>
+<rect x='440' y='156' width='24' height='8' fill='url(#copper)'/>
+<rect x='188' y='48' width='8' height='24' fill='url(#copper)'/>
+<rect x='188' y='440' width='8' height='24' fill='url(#copper)'/>
+<rect x='48' y='188' width='24' height='8' fill='url(#copper)'/>
+<rect x='440' y='188' width='24' height='8' fill='url(#copper)'/>
+<rect x='220' y='48' width='8' height='24' fill='url(#copper)'/>
+<rect x='220' y='440' width='8' height='24' fill='url(#copper)'/>
+<rect x='48' y='220' width='24' height='8' fill='url(#copper)'/>
+<rect x='440' y='220' width='24' height='8' fill='url(#copper)'/>
+<rect x='252' y='48' width='8' height='24' fill='url(#copper)'/>
+<rect x='252' y='440' width='8' height='24' fill='url(#copper)'/>
+<rect x='48' y='252' width='24' height='8' fill='url(#copper)'/>
+<rect x='440' y='252' width='24' height='8' fill='url(#copper)'/>
+<rect x='284' y='48' width='8' height='24' fill='url(#copper)'/>
+<rect x='284' y='440' width='8' height='24' fill='url(#copper)'/>
+<rect x='48' y='284' width='24' height='8' fill='url(#copper)'/>
+<rect x='440' y='284' width='24' height='8' fill='url(#copper)'/>
+<rect x='316' y='48' width='8' height='24' fill='url(#copper)'/>
+<rect x='316' y='440' width='8' height='24' fill='url(#copper)'/>
+<rect x='48' y='316' width='24' height='8' fill='url(#copper)'/>
+<rect x='440' y='316' width='24' height='8' fill='url(#copper)'/>
+<rect x='348' y='48' width='8' height='24' fill='url(#copper)'/>
+<rect x='348' y='440' width='8' height='24' fill='url(#copper)'/>
+<rect x='48' y='348' width='24' height='8' fill='url(#copper)'/>
+<rect x='440' y='348' width='24' height='8' fill='url(#copper)'/>
+<rect x='380' y='48' width='8' height='24' fill='url(#copper)'/>
+<rect x='380' y='440' width='8' height='24' fill='url(#copper)'/>
+<rect x='48' y='380' width='24' height='8' fill='url(#copper)'/>
+<rect x='440' y='380' width='24' height='8' fill='url(#copper)'/>
+
+  <polygon points="104,72 408,72 440,104 440,408 408,440 104,440 72,408 72,104" fill="url(#body)" stroke="#6E8089" stroke-width="3"/>
+  <polygon points="112,86 400,86 426,112 426,400 400,426 112,426 86,400 86,112" fill="none" stroke="#47545C" stroke-width="2"/>
+  <path d="M110 182V132H180 M402 330V380H332 M116 330V376H168 M396 182V136H346" fill="none" stroke="#3F5058" stroke-width="3"/>
+  <polygon points="256,120 392,256 256,392 120,256" fill="#142028" stroke="#677982" stroke-width="2"/>
+  <polygon points="256,137 375,256 256,375 137,256" fill="url(#silicon)" stroke="#455A64" stroke-width="2"/>
+  <polygon points="319.587,193.022 246.112,193.022 196.904,267.996 265.881,267.996 243.921,290.488 191.439,290.488 168.157,320.478 253.628,320.478 305.57,247.003 236.594,247.003 258.818,223.011 297.804,223.011" transform="translate(0 3)" fill="#788D97"/>
+  <polygon points="319.587,193.022 246.112,193.022 196.904,267.996 265.881,267.996 243.921,290.488 191.439,290.488 168.157,320.478 253.628,320.478 305.57,247.003 236.594,247.003 258.818,223.011 297.804,223.011" fill="#091219" stroke="#536B77" stroke-width="2"/>
+  <polyline points="279.456,208.016 294.451,208.016" fill="none" stroke="#79B6BC" stroke-width="2.2"/>
+  <path d="M105 78H406L435 107 M126 256L256 126" fill="none" stroke="#A0AFB5" stroke-opacity=".5" stroke-width="2"/>
+</svg>

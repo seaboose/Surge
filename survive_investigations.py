@@ -538,6 +538,10 @@ class InvestigationManager:
                               "Snapshots preserve selected evidence, not the complete original recording. Reproduction requires the referenced original recording and analysis version.",
                               "Verification describes export time. Later source changes are not reflected in this static report.",
                               "No finding does not establish human input or legitimate play. Unknown coverage is not a clean result."]}
+        examples = {card["evidence_id"] for card in doc["evidence"]
+                    if card["capture"].get("provenance") == "simulated_standard_example"}
+        if examples:
+            payload["limits"].insert(0, "The standard example uses simulated movement created to demonstrate evidence review.")
         structured = json.dumps(payload, ensure_ascii=False, indent=2, allow_nan=False)
         escape = lambda value: html.escape(str(value), quote=True)
         sections = []
@@ -550,6 +554,8 @@ class InvestigationManager:
             state = next(item for item in verification["items"] if item["evidence_id"] == card["evidence_id"])
             constraint = card["constraint"]
             details = '<p>Recorded event: ' + escape(card["raw_record"].get("event")) + ' · ' + _display_number(card["time_s"]) + ' s · sequence ' + str(card["seq"]) + '</p>'
+            if card["evidence_id"] in examples:
+                details = '<p><strong>Simulated standard example</strong></p>' + details
             if constraint:
                 details += '<p>Rule: ' + escape(constraint.get("constraint")) + ' · outcome: ' + escape(constraint.get("status")) + '</p>'
                 details += '<p>Observed ' + _display_number(constraint.get("observed")) + ' / allowed ' + _display_number(constraint.get("allowed")) + ' ' + escape(constraint.get("unit")) + ' · coverage: ' + escape(constraint.get("coverage")) + '</p>'

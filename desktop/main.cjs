@@ -377,6 +377,11 @@ else {
         ["/app.js", "app.js"],
         ["/style.css", "style.css"],
         ["/app.css", "app.css"],
+        ["/fonts/Inter-Variable.ttf", "fonts/Inter-Variable.ttf"],
+        [
+          "/fonts/JetBrainsMono-Variable.ttf",
+          "fonts/JetBrainsMono-Variable.ttf",
+        ],
       ]);
       if (developerTools) {
         for (const name of ["app.js.map", "app.css.map", "style.css.map"])
@@ -392,6 +397,8 @@ else {
           "app.js": "text/javascript; charset=utf-8",
           "style.css": "text/css; charset=utf-8",
           "app.css": "text/css; charset=utf-8",
+          "fonts/Inter-Variable.ttf": "font/ttf",
+          "fonts/JetBrainsMono-Variable.ttf": "font/ttf",
         };
         try {
           return new Response(
@@ -431,10 +438,15 @@ else {
         width: 1360,
         height: 880,
         ...(launchPresentation?.window || {}),
-        minWidth: 720,
-        minHeight: 540,
+        minWidth: 320,
+        minHeight: 360,
         title: developerTools ? developerTools.windowTitle(app) : "Surge",
-        backgroundColor: "#080c12",
+        icon: path.join(
+          __dirname,
+          "assets",
+          process.platform === "win32" ? "surge.ico" : "surge.png",
+        ),
+        backgroundColor: "#040507",
         show: false,
         autoHideMenuBar: app.isPackaged,
         webPreferences: {

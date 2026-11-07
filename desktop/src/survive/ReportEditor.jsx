@@ -1,4 +1,5 @@
-import React from "react";
+import React, { useId } from "react";
+import { Info } from "../Info.jsx";
 import { SECTIONS } from "./investigation-model.mjs";
 
 const tabLabels = {
@@ -8,6 +9,31 @@ const tabLabels = {
   conclusion: "Conclusion",
   next_steps: "Next steps",
 };
+
+const sectionHelp = {
+  question: "State the question this recording can help answer.",
+  observations:
+    "Describe what you saw or measured. Cite an attached item with its reference, such as [E1].",
+  hypothesis:
+    "Give plausible explanations and note which evidence supports or weakens each one.",
+  conclusion:
+    "Answer the question and state what the recording leaves uncertain, including gaps in coverage.",
+  next_steps:
+    "Describe the next check or recording that would resolve an open question.",
+};
+
+export function ReportField({ label, help, children }) {
+  const id = useId();
+  return (
+    <div className="investigation-field">
+      <div className="report-heading">
+        <label htmlFor={id}>{label}</label>
+        <Info label={label}>{help}</Info>
+      </div>
+      {React.cloneElement(children, { id })}
+    </div>
+  );
+}
 
 export function NarrativeEditor({
   sections,
@@ -64,8 +90,7 @@ export function NarrativeEditor({
           aria-labelledby={`report-tab-${key}`}
           hidden={section !== key}
         >
-          <label>
-            {label}
+          <ReportField label={label} help={sectionHelp[key]}>
             <textarea
               aria-label={label}
               value={sections[key]}
@@ -79,7 +104,7 @@ export function NarrativeEditor({
                 })
               }
             />
-          </label>
+          </ReportField>
           <small>
             {sections[key].length.toLocaleString()} / 4,000 characters
           </small>
@@ -100,8 +125,10 @@ export function RevisionControls({
   return (
     <div className="investigation-save-block">
       <div className="investigation-save-fields">
-        <label>
-          Revision reason
+        <ReportField
+          label="Revision reason"
+          help="Briefly describe what changed so another reviewer can follow the revision history."
+        >
           <textarea
             aria-label="Revision reason"
             value={form.change_reason}
@@ -110,9 +137,11 @@ export function RevisionControls({
             disabled={busy}
             onChange={(e) => onChange("change_reason", e.target.value)}
           />
-        </label>
-        <label>
-          Review status
+        </ReportField>
+        <ReportField
+          label="Review status"
+          help="Keep work in Draft, or mark it Reviewed to record your assessment. Save the revision to apply this choice."
+        >
           <select
             aria-label="Investigation review status"
             value={form.status}
@@ -122,7 +151,7 @@ export function RevisionControls({
             <option value="draft">Draft</option>
             <option value="reviewed">Reviewed by named analyst</option>
           </select>
-        </label>
+        </ReportField>
       </div>
       <div className="survive-controls">
         <button

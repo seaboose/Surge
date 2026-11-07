@@ -16,6 +16,7 @@ import os
 from pathlib import Path
 import re
 import stat
+import tempfile
 import threading
 import time
 import types
@@ -33,6 +34,8 @@ MAX_RESPONSE = 4 * 1024 * 1024
 MAX_ENTRIES = 2000
 GUID = re.compile(r"^[a-fA-F0-9]{32}$")
 RECORDING = re.compile(r"^[a-f0-9]{32}$")
+EXAMPLE_ID = "d126ce6b03854c9aae7e4e10b9460a45"
+EXAMPLE_PATH = ROOT / "demos" / "survive" / "standard-example.jsonl"
 PROFILE_IDS = frozenset({"survive-lucian-practice-v1", "survive-lucian-reference-v1"})
 _ADAPTER_LOCK = threading.Lock()
 _ADAPTERS = None
@@ -245,11 +248,11 @@ class PrefixValidator:
 
 
 class _Session:
-    def __init__(self, manager, source_id, profile_id):
+    def __init__(self, manager, source_id, profile_id, *, example=False):
         self.manager = manager
         self.profile, self.profile_raw, self.policy_raw = _profile(profile_id)
         self.analysis_inputs = _analysis_identity()
-        self.recording_id = uuid.uuid4().hex
+        self.recording_id = EXAMPLE_ID if example else uuid.uuid4().hex
         self.directory = manager.recording_root / self.recording_id
         _directory(manager.recording_root)
         self.directory.mkdir(exist_ok=False)
@@ -264,6 +267,8 @@ class _Session:
         self.source_id = None if source_id == "next" else source_id
         self.discovery = {s["source_id"].lower() for s in manager.sources()} if source_id == "next" else set()
         self.provenance = "new_source_from_byte_zero" if source_id == "next" else "selected_source_backfill_from_byte_zero"
+        if example:
+            self.provenance = "simulated_standard_example"
         self.rows = []
         self.observed = b""
         self.pending = b""
@@ -437,7 +442,8 @@ class _Session:
                 "completion": self.source_completion, "stop_reason": self.stop_reason,
                 "analysis_state": "pending" if finalizing else self.analysis_state, "created_utc": self.created_utc,
                 "finalizing": finalizing, "finalized": self.finalized or for_manifest,
-                "provenance": self.provenance, "authenticity": "local_unsigned_not_attested",
+                "provenance": self.provenance, "authenticity": (
+                    "simulated_example" if self.provenance == "simulated_standard_example" else "local_unsigned_not_attested"),
                 "health": {"sequence_gaps": self.sequence_gaps, "parse_errors": self.parse_errors,
                            "stale_s": max(0., (self.finished or time.monotonic()) - self.last_receive),
                            "pending_bytes": len(self.pending), "error": self.error}}
@@ -479,7 +485,7 @@ def _response(capture, rows, analysis, after=0):
             "metadata": {"schema": "survive-v3", "profile_id": capture["profile_id"],
                          "profile_sha256": capture["profile_sha256"], "session_id": capture["session_id"],
                          "source_clock": "game_elapsed_seconds", "input_observation": "server_commands_only",
-                         "authenticity": "local_unsigned_not_attested", "display_truncated": False}}
+                         "authenticity": capture.get("authenticity", "local_unsigned_not_attested"), "display_truncated": False}}
     result = {"capture": capture, "records": page, "next_cursor": after + len(page), "view": view}
     # Retention on disk is complete. Only an oversized display projection is
     # reduced, with explicit counts; never use the reduced view for analysis.
@@ -617,7 +623,7 @@ class CaptureManager:
             for count, entry in enumerate(entries):
                 if count >= MAX_ENTRIES:
                     raise ValueError("Too many recording directory entries")
-                if not RECORDING.fullmatch(entry.name):
+                if not RECORDING.fullmatch(entry.name) or entry.name == EXAMPLE_ID:
                     continue
                 directory = Path(entry.path)
                 if self.active and self.active.recording_id == entry.name and self.active.thread.is_alive():
@@ -641,7 +647,70 @@ class CaptureManager:
                     result.append(dict({key: item.get(key) for key in fields}, verified=False))
                 except (ValueError, OSError, TypeError) as exc:
                     result.append(self._unverified_entry(entry.name, exc))
+        for row in result:
+            row["display_name"] = self._display_name(row["recording_id"])
         return sorted(result, key=lambda row: row.get("created_utc") or "", reverse=True)
+
+    def _display_name(self, recording_id):
+        try:
+            path = self.recording_root / recording_id / "display-name.json"
+            name = _json(_read(path, 1024))
+            return self._valid_name(name)
+        except (OSError, ValueError):
+            return None
+
+    @staticmethod
+    def _valid_name(name):
+        if (not isinstance(name, str) or not 1 <= len(name.strip()) <= 80 or
+                any(ord(c) < 32 or ord(c) == 127 or 0xd800 <= ord(c) <= 0xdfff for c in name)):
+            raise ValueError("Enter a recording name of 1–80 readable characters.")
+        return name.strip()
+
+    def rename(self, recording_id, name):
+        name = self._valid_name(name)
+        if not isinstance(recording_id, str) or not RECORDING.fullmatch(recording_id) or recording_id == EXAMPLE_ID:
+            raise ValueError("Choose a saved recording to rename.")
+        if self.active and self.active.recording_id == recording_id and self.active.thread.is_alive():
+            raise ValueError("Finish recording before renaming it.")
+        directory = _directory(self.recording_root / recording_id)
+        temporary = directory / ("name-" + uuid.uuid4().hex + ".pending")
+        # Display names live outside the evidence manifest and all evidence fingerprints.
+        try:
+            with temporary.open("xb") as stream:
+                stream.write(_encoded(name))
+                stream.flush()
+                os.fsync(stream.fileno())
+            os.replace(temporary, directory / "display-name.json")
+        finally:
+            temporary.unlink(missing_ok=True)
+        return {"recording_id": recording_id, "display_name": name}
+
+    def open_example(self):
+        directory = self.recording_root / EXAMPLE_ID
+        raw = _read(EXAMPLE_PATH, MAX_BYTES)
+        if not directory.exists():
+            # Materialize once. The live recorder never sees the example as a game source.
+            with tempfile.TemporaryDirectory(prefix=".example-", dir=_directory(self.recording_root)) as staging:
+                base = Path(staging)
+                staged = CaptureManager(base / "sources", base / "recordings")
+                (staged.source_root / (EXAMPLE_ID + ".jsonl")).write_bytes(raw)
+                example = _Session(staged, EXAMPLE_ID, "survive-lucian-practice-v1", example=True)
+                example.thread.join(timeout=10)
+                if example.thread.is_alive():
+                    example.stop()
+                    raise ValueError("Example preparation timed out. Try opening it again.")
+                if not example.finalized or example.state != "complete":
+                    raise ValueError(example.error or "The example could not be finalized.")
+                try:
+                    example.directory.rename(directory)
+                except OSError:
+                    if not directory.is_dir():
+                        raise
+        opened = self.open(EXAMPLE_ID)
+        if (opened["capture"]["source_sha256"] != _sha(raw)
+                or opened["capture"]["provenance"] != "simulated_standard_example"):
+            raise ValueError("The saved example differs from the supplied example.")
+        return opened
 
     def open(self, recording_id):
         if not isinstance(recording_id, str) or not RECORDING.fullmatch(recording_id):
@@ -719,7 +788,8 @@ class CaptureManager:
             raise ValueError("Completed source lacks a reproducible analysis")
         elif capture.get("completion") is not None and capture.get("state") != "failed":
             raise ValueError("Partial recording claims game completion")
-        capture = dict(capture, reopened=True)
+        capture = dict(capture, reopened=True, display_name=(
+            "Standard example" if recording_id == EXAMPLE_ID else self._display_name(recording_id)))
         self._opened = {"recording_id": recording_id, "rows": rows,
                         "hashes": dict(manifest["files_sha256"], **{"manifest.json": _sha(manifest_raw)})}
         self._remember_verified(capture, analysis, self._opened["hashes"])

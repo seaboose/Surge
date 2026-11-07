@@ -1,0 +1,95 @@
+.survive-workspace .survive-replay-studio .arena-view {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 6px;
+}
+.arena-header,
+.arena-tools,
+.arena-mark-tools,
+.arena-marks li {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+}
+.arena-header {
+  justify-content: space-between;
+}
+.survive-workspace .arena-header h3 {
+  margin: 0;
+  font-size: 13px;
+}
+.survive-workspace .arena-view button:not(.surge-info),
+.survive-workspace .arena-view select,
+.survive-workspace .arena-view input {
+  min-height: 30px;
+  padding: 4px 9px;
+  font-size: 12px;
+}
+.arena-tools {
+  align-items: flex-end;
+  padding-block: 3px 8px;
+}
+.arena-tools label {
+  display: grid;
+  gap: 3px;
+  font-size: 12px;
+}
+.arena-mark-tools {
+  flex-basis: 100%;
+  align-items: flex-end;
+}
+.survive-workspace .survive-replay-studio .arena-view .survive-arena {
+  width: 100%;
+  height: clamp(235px, 31vh, 390px);
+  max-height: none;
+  min-height: 0;
+  border-radius: 3px;
+  background: #080d12;
+}
+.survive-workspace
+  .survive-replay-studio
+  .arena-view[data-large="true"]
+  .survive-arena {
+  height: clamp(350px, 62vh, 760px);
+}
+.arena-view .survive-arena[data-placing="true"] {
+  cursor: crosshair;
+}
+.arena-view[data-palette="contrast"] {
+  --cyan: #a3f9ff;
+  --orange: #ffe16e;
+}
+.arena-view[data-palette="contrast"] .survive-obstacle {
+  fill: #52627b;
+  stroke: #becce7;
+}
+.arena-view[data-palette="contrast"] .survive-dash-path {
+  stroke: #ffb5f2;
+}
+.arena-pin {
+  fill: #efce82;
+  stroke: #151a20;
+  stroke-width: 7;
+}
+.arena-marks ul {
+  list-style: none;
+  padding: 0;
+}
+.arena-marks li {
+  margin-block: 4px;
+  overflow-wrap: anywhere;
+}
+.arena-view small {
+  font-variant-numeric: tabular-nums;
+}
+
+.arena-view svg [data-record] {
+  cursor: pointer;
+}
+.arena-view svg [data-record]:focus-visible {
+  outline: 2px solid #edf8fc;
+}
+.arena-view svg[data-placing="true"] [data-record] {
+  cursor: crosshair;
+}

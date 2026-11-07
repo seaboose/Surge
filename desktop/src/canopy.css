@@ -1,0 +1,307 @@
+/* The approved full-width scene uses uniform reference coordinates. Controls
+   retain readable sizes while the artwork fits the available orientation. */
+.app.at-home {
+  position: relative;
+  min-height: 480px;
+  background: #050607;
+}
+.app.at-home > main {
+  position: static;
+  padding: 0;
+}
+.app.at-home > .instrument-header {
+  z-index: 10;
+  pointer-events: none;
+}
+.app.at-home > .instrument-header button,
+.app.at-home > .instrument-header .instrument-access {
+  pointer-events: auto;
+}
+.surge-opening.luminous-opening.landing-flow {
+  position: static;
+  display: block;
+  max-width: none;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+}
+.app.at-home .packet-hero {
+  position: absolute;
+  inset: 0;
+  width: auto;
+  margin: 0;
+  pointer-events: none;
+  overflow: hidden;
+}
+.app.at-home .packet-scene {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  aspect-ratio: auto;
+  overflow: hidden;
+  pointer-events: none;
+}
+.canopy-canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+.canopy-rear {
+  z-index: 1;
+}
+.canopy-front {
+  z-index: 3;
+}
+.packet-scene .canopy-brand {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: calc(
+    100% - var(--canopy-y) - 520px * var(--canopy-scale) +
+      clamp(22px, 62px * var(--canopy-scale), 80px)
+  );
+  width: calc(654px * var(--canopy-scale));
+  max-width: calc(100% - 32px);
+  margin-inline: auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: clamp(8px, 10px * var(--canopy-scale), 12px);
+  text-align: center;
+}
+.packet-scene .surge-wordmark {
+  position: relative;
+  z-index: 2;
+  margin: 0;
+  padding-left: 0.22em;
+  font-family: var(--font-ui);
+  font-size: calc(148px * var(--canopy-scale));
+  font-weight: 200;
+  font-style: normal;
+  letter-spacing: 0.22em;
+  line-height: 1;
+  color: #e7edeb;
+}
+.packet-scene .canopy-subtitle {
+  position: relative;
+  z-index: 4;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  column-gap: 0.28em;
+  width: max-content;
+  max-width: 74%;
+  margin: 0;
+  font-family: var(--font-ui);
+  font-size: clamp(11px, 16px * var(--canopy-scale), 18px);
+  font-weight: 300;
+  letter-spacing: 0.005em;
+  line-height: 1.35;
+  color: #c3ccd0;
+  text-shadow:
+    0 1px 5px #050607,
+    0 0 10px #050607;
+}
+.packet-scene .canopy-subtitle span {
+  white-space: nowrap;
+}
+.canopy-core {
+  position: absolute;
+  left: calc(var(--canopy-x) + 854px * var(--canopy-scale));
+  top: calc(var(--canopy-y) + 520px * var(--canopy-scale));
+  width: calc(212px * var(--canopy-scale));
+  height: auto;
+  z-index: 4;
+}
+.canopy-core .processor-core {
+  width: 100%;
+  height: auto;
+}
+.canopy-core .processor-stamp {
+  stroke: #71858f;
+  stroke-width: 1;
+}
+.canopy-core .processor-packet text {
+  font-family: ui-monospace, Consolas, monospace !important;
+  font-size: 12px;
+  filter: brightness(2.1);
+}
+.app.at-home .packet-actions {
+  position: absolute;
+  inset: 0;
+  display: block;
+  width: 100%;
+  margin: 0;
+  pointer-events: none;
+}
+.app.at-home .packet-action {
+  position: absolute;
+  top: var(--action-top);
+  left: var(--action-left);
+  width: var(--action-width);
+  min-height: 65px;
+  height: auto;
+  transform: translateX(-50%);
+  padding: 10px 14px;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  gap: 13px;
+  z-index: 7;
+  pointer-events: auto;
+  border-radius: 5px;
+}
+.app.at-home .packet-action.landing-capture {
+  left: var(--action-right);
+  top: var(--action-second-top);
+}
+.app.at-home .landing-action-copy {
+  padding-left: 13px;
+  border-left: 1px solid #ffffff23;
+  gap: 3px;
+}
+.app.at-home .landing-action-copy strong {
+  font-size: 16px;
+  font-weight: 500;
+  letter-spacing: -0.01em;
+}
+.app.at-home .landing-action-copy > span {
+  font-size: 14px;
+  color: #a3adb5;
+}
+.app.at-home .landing-action-icon {
+  width: 25px;
+  height: 27px;
+  flex-basis: 25px;
+}
+.app.at-home .landing-corners {
+  display: none;
+}
+.app.at-home .landing-recent {
+  position: absolute;
+  left: 2.9%;
+  right: 2.9%;
+  bottom: 18px;
+  width: auto;
+  min-height: 48px;
+  padding: 10px 3px 0;
+  margin: 0;
+  z-index: 7;
+  gap: 17px;
+  border-color: #ffffff16;
+  background: #050607;
+}
+.app.at-home .landing-recent-summary {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  min-width: 0;
+  gap: 4px 17px;
+}
+.app.at-home .landing-recent-summary h2 {
+  color: #c1c9ce;
+  font-size: 14px;
+}
+.app.at-home .landing-recent-summary p {
+  font-size: 14px;
+  color: #929ca5;
+  margin: 0;
+}
+.app.at-home .landing-recent-actions {
+  gap: 17px;
+}
+.app.at-home .home-resume {
+  position: relative;
+  z-index: 8;
+  margin: 0 auto;
+  width: fit-content;
+  max-width: calc(100% - 48px);
+  background: #0e151b;
+}
+.app.at-home > footer {
+  position: relative;
+  z-index: 8;
+}
+.app.at-home:has(> footer:not([data-quiet="true"])) .landing-recent {
+  bottom: 44px;
+}
+@media (max-width: 640px) {
+  .app:not(.at-home) {
+    grid-template-rows: 128px minmax(0, 1fr) auto;
+  }
+  .app:not(.at-home) > .instrument-header {
+    padding: 68px 16px 10px;
+    justify-content: flex-start;
+  }
+  .app:not(.at-home) .instrument-heading {
+    min-width: 0;
+    gap: 12px;
+  }
+  .app:not(.at-home) .instrument-heading > div {
+    min-width: 0;
+  }
+  .app:not(.at-home) .instrument-heading h1 {
+    font-size: 20px;
+    overflow-wrap: anywhere;
+  }
+  .app:not(.at-home) .workspace-crystal {
+    width: 36px;
+    height: 36px;
+    flex-basis: 36px;
+  }
+  .app.at-home .packet-action {
+    gap: 10px;
+    padding: 10px 12px;
+  }
+  .app.at-home .landing-action-copy {
+    padding-left: 10px;
+  }
+  .app.at-home .landing-action-copy strong {
+    font-size: 14px;
+  }
+  .app.at-home .landing-action-copy > span {
+    font-size: 12px;
+  }
+  .app.at-home .landing-recent {
+    gap: 10px;
+    bottom: 14px;
+  }
+  .app.at-home .landing-recent-actions {
+    gap: 10px;
+  }
+  .app.at-home .landing-recent-actions .landing-all-cases:not(:first-child) {
+    padding-left: 10px;
+  }
+  .app.at-home .landing-recent-summary {
+    gap: 4px 10px;
+  }
+  .app.at-home .landing-recent-summary h2,
+  .app.at-home .landing-recent-summary p,
+  .app.at-home .landing-recent button {
+    font-size: 12px;
+  }
+}
+@media (max-width: 500px) {
+  .app.at-home {
+    min-height: max(580px, calc(100vw + 240px));
+  }
+  .app.at-home .landing-recent {
+    flex-wrap: wrap;
+    min-height: 64px;
+  }
+  .app.at-home .landing-recent-summary {
+    flex-basis: calc(100% - 32px);
+  }
+  .app.at-home .landing-recent-actions {
+    width: 100%;
+    justify-content: flex-end;
+    margin-left: 0;
+  }
+  .app.at-home .landing-recent-summary p {
+    border-left: 1px solid #ffffff26;
+    padding-left: 10px;
+  }
+}

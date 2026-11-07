@@ -141,6 +141,8 @@ export function Select({ label, value, onChange, options, ...props }) {
 }
 
 export function Pager({ page, total, onChange }) {
+  if (total <= 100 && page === 0)
+    return <div className="pager">{total} records</div>;
   return (
     <div className="actions pager">
       <Button disabled={!page} onClick={() => onChange(page - 1)}>
@@ -187,13 +189,13 @@ export function Modal({ children, close, label = "Details" }) {
   );
 }
 
-export function Split({ left, right, name }) {
+export function Split({ left, right, name, defaultSize = 50 }) {
   const initial = () => {
     try {
       const v = Number(localStorage.getItem(name));
-      return v >= 30 && v <= 70 ? v : 50;
+      return v >= 30 && v <= 70 ? v : defaultSize;
     } catch {
-      return 50;
+      return defaultSize;
     }
   };
   const [size, setSize] = useState(initial);

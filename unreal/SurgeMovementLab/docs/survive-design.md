@@ -9,7 +9,7 @@ Unreal build/UHT, two native checks and a nine-round, three-seed automated pilot
 have executed successfully. Rendered CUA clicks and separate engine-injected
 hold/focus probes support the input behavior below. These are development checks,
 not human studies or exact League movement parity.
-[Evidence](verification-2026-10-26.md) preserves current and historical results.
+Evidence (separate validation kit) preserves current and historical results.
 
 ## Controls
 
@@ -46,7 +46,7 @@ stayed true. Physical mouse holding and all input edge cases remain unverified.
 
 The local coordinate scale is chosen, not a Riot physical-unit definition. Hit
 radius, blink range and some cast/terrain semantics remain provisional.
-[Calibration](calibration/README.md) preserves versions, conflicts and official
+Calibration (separate validation kit) preserves versions, conflicts and official
 video observations. No complete kit, haste or cooldown refund is reproduced.
 Observed Survive speeds and timing agree with this profile; that is not a direct
 measurement of League. Exact 16-second readiness and a 300-second blink regrant
@@ -72,7 +72,7 @@ restarts, cancellations and unsupported intervals remain visible.
 Analysis selects a reviewed profile; raw data cannot select limits. Separate
 constraints cover walking, mobility range/cooldowns and supported dash maxima.
 Descriptive summaries retain exposure, overlap, cadence, clearance and accepted
-action timing without calling it human reaction time. [Summary v2](opportunity-model.md)
+action timing without calling it human reaction time. Summary v2 (separate validation kit)
 keeps nominal walking opportunity budgets separate from observed delays and
 detector limits. Offline replay uses recorded
 paths and gaps. Hashes bind local bytes; they do not authenticate them.
@@ -90,5 +90,5 @@ paths and gaps. Hashes bind local bytes; they do not authenticate them.
    and movement mode. Keep failed attempts and all supported denominators.
 
 No inventory, accounts, multiplayer, leaderboard or elaborate art is needed.
-[Collection protocol](experiment-protocol.md) and [v3 contract](telemetry-v3.md)
+Collection protocol (separate validation kit) and [v3 contract](telemetry-v3.md)
 describe current behavior. Earlier design revisions remain available in Git history.

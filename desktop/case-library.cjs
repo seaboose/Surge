@@ -21,14 +21,14 @@ function cleanupFailure(error, detail) {
   if (error.code) failure.code = error.code;
   return failure;
 }
-async function publishCase(staging, destination) {
+async function renameCaseDirectory(source, destination) {
   const retryDelays = [25, 50, 100, 200];
   for (let attempt = 0; ; attempt++) {
     try {
-      await fs.rename(staging, destination);
+      await fs.rename(source, destination);
       return;
     } catch (error) {
-      // Windows can briefly deny directory publication after file handles close.
+      // Windows can briefly deny directory renames after file handles close.
       // Retry only this atomic rename; never repeat writes or change permissions.
       if (
         process.platform !== "win32" ||
@@ -162,7 +162,7 @@ class CaseLibrary {
         JSON.stringify(meta),
         { flag: "wx" },
       );
-      await publishCase(staging, final);
+      await renameCaseDirectory(staging, final);
       return { entry: meta, message: "Case saved to the local library." };
     } catch (error) {
       // Staging contains only files created by this operation, never source evidence.
@@ -206,7 +206,7 @@ class CaseLibrary {
         "Case folder contains unexpected files; deletion canceled.",
       );
     const removed = path.join(this.root, `.deleted-${id}-${randomUUID()}`);
-    await fs.rename(e.dir, removed);
+    await renameCaseDirectory(e.dir, removed);
     try {
       await fs.unlink(path.join(removed, "case.json"));
       await fs.unlink(path.join(removed, "metadata.json"));

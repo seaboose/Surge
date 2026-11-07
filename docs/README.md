@@ -1,15 +1,15 @@
 # Documentation
 
-- [Five-minute demo](standalone-demo.md): record, inspect, and export a report.
-- [Code guide](code-map.md): follow a recording through the implementation.
-- [Development](development.md): setup, tests, and source layout.
-- [Architecture](architecture.md): process boundaries and evidence flow.
-- [Validation](validation.md): verified results and remaining limits.
-- [Release checklist](release-checklist.md): repeatable steps for future updates.
+- [Build and run](development.md)
+- [Source guide](code-map.md)
+- [Architecture](architecture.md)
+- [Landing and preferences](landing-design.md)
+- [Windows package](windows-package.md)
+- [Capture and report walkthrough](standalone-demo.md)
+- [Survive workflow](survive-workflow.md)
+- [Reports and evidence](survive-investigations.md)
+- [Study comparisons](survive-study.md)
+- [Native collection](../native/README.md)
+- [Security](../SECURITY.md)
 
-For details: [gameplay workflow](survive-workflow.md),
-[report editor](survive-investigations.md), [study protocol](survive-study.md),
-[packaging](runtime-release-scope.md), and [security](../SECURITY.md).
-
-Other files in this directory document test procedures and acceptance criteria
-used by the development scripts. They are not additional product features.
+Tests and detailed qualification records belong to the separate validation kit.

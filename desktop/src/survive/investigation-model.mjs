@@ -16,6 +16,44 @@ export const editableInvestigation = (document) => ({
 });
 export const formatEvidenceNumber = (value, digits = 3) =>
   Number.isFinite(value) ? value.toFixed(digits) : "Unavailable";
+
+export function sameEvidenceSelection(a, b) {
+  return Boolean(
+    a?.recording_id &&
+    a.recording_id === b?.recording_id &&
+    Number.isInteger(a.seq) &&
+    a.seq === b.seq &&
+    (a.constraint_id ?? null) === (b.constraint_id ?? null),
+  );
+}
+
+export function attachedEvidenceId(evidence, selection) {
+  return (
+    evidence?.find((card) => sameEvidenceSelection(card, selection))
+      ?.evidence_id ?? null
+  );
+}
+
+export function findVisitedEvidence(
+  visit,
+  investigationId,
+  revision,
+  evidence = [],
+) {
+  if (
+    !visit ||
+    visit.investigationId !== investigationId ||
+    !Number.isInteger(revision) ||
+    revision < visit.revision
+  )
+    return null;
+  return evidence.find(
+    (card) =>
+      card.evidence_id === visit.evidenceId &&
+      sameEvidenceSelection(card, visit.selection),
+  );
+}
+
 export function reportReadiness({
   document,
   form,

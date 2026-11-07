@@ -1,7 +1,7 @@
 # Source guide
 
-The repository contains one maintained implementation plus its tests and build
-tools. The Windows package contains the required runtimes, game and application
+The repository contains the software implementation and its build support.
+Tests and historical validation material are distributed separately. The Windows package contains the required runtimes, game and application
 assets; development tools and private recordings stay outside that package.
 
 ## Follow one investigation
@@ -28,35 +28,15 @@ and capture, `SurviveSim.h` for shared rules, and `SurviveAttackDirector.cpp` fo
 threat scheduling. The separate native demo starts at `native/owned_app.cpp` and
 `native/code_range_collector.cpp`; `native_stream.py` validates its bounded stream.
 
-## Focused checks
-
-- `test_survive_capture.py`: complete versus truncated or reordered recordings.
-- `test_survive_investigations.py`: revisions, stale saves and changed sources.
-- `test_desktop_dispatch.py`: admission checks before handler work.
-- `desktop/survive-flow.test.cjs`: timeline selection and replay boundaries.
-- `test_native_manifest_security.py`: coverage declarations and approval identity.
-
-See [desktop development](../desktop/README.md) for commands and
-[validation scope](validation.md) for the distinction between recorded results
-and a fresh qualification run. `pnpm --dir desktop dev` provides source maps and
-the interface inspector; these are excluded from the product.
-
 ## Compatibility and packaging
 
 The v3 movement adapter imports helpers from `prepare.py` and `prepare_v2.py`.
 Those files are active dependencies, not duplicate obsolete implementations.
-Native v1 fixtures preserve supported-format and corruption tests. The Tk
-Workbench is a development-only compatibility interface with existing regression
-coverage; the packaged product uses Electron.
+Both native DLL versions support owned demonstrations and baseline approval.
+The product interface uses Electron; development-only compatibility interfaces
+are retained in the separate validation kit.
 
 `scripts/build_windows_package.py` declares runtime modules;
 `scripts/release_files.py` selects publishable source. Read
 [runtime release scope](runtime-release-scope.md) before changing either list.
-To regenerate a bounded source inventory without opening private/generated trees:
-
-```powershell
-python scripts/code_inventory.py --output verification/code-inventory.json
-```
-
-Choose a new output filename for each saved inventory. Counts are a navigation
-aid, not proof of dependency completeness or working release behavior.
+The separate validation kit records the matching product fingerprint.

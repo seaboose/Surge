@@ -11,7 +11,7 @@ The two reviewed local profiles are `survive-lucian-practice-v1` and
 `survive-lucian-reference-v1`. They share movement/geometry, but cooldowns are
 4/12 seconds for practice and 16/300 seconds for reference. Calibration status,
 raw-value/display-range conflicts, source hashes and timing uncertainty are in
-[the calibration record](calibration/README.md), not hidden detector features.
+the calibration record (separate validation kit), not hidden detector features.
 
 ## Flat record fields
 
@@ -61,7 +61,7 @@ transition/active ability. Missing heads/tails, hitches and mobility crossings
 yield Unknown; they are never counted as clean. Dash timing additionally requires
 supported in-dash samples/ticks and an uncensored matched end. Short wall-stopped
 dashes remain valid; minimum actual travel and exact speed are not enforced.
-[Dash evidence](dash-evidence.md) defines the conservative maximum-envelope rules.
+Dash evidence (separate validation kit) defines the conservative maximum-envelope rules.
 The opt-in owned speed probe changes real walking speed to1200 at20–35 seconds,
 then restores335; actions/expected outcomes remain external to raw detector input.
 
@@ -88,13 +88,13 @@ shots receive a nominal budget for the best straight angled heading, with
 explicit range/centering checks. This assumes no terrain, other threats, latency
 or acceleration. Nominal delay and observed warning-to-fire delay are separate.
 Summary v2 deprecates the old perpendicular field name; see
-[the opportunity model](opportunity-model.md) for formulas and availability.
+the opportunity model (separate validation kit) for formulas and availability.
 
 No pure human reaction time is reported. Client input/cue-display timestamps and
 clock synchronization remain future work; server elapsed/platform clocks cannot
 be subtracted from an arbitrary client clock to infer latency.
 
-[Quality metrics](quality-metrics.md) add observed sample coverage, separate
+Quality metrics (separate validation kit) add observed sample coverage, separate
 monotonic cadence and simulation/monotonic ratios. Each threat also reports time
 to the first later accepted move command, bounded by resolution/capture end,
 with competing-threat counts and conservative prewarning displacement context.

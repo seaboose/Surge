@@ -1,37 +1,43 @@
-# Play, record, review, explain, export
+# Play & record, review, explain, export
 
 In the standalone product, open `Surge.exe`; in the developer workspace, use
-`Start-Surge.cmd`. Choose **Survive sessions**. The five-step bar keeps
-the launcher, recording status, replay, investigation and export checks within
-one workspace. Each step shows its own focused view. Changing steps preserves
+`Start-Surge.cmd`. Choose **Try Demo** → **Survive**. The four-step bar keeps
+round setup and recording together, followed by review, investigation and export. Each step shows its own focused view. Changing steps preserves
 the selected evidence and report draft; leaving Review stops replay playback.
 Secondary settings, definitions and source details expand when needed.
 
-1. **Play:** choose an alias, input condition, seed, phase and profile. **Play and
+1. **Play & record:** in **Round setup**, choose an alias, input condition, seed, phase and profile. **Play and
    record trial** arms recording before launching one 60-second game. Right-click
    moves; S stops movement, Q dashes and E blinks. Practice sessions are excluded
    from comparison rates. The launcher waits for the current owned game to exit
    before allowing another trial.
-2. **Record:** the desktop strip shows game elapsed time, recorder elapsed time,
+   Setup collapses when capture starts; reopen it to inspect your choices.
+   The recording strip shows game elapsed time, recorder elapsed time,
    received records and receipt freshness. In the game, the HUD distinguishes
    telemetry being written from Surge receiving it. **F10** or the HUD's **Stop
    recording** button stops only the recorder. Gameplay continues and a partial
    recording remains partial/Unknown. A missing or stale heartbeat is unavailable,
-   never a healthy fallback. **Inspect live** opens Review; **Pause view** pauses
+   never a healthy fallback. **Inspect live recording** opens Review; **Pause view** pauses
    inspection, not recording. Recorder diagnostics are available on demand.
-3. **Review:** when recording finishes, choose **Review this session**. Completion
+   Use **Recordings** to rename a saved round, open it, or record an existing or upcoming game source.
+   The default name uses the session type and local recording date and time. Choose **Rename** to give it your own name.
+   **Open example** loads an eight-second simulated recording. It supports the same evidence links and report workflow.
+   Review and Explain unlock when a recording is loaded. Export also requires a report.
+2. **Review:** when recording finishes, choose **Review this session**. Completion
    does not replace a paused view or a different saved session. A compact summary
    keeps duration, Review findings and Unknown observations visible. Expand it
    for hits, avoided initial threats, sampled coverage and metric definitions.
    Missing measurements are not displayed as zero.
-4. **Explain:** select a timeline marker, graph interval or event row. Replay,
+3. **Explain:** select a timeline marker, graph interval or event row. Replay,
    selected time, measurements and exact raw evidence share that selection.
    **Add selection to investigation** pins the moment and attaches it to a clean
    open report in one click. If a report must be created or saved first, the pinned
    selection stays available without discarding notes or moving the replay.
-   Section tabs show one writing field at a time, alongside cited evidence.
+   When the open investigation already includes this selection, Review and Explain show its evidence ID, for example **Attached as E2**.
+   In Review, select **Attached as E2** to jump to that card in Explain. Choose **Back to replay** on the card to return to the same playhead position, evidence selection and zoom range.
+   Choose **New investigation** or a saved title in the investigation picker. Review the attached evidence, then write and cite it.
    Report switching, authorship and revision history expand on demand.
-5. **Export:** the readiness panel checks saved text, citations, current source
+4. **Export:** the readiness panel checks saved text, citations, current source
    verification, the question/conclusion and analyst review. **Recheck evidence**
    preserves unsaved notes. Drafts and incomplete investigations can still be
    exported with visible warnings; unsaved changes and unknown citation IDs must
@@ -47,9 +53,10 @@ use Left/Right, to change the available space. Home/End select the limits;
 Resizing never changes the selected moment or evidence.
 
 The inspector shows the assessment, observed/allowed values, coverage, event and
-time first. Record identifiers, source/policy, raw JSON and explanations expand
-individually. Missing-data warnings stay visible. **Movement measurements**,
-**Event records**, and **Compare sessions and study labels** open only when needed.
+time first. Field help explains the value and its limits. Identifiers, source details and raw JSON expand individually.
+In **Replay tools**, change the camera, enlarge the map or switch colors. Mark a location or the current player position. These personal map notes stay on this device and reopen the linked moment. For a portable citation use **Add selection to investigation**.
+**Timeline** opens first. Choose **Movement** or **Event records** to switch views, or use **Show together** to inspect the same selection in several views.
+**Compare recordings** opens a second saved recording alongside the current summary. Study comparison and labels are available there.
 
 ## Time and visual meaning
 
@@ -64,13 +71,15 @@ individually. Missing-data warnings stay visible. **Movement measurements**,
 | Grey Unknown / missing data | Evidence is unavailable or unsupported; not a clean result. |
 | Cyan verified | Source consistency was checked; not authenticated human input. |
 
-The full-round overview stays above the detailed event lanes. Drag across it to
-select a time range, click to recenter, or use zoom controls. **Set range** provides
-precise start/end fields; **Follow selected moment** restores the moving window.
+Click or drag the full-round timeline to seek. Seeking pauses replay and leaves
+the arena and inspector at the same moment. Arrow keys move 0.1 s; Shift+arrow
+moves 1 s. Home/End jump to the ends. Open **Time & zoom** for an exact time or
+viewing range. **Zoom range** changes dragging to range selection; close the tools
+to seek again. **Follow selected moment** restores the moving window.
 Changing the viewed range does not change the selected evidence or replay time.
 
-**Filter events** shows hits, dashes, blinks, findings, missing data, commands and
-threats. Nearby markers become counted clusters: open one to choose its exact
+Three lanes distinguish Review (amber diamond), Coverage (hollow square),
+and recorded Events (muted dot). **Filter events** narrows the display by kind. Nearby markers become counted clusters: open one to choose its exact
 event. Single markers and listed events support Enter/Space. Grey spans mark gaps
 greater than 150 ms between recorded positions, including gaps crossing the viewed
 range. The overview's missing-data indicators stay visible when event filters are

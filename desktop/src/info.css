@@ -1,0 +1,61 @@
+.survive-workspace button.surge-info {
+  display: inline-grid;
+  place-items: center;
+  inline-size: 20px;
+  block-size: 20px;
+  min-width: 20px;
+  min-height: 20px;
+  padding: 0;
+  margin-inline-start: 4px;
+  align-self: center;
+  vertical-align: middle;
+  border: 0;
+  background: transparent;
+  color: var(--muted, #a6b3bd);
+  box-shadow: none;
+  font-size: 10px;
+}
+.surge-info > span {
+  display: grid;
+  place-items: center;
+  width: 13px;
+  height: 13px;
+  border: 1px solid currentColor;
+  border-radius: 50%;
+  line-height: 1;
+  font-family: inherit;
+  font-weight: 650;
+  text-transform: none;
+  letter-spacing: 0;
+}
+.survive-workspace button.surge-info:hover,
+.survive-workspace button.surge-info:focus-visible {
+  color: #edf5fa;
+}
+.surge-info-bubble {
+  position: fixed;
+  z-index: 10000;
+  width: max-content;
+  max-width: min(30ch, calc(100vw - 20px));
+  padding: 9px 11px;
+  border: 1px solid #495762;
+  border-radius: 5px;
+  background: #182128;
+  color: #eef4f7;
+  box-shadow: 0 4px 18px #0008;
+  font:
+    400 12px/1.5 Inter,
+    sans-serif;
+  text-align: left;
+}
+.survive-field {
+  display: grid;
+  align-content: start;
+  min-width: 0;
+  gap: 4px;
+}
+.survive-field-heading {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+}

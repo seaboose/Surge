@@ -18,13 +18,15 @@ import uuid
 import zipfile
 
 try:
-    from . import qualify
+    from .process_runner import run_command
     from .release_files import ROOT, source_files
     from .survive_package import COMBINED_LIMITS, copy_runtime
+    from .windows_icon import embed_icon
 except ImportError:
-    import qualify
+    from process_runner import run_command
     from release_files import ROOT, source_files
     from survive_package import COMBINED_LIMITS, copy_runtime
+    from windows_icon import embed_icon
 
 LIMITS = dict(total_seconds=1200, command_seconds=600, download_seconds=180,
               log_bytes=10 * 1024 * 1024, archive_bytes=256 * 1024 * 1024,
@@ -34,7 +36,7 @@ BACKEND = ("chart", "comparison", "desktop_worker", "engine", "evaluation", "evi
            "import_errors", "integrity_manifest", "investigation", "mapping_checks", "native_integrity",
            "native_stream", "record_search", "workflow", "survive_workspace", "survive_capture", "survive_study", "survive_investigations", "survive_recorder_bridge", "survive_runtime")
 DESKTOP = ("main.cjs", "preload.cjs", "runtime.cjs", "boundary.cjs", "case-library.cjs", "startup.cjs", "investigation-export.cjs", "presentation.cjs")
-GUIDES = ("windows-package.md", "windows-package-tester.md", "windows-package-session-record.md")
+GUIDES = ("windows-package.md",)
 
 
 def sha(path):
@@ -56,6 +58,31 @@ def package_filename(version, commit, dirty, with_survive=False):
 def inventory(root):
     return [dict(path=p.relative_to(root).as_posix(), bytes=p.stat().st_size, sha256=sha(p))
             for p in sorted(root.rglob("*")) if p.is_file()]
+
+
+def check_bundled_backend(app, work, python, command, *, skip=False, source_root=ROOT):
+    if skip:
+        return dict(status="skipped", tests=0,
+                    reason="Explicit --without-backend-tests: validation files are distributed separately. This is not full qualification.")
+    names = ("test_desktop_worker.py", "test_evaluation.py")
+    # Missing validation files must never silently weaken the default build.
+    if any(not (source_root / name).is_file() for name in names):
+        raise ValueError("Backend validation files are missing; restore the validation supplement or explicitly use --without-backend-tests.")
+    backend_tests = work / "backend-checks"
+    (backend_tests / "verification/temporary-test-files").mkdir(parents=True)
+    for name in names:
+        shutil.copy2(source_root / name, backend_tests / name)
+    probe = (
+        "import sys,json,pathlib,unittest;sys.path.insert(0,sys.argv[1]);sys.path.append(sys.argv[2]);"
+        "names=json.loads(sys.argv[3]);mods=[__import__(n) for n in names];"
+        "assert all(pathlib.Path(m.__file__).resolve().parent==pathlib.Path(sys.argv[1]).resolve() for m in mods);"
+        "suite=unittest.defaultTestLoader.loadTestsFromNames(['test_desktop_worker','test_evaluation']);"
+        "result=unittest.TextTestRunner(verbosity=2).run(suite);"
+        "print('SURGE_BUNDLED_BACKEND='+json.dumps({'python':sys.executable,'modules':{m.__name__:m.__file__ for m in mods},'tests':result.testsRun,'skipped':len(result.skipped),'passed':result.wasSuccessful()}));"
+        "sys.exit(0 if result.wasSuccessful() and result.testsRun==25 and not result.skipped else 1)"
+    )
+    command("existing_backend_on_bundled_python", [python, "-I", "-B", "-c", probe, app, backend_tests, json.dumps(BACKEND)], timeout=120)
+    return dict(status="passed", tests=25, source="validation supplement")
 
 
 def extract_checked(archive, destination, deadline):
@@ -145,12 +172,7 @@ def run_builder(args):
             raise ValueError("build_log_or_time_budget_exhausted")
         log = folder / (name + ".log")
         step = dict(id=name, argv=argv, cwd=str(cwd), timeout_seconds=timeout or LIMITS["command_seconds"])
-        previous = qualify.LOG_LIMIT
-        try:
-            qualify.LOG_LIMIT = remaining
-            result = qualify.run_command(step, log, os.environ.copy(), deadline)
-        finally:
-            qualify.LOG_LIMIT = previous
+        result = run_command(step, log, os.environ.copy(), deadline, root=ROOT, log_limit=remaining)
         logs_used += result.get("log_bytes", 0)
         report["steps"].append(dict(id=name, command=argv, active_log_limit_bytes=remaining, **result))
         if result["status"] != "passed":
@@ -190,6 +212,7 @@ def run_builder(args):
             check(name + "_download_hash", sha(archives[name]) == lock[name]["sha256"])
         extract_checked(archives["electron"], payload, deadline)
         (payload / "electron.exe").rename(payload / "Surge.exe")
+        embed_icon(payload / "Surge.exe", ROOT / "desktop/assets/surge.ico")
         if (payload / "electron_wer.dll").exists():
             (payload / "electron_wer.dll").rename(payload / "Surge_wer.dll")
         # Keep upstream support files and all locales; only the Electron demo is omitted.
@@ -214,8 +237,14 @@ def run_builder(args):
             shutil.copy2(ROOT / (name + ".py"), app / (name + ".py"))
         for name in DESKTOP:
             shutil.copy2(ROOT / "desktop" / name, desktop / name)
+        (desktop / "assets").mkdir()
+        for name in ("surge.ico", "surge.png", "surge.svg"):
+            shutil.copy2(ROOT / "desktop/assets" / name, desktop / "assets" / name)
         if survive_build:
             report["survive"] = copy_runtime(survive_build, app, ROOT, deadline)
+            example = Path("demos/survive/standard-example.jsonl")
+            (app / example.parent).mkdir(parents=True, exist_ok=True)
+            shutil.copy2(ROOT / example, app / example)
             identity["survive_game_manifest_sha256"] = report["survive"]["game_manifest_sha256"]
             write_json(app / "package-identity.json", identity)
             probe = (
@@ -231,14 +260,12 @@ def run_builder(args):
                 target = work / "source" / relative
                 target.parent.mkdir(parents=True, exist_ok=True)
                 shutil.copy2(ROOT / relative, target)
-        script = "const e=require('esbuild'),p=require('node:path');e.buildSync({entryPoints:[process.argv[1]],outfile:process.argv[2],nodePaths:[p.join(process.cwd(),'node_modules')],bundle:true,minify:true,sourcemap:false,define:{'process.env.NODE_ENV':'\"production\"'},legalComments:'eof'});"
-        command("renderer_build", ["node", "-e", script, work / "source/desktop/src/main.jsx", desktop / "dist/app.js"], ROOT / "desktop")
-        for name in ("index.html", "style.css"):
-            shutil.copy2(work / "source/desktop/src" / name, desktop / "dist" / name)
+        script = "const b=require(process.argv[1]),p=require('node:path');b.build(false,{sourceDir:process.argv[2],outputDir:process.argv[3],nodePaths:[p.join(process.cwd(),'node_modules')]});"
+        command("renderer_build", ["node", "-e", script, ROOT / "desktop/build.cjs", work / "source/desktop/src", desktop / "dist"], ROOT / "desktop")
         command("node_identity", ["node", "--version"], timeout=30)
         command("cmake_identity", [cmake, "--version"], timeout=30)
         native_build = work / "native-build"
-        command("native_configure", [cmake, "-S", work / "source/native", "-B", native_build, "-A", "x64", "-DCMAKE_MSVC_RUNTIME_LIBRARY=MultiThreaded"])
+        command("native_configure", [cmake, "-S", work / "source/native", "-B", native_build, "-A", "x64", "-DCMAKE_MSVC_RUNTIME_LIBRARY=MultiThreaded", "-DBUILD_TESTING=OFF"])
         command("native_build", [cmake, "--build", native_build, "--config", "Release", "--target", "surge_owned_app", "surge_fixture", "--", "/nodeReuse:false"])
         cache_text = (native_build / "CMakeCache.txt").read_text()
         linker = re.search(r"^CMAKE_LINKER:FILEPATH=(.+)$", cache_text, re.M).group(1)
@@ -270,21 +297,9 @@ def run_builder(args):
         # Validate the existing ordinary capture/reader path using the packaged backend.
         probe = "import sys,json;sys.path.insert(0,sys.argv[1]);import desktop_worker,native_stream;w=desktop_worker.Workspace();s=native_stream.NativeSession('v2');s.ready.wait(5);import time;time.sleep(1.2);status=s.stop();rows=s.snapshot();assert status['state']=='stopped' and s.process.poll()==0,status;assert len(rows)>=4 and all(r.get('baseline_approved') is True and r.get('memory_matches') is True and r.get('protection_matches') is True for r in rows),rows;print(json.dumps({'backend':desktop_worker.__file__,'python':sys.executable,'samples':status['samples'],'observations':len(rows),'sample_exit_code':s.process.returncode}));w.close()"
         command("ordinary_packaged_sample", [py, "-I", "-B", "-c", probe, app], timeout=30)
-        # Existing backend cases, copied unchanged; imports resolve to shipped code.
-        backend_tests = work / "backend-checks"
-        (backend_tests / "verification/temporary-test-files").mkdir(parents=True)
-        for name in ("test_desktop_worker.py", "test_evaluation.py"):
-            shutil.copy2(ROOT / name, backend_tests / name)
-        backend_probe = (
-            "import sys,json,pathlib,unittest;sys.path.insert(0,sys.argv[1]);sys.path.append(sys.argv[2]);"
-            "names=json.loads(sys.argv[3]);mods=[__import__(n) for n in names];"
-            "assert all(pathlib.Path(m.__file__).resolve().parent==pathlib.Path(sys.argv[1]).resolve() for m in mods);"
-            "suite=unittest.defaultTestLoader.loadTestsFromNames(['test_desktop_worker','test_evaluation']);"
-            "result=unittest.TextTestRunner(verbosity=2).run(suite);"
-            "print('SURGE_BUNDLED_BACKEND='+json.dumps({'python':sys.executable,'modules':{m.__name__:m.__file__ for m in mods},'tests':result.testsRun,'skipped':len(result.skipped),'passed':result.wasSuccessful()}));"
-            "sys.exit(0 if result.wasSuccessful() and result.testsRun==25 and not result.skipped else 1)"
-        )
-        command("existing_backend_on_bundled_python", [py, "-I", "-B", "-c", backend_probe, app, backend_tests, json.dumps(BACKEND)], timeout=120)
+        # Validation stays outside the payload and may be supplied separately.
+        report["backend_validation"] = check_bundled_backend(
+            app, work, py, command, skip=getattr(args, "without_backend_tests", False))
         licenses = payload / "licenses"
         licenses.mkdir()
         shutil.copy2(ROOT / "LICENSE", licenses / "Surge-MIT.txt")
@@ -304,6 +319,7 @@ def run_builder(args):
             "Surge application: MIT; see licenses/Surge-MIT.txt.\n"
             "Electron: licenses/Electron-LICENSE.txt. Chromium/Node and bundled components: LICENSES.chromium.html.\n"
             "React, ReactDOM and Scheduler: licenses/*-LICENSE.txt; renderer retains bundled legal comments.\n"
+            "Bundled fonts: resources/app/desktop/dist/fonts/*-OFL.txt.\n"
             "CPython and its bundled libraries/runtime files: resources/python/LICENSE.txt (also licenses/Python-LICENSE.txt).\n"
             "Owned native sample: Surge MIT source, built with the Microsoft C++ static runtime; Windows OS DLLs are not bundled.\n"
             "Build tools (esbuild, CMake, MSVC, pnpm) and developer dependencies are not shipped.\n"
@@ -323,7 +339,7 @@ def run_builder(args):
                 shutil.copy2(item, destination)
         instructions = "Extract this whole folder, then open Surge.exe. No setup or developer tools are needed.\nRead docs/windows-package.md for instructions and limits. Cases stay in your Windows profile when replacing this folder.\n"
         if survive_build:
-            instructions += "Choose Survive sessions, then Play and record trial. The included standalone game does not require the Unreal editor. Recordings and reports stay in your Windows user profile, separate from this application folder. Read docs/standalone-demo.md for a short demonstration walkthrough.\n"
+            instructions += "Choose Try Demo, then Survive to record a game or open the example. See docs/standalone-demo.md for the walkthrough.\n"
             for name in ("standalone-demo.md", "survive-workflow.md", "survive-study.md", "survive-investigations.md"):
                 shutil.copy2(ROOT / "docs" / name, payload / "docs" / name)
         (payload / "OPEN-SURGE.txt").write_text(instructions, encoding="utf-8")
@@ -375,6 +391,7 @@ def main():
     parser.add_argument("--output-root", type=Path, default=ROOT / "verification/qualification")
     parser.add_argument("--cache", type=Path, default=ROOT / "verification/qualification/windows-package-cache")
     parser.add_argument("--allow-dirty", action="store_true", help="Development attempt only; final release requires clean committed source.")
+    parser.add_argument("--without-backend-tests", action="store_true", help="Explicit software-only build: skip the separate backend validation suite and record this limitation. Ordinary packaged capture checks still run.")
     parser.add_argument("--survive-build", type=Path, help="Verified standalone attempt containing game/ and game-manifest.json; include the full Survive workflow.")
     parser.add_argument("--cmake", type=Path, help="Existing CMake executable for building the owned native demonstration.")
     parser.add_argument("--fetch-runtime", choices=("electron", "python"), help=argparse.SUPPRESS)

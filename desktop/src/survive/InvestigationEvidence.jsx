@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useRef } from "react";
 import {
   SECTIONS,
   formatEvidenceNumber as number,
@@ -65,14 +65,34 @@ export function EvidenceCard({
   historical,
   navigate,
   cite,
+  visit,
+  onReturnToReplay,
 }) {
+  const cardRef = useRef(null);
+  useEffect(() => {
+    if (!visit) return;
+    const frame = requestAnimationFrame(() => {
+      const card = cardRef.current;
+      if (!card) return;
+      card.focus({ preventScroll: true });
+      card.scrollIntoView({
+        block: "start",
+        inline: "nearest",
+        behavior: "instant",
+      });
+    });
+    return () => cancelAnimationFrame(frame);
+  }, [visit]);
   const check = verification?.items?.find(
     (entry) => entry.evidence_id === item.evidence_id,
   );
   return (
     <article
-      key={item.evidence_id}
-      className="investigation-card"
+      ref={cardRef}
+      tabIndex={visit ? -1 : undefined}
+      className={
+        visit ? "investigation-card from-replay" : "investigation-card"
+      }
       aria-label={`Evidence ${item.evidence_id}`}
     >
       <div className="investigation-card-heading">
@@ -112,12 +132,18 @@ export function EvidenceCard({
       )}
       {!compact && (
         <div className="survive-controls">
-          <button
-            disabled={busy || check?.state !== "verified"}
-            onClick={() => navigate(item.evidence_id)}
-          >
-            Open {item.evidence_id} in replay
-          </button>
+          {visit ? (
+            <button disabled={busy} onClick={onReturnToReplay}>
+              Back to replay
+            </button>
+          ) : (
+            <button
+              disabled={busy || check?.state !== "verified"}
+              onClick={() => navigate(item.evidence_id)}
+            >
+              Open {item.evidence_id} in replay
+            </button>
+          )}
           <button
             disabled={busy || historical}
             onClick={() => cite(item.evidence_id)}

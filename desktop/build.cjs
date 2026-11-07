@@ -1,11 +1,16 @@
 const esbuild = require("esbuild");
 const fs = require("node:fs");
+const path = require("node:path");
 
-function options(development = false) {
+function options(development = false, paths = {}) {
+  const { sourceDir = "src", outputDir = "dist", nodePaths } = paths;
   return {
-    entryPoints: ["src/main.jsx"],
+    entryPoints: [path.join(sourceDir, "main.jsx")],
     bundle: true,
-    outfile: "dist/app.js",
+    loader: { ".ttf": "file", ".svg": "dataurl" },
+    assetNames: "fonts/[name]",
+    outfile: path.join(outputDir, "app.js"),
+    ...(nodePaths ? { nodePaths } : {}),
     minify: !development,
     sourcemap: development ? "linked" : false,
     sourcesContent: development,
@@ -18,22 +23,35 @@ function options(development = false) {
   };
 }
 
-function build(development) {
-  fs.mkdirSync("dist", { recursive: true });
-  esbuild.buildSync(options(development));
-  fs.copyFileSync("src/index.html", "dist/index.html");
+function build(development = false, paths = {}) {
+  const { sourceDir = "src", outputDir = "dist" } = paths;
+  fs.mkdirSync(outputDir, { recursive: true });
+  esbuild.buildSync(options(development, paths));
+  fs.copyFileSync(
+    path.join(sourceDir, "index.html"),
+    path.join(outputDir, "index.html"),
+  );
+  fs.mkdirSync(path.join(outputDir, "fonts"), { recursive: true });
+  for (const name of ["Inter-OFL.txt", "JetBrainsMono-OFL.txt"])
+    fs.copyFileSync(
+      path.join(sourceDir, "fonts", name),
+      path.join(outputDir, "fonts", name),
+    );
   if (development) {
     esbuild.buildSync({
-      entryPoints: ["src/style.css"],
-      outfile: "dist/style.css",
+      entryPoints: [path.join(sourceDir, "style.css")],
+      outfile: path.join(outputDir, "style.css"),
       sourcemap: "linked",
       sourcesContent: true,
     });
   } else {
-    fs.copyFileSync("src/style.css", "dist/style.css");
+    fs.copyFileSync(
+      path.join(sourceDir, "style.css"),
+      path.join(outputDir, "style.css"),
+    );
     // These are known generated artifacts, never editable source files.
     for (const name of ["app.js.map", "app.css.map", "style.css.map"])
-      fs.rmSync("dist/" + name, { force: true });
+      fs.rmSync(path.join(outputDir, name), { force: true });
   }
 }
 

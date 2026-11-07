@@ -9,8 +9,12 @@ import Evaluate from "./Evaluate.jsx";
 import Details from "./Details.jsx";
 import CollectionPanel from "./CollectionPanel.jsx";
 import Welcome from "./Welcome.jsx";
+import EntryChooser from "./EntryChooser.jsx";
 import SavedCaseStatus from "./SavedCaseStatus.jsx";
+import WorkspaceHeader from "./WorkspaceHeader.jsx";
 import SurviveWorkspace from "../SurviveWorkspace.jsx";
+import usePreferences from "./usePreferences.jsx";
+import { newestCase } from "./preferences.mjs";
 
 const VIEWS = ["Data", "Results", "Compare", "Evaluate", "Details"];
 
@@ -31,11 +35,18 @@ function suggestedCopyName(name) {
 }
 
 export default function App() {
+  const settings = usePreferences();
+  const startupAttempted = useRef(false);
+  const interacted = useRef(false);
   const pending = useRef(false);
   const [working, setWorking] = useState(false);
+  const [homeVisible, setHomeVisible] = useState(false);
+  const [entry, setEntry] = useState(null);
+  const [libraryRefresh, setLibraryRefresh] = useState(0);
   const [mappingUndo, setMappingUndo] = useState(null);
   const [capture, setCapture] = useState(null);
   const [captureVisible, setCaptureVisible] = useState(false);
+  const [captureDemo, setCaptureDemo] = useState(false);
   const [surviveVisible, setSurviveVisible] = useState(false);
   const [libraryVisible, setLibraryVisible] = useState(false);
   const [saveVisible, setSaveVisible] = useState(false);
@@ -47,6 +58,51 @@ export default function App() {
     [status, setStatus] = useState("Opening Surge…");
   const [error, setError] = useState(""),
     [page, setPage] = useState("Data");
+  const atHome =
+    !entry && (homeVisible || (!state?.current && !captureVisible));
+  const workspaceVisible = !atHome && !entry;
+  const openEntry = (kind) => {
+    if (pending.current) return;
+    setHomeVisible(false);
+    setCaptureVisible(false);
+    setEntry(kind);
+  };
+  const openCapture = () => {
+    setEntry(null);
+    setHomeVisible(false);
+    setCaptureVisible(true);
+  };
+  const navigateView = (target) => {
+    setHomeVisible(false);
+    setEntry(null);
+    setPage(target);
+  };
+  const goHome = () => {
+    if (pending.current) return;
+    setEntry(null);
+    setLibraryRefresh((n) => n + 1);
+    setHomeVisible(true);
+    setCaptureVisible(false);
+    requestAnimationFrame(() =>
+      document.querySelector(".surge-wordmark")?.focus(),
+    );
+  };
+  useEffect(() => {
+    if (entry && !surviveVisible)
+      document.querySelector(".instrument-heading h1")?.focus();
+  }, [entry, surviveVisible]);
+  useEffect(() => {
+    // A user's action always wins over a delayed startup library lookup.
+    const markInteraction = () => {
+      interacted.current = true;
+    };
+    document.addEventListener("pointerdown", markInteraction, true);
+    document.addEventListener("keydown", markInteraction, true);
+    return () => {
+      document.removeEventListener("pointerdown", markInteraction, true);
+      document.removeEventListener("keydown", markInteraction, true);
+    };
+  }, []);
   useEffect(() => {
     request("state")
       .then((v) => {
@@ -59,6 +115,39 @@ export default function App() {
       })
       .catch((e) => setError(e.message));
   }, []);
+  useEffect(() => {
+    if (!state || startupAttempted.current) return;
+    startupAttempted.current = true;
+    if (
+      !settings.preferences.openLatestCase ||
+      state.current ||
+      state.capture ||
+      interacted.current
+    )
+      return;
+    let alive = true;
+    request("library_list")
+      .then(async (library) => {
+        if (!alive || interacted.current || pending.current) return;
+        const latest = newestCase(library.entries);
+        if (!latest) {
+          setStatus(
+            library.unavailable
+              ? "Recent cases are unavailable. Home is ready."
+              : "No saved cases yet. Home is ready.",
+          );
+          return;
+        }
+        await run("library_open", { id: latest.id }, undefined, false, true);
+      })
+      .catch(() => {
+        if (alive && !interacted.current)
+          setStatus("Recent cases could not be read. Home is ready.");
+      });
+    return () => {
+      alive = false;
+    };
+  }, [!!state]);
   useEffect(() => {
     if (capture?.state !== "running") return;
     let alive = true;
@@ -86,7 +175,13 @@ export default function App() {
       clearTimeout(timer);
     };
   }, [capture?.state]);
-  async function run(method, args = {}, after, restoring = false) {
+  async function run(
+    method,
+    args = {},
+    after,
+    restoring = false,
+    automatic = false,
+  ) {
     if (method === "save") {
       setSaveVisible(true);
       return;
@@ -147,6 +242,15 @@ export default function App() {
         setStatus("Canceled. Your workspace is unchanged.");
         return;
       }
+      if (
+        [
+          "library_save",
+          "library_import",
+          "library_rename",
+          "library_delete",
+        ].includes(method)
+      )
+        setLibraryRefresh((n) => n + 1);
       if (v.capture) {
         captureEpoch.current++;
         setCapture(v.capture);
@@ -218,10 +322,31 @@ export default function App() {
       if (["import", "policy_load", "configure"].includes(method))
         setPage("Data");
       if (restoring) setStatus("Mapping restored. Analyze to refresh results.");
+      if (
+        [
+          "import",
+          "open",
+          "library_open",
+          "analyze",
+          "native_start",
+          "native_snapshot",
+          "native_stop",
+        ].includes(method)
+      ) {
+        setHomeVisible(false);
+        setEntry(null);
+      }
       after?.(v);
     } catch (e) {
-      setError(e.message);
-      setStatus("Operation failed. Previous evidence was retained.");
+      if (automatic) {
+        setHomeVisible(true);
+        setStatus(
+          "The latest case could not be opened. Choose a case from Home.",
+        );
+      } else {
+        setError(e.message);
+        setStatus("Operation failed. Previous evidence was retained.");
+      }
     } finally {
       pending.current = false;
       setWorking(false);
@@ -230,7 +355,11 @@ export default function App() {
   }
   useEffect(() => {
     const shortcut = (e) => {
-      if (busy || surviveVisible || document.querySelector("dialog[open]"))
+      if (
+        busy ||
+        surviveVisible ||
+        document.querySelector("dialog[open], .settings-panel:popover-open")
+      )
         return;
       if (e.ctrlKey || e.metaKey) {
         if (e.key.toLowerCase() === "o") {
@@ -247,7 +376,7 @@ export default function App() {
         }
         if (e.key.toLowerCase() === "f" && state?.summary) {
           e.preventDefault();
-          setPage("Results");
+          navigateView("Results");
           requestAnimationFrame(() =>
             document.querySelector('[aria-label="Search records"]')?.focus(),
           );
@@ -263,7 +392,7 @@ export default function App() {
         const target = VIEWS[Number(e.key) - 1];
         if (state?.current && (target === "Data" || state.summary)) {
           e.preventDefault();
-          setPage(target);
+          navigateView(target);
         }
       }
     };
@@ -299,7 +428,7 @@ export default function App() {
                   : "Collecting."
                 : capture?.has_evidence
                   ? "Collection stopped."
-                  : "Demo ready."
+                  : "Capture ready."
           : status;
   const ctx = {
     saveActionLabel: openedCase
@@ -319,7 +448,7 @@ export default function App() {
     setStatus,
     setupPosition,
     mappingUndo,
-    showCapture: () => setCaptureVisible(true),
+    showCapture: openCapture,
     showLibrary: () => setLibraryVisible(true),
     capture,
     captureVisible,
@@ -333,49 +462,94 @@ export default function App() {
       </main>
     );
   if (surviveVisible)
-    return <SurviveWorkspace onClose={() => setSurviveVisible(false)} />;
+    return (
+      <SurviveWorkspace
+        settings={settings}
+        onClose={() => setSurviveVisible(false)}
+        onHome={() => {
+          setSurviveVisible(false);
+          goHome();
+        }}
+      />
+    );
+  const viewButtons = VIEWS.map((view, index) => (
+    <Button
+      key={view}
+      title={`${VIEW_HELP[view]} (Alt+${index + 1})${view !== "Data" && !state.summary ? " · Analyze evidence first" : ""}`}
+      aria-keyshortcuts={`Alt+${index + 1}`}
+      aria-current={view === page ? "page" : undefined}
+      aria-controls={`workspace-${view.toLowerCase()}`}
+      className={view === page ? "active" : ""}
+      disabled={busy || (view !== "Data" && !state.summary)}
+      onClick={() => navigateView(view)}
+    >
+      {VIEW_LABELS[view] || view}
+    </Button>
+  ));
   return (
     <Context.Provider value={ctx}>
-      <div className={`app ${busy ? "busy" : ""}`} data-working={working}>
-        {state.current && (
-          <nav aria-label="Views">
-            <Button disabled={working} onClick={() => setSurviveVisible(true)}>
-              Survive sessions
-            </Button>
-            <Button disabled={working} onClick={() => setLibraryVisible(true)}>
-              Case library
-            </Button>
-            {VIEWS.map((p, index) => (
+      <div
+        className={`app ${busy ? "busy" : ""} ${atHome ? "at-home" : ""}`}
+        data-working={working}
+      >
+        <WorkspaceHeader
+          title={
+            atHome
+              ? null
+              : entry
+                ? entry === "demo"
+                  ? "Try Demo"
+                  : "Start capture"
+                : captureVisible && !state.current
+                  ? "Capture"
+                  : "Investigation"
+          }
+          onHome={goHome}
+          working={working}
+          settings={settings}
+          homeContent={
+            atHome && (
               <Button
-                key={p}
-                title={`${VIEW_HELP[p]} (Alt+${index + 1})${p !== "Data" && !state.summary ? " · Analyze evidence first" : ""}`}
-                aria-keyshortcuts={`Alt+${index + 1}`}
-                aria-current={p === page ? "page" : undefined}
-                className={p === page ? "active" : ""}
-                disabled={busy || (p !== "Data" && !state.summary)}
-                onClick={() => setPage(p)}
+                className="home-demo-control"
+                disabled={working}
+                onClick={() => openEntry("demo")}
               >
-                {VIEW_LABELS[p] || p}
+                <svg viewBox="0 0 20 20" aria-hidden="true" focusable="false">
+                  <path d="M5 3 17 10 5 17Z" />
+                </svg>
+                Try Demo
               </Button>
-            ))}
-          </nav>
-        )}
+            )
+          }
+        >
+          <Button disabled={working} onClick={() => openEntry("capture")}>
+            Start capture
+          </Button>
+          <Button disabled={working} onClick={() => openEntry("demo")}>
+            Try Demo
+          </Button>
+          <Button disabled={working} onClick={() => setLibraryVisible(true)}>
+            Case library
+          </Button>
+          {state.current && !workspaceVisible && viewButtons}
+        </WorkspaceHeader>
         <main
           className={
-            captureVisible ||
-            openedCase ||
-            savedNotice?.revision === state.revision
+            workspaceVisible &&
+            (captureVisible ||
+              openedCase ||
+              savedNotice?.revision === state.revision)
               ? "with-capture"
               : undefined
           }
         >
-          {openedCase && (
+          {workspaceVisible && openedCase && (
             <SavedCaseStatus
               openedCase={openedCase}
-              onShowCapture={() => setCaptureVisible(true)}
+              onShowCapture={openCapture}
             />
           )}
-          {savedNotice?.revision === state.revision && (
+          {workspaceVisible && savedNotice?.revision === state.revision && (
             <div
               className="saved-confirmation"
               role="region"
@@ -402,8 +576,10 @@ export default function App() {
               </Button>
             </div>
           )}
-          {captureVisible && (
+          {workspaceVisible && captureVisible && (
             <CollectionPanel
+              demoMode={captureDemo}
+              onSources={() => openEntry("capture")}
               openedCase={openedCase}
               savedNotice={savedNotice}
               page={page}
@@ -412,40 +588,153 @@ export default function App() {
               onClose={() => setCaptureVisible(false)}
             />
           )}
-          {!state.current && !captureVisible ? (
+          {(atHome || entry) && (capture || state.current) && (
+            <div
+              className="home-resume"
+              role="region"
+              aria-label="Current work"
+            >
+              <span>
+                {capture?.state === "running"
+                  ? "Live capture is running"
+                  : "Your current work is still open"}
+              </span>
+              {capture && (
+                <Button onClick={openCapture} disabled={working}>
+                  Return to capture
+                </Button>
+              )}
+              {state.current && (
+                <Button
+                  onClick={() => {
+                    setHomeVisible(false);
+                    setEntry(null);
+                  }}
+                  disabled={working}
+                >
+                  Return to evidence
+                </Button>
+              )}
+              {capture?.state === "running" && (
+                <Button
+                  onClick={() =>
+                    run("native_stop", {}, () => setCaptureVisible(true))
+                  }
+                  disabled={working}
+                >
+                  Stop collection
+                </Button>
+              )}
+            </div>
+          )}
+          {atHome && (
             <Welcome
-              onSurvive={() => setSurviveVisible(true)}
               onLibrary={() => setLibraryVisible(true)}
-              onCapture={() => setCaptureVisible(true)}
+              onCapture={() => openEntry("capture")}
+              onDemo={() => openEntry("demo")}
+              libraryRefresh={libraryRefresh}
             />
-          ) : state.current ? (
-            <fieldset disabled={busy} className="workspace">
-              <div className="view" hidden={page !== "Data"}>
-                <DataView key={state.revision} active={page === "Data"} />
+          )}
+          {entry && (
+            <EntryChooser
+              kind={entry}
+              onNative={() => {
+                setCaptureDemo(entry === "demo");
+                openCapture();
+              }}
+              onSurvive={() => setSurviveVisible(true)}
+              working={working}
+            />
+          )}
+          {state.current && (
+            <fieldset
+              disabled={busy}
+              className="workspace"
+              data-view={page}
+              hidden={!workspaceVisible}
+            >
+              <header className="case-heading">
+                <div>
+                  <h2>{openedCase?.name || state.current.name}</h2>
+                  <p>
+                    {openedCase
+                      ? "Saved case"
+                      : state.inspected_capture
+                        ? "Viewed snapshot"
+                        : "Imported evidence"}
+                    {" · "}
+                    {state.current.records.toLocaleString()} records
+                    {state.observation_counts && (
+                      <>
+                        {" "}
+                        · {state.observation_counts.samples.toLocaleString()}{" "}
+                        retained samples
+                      </>
+                    )}
+                  </p>
+                </div>
+              </header>
+              <nav className="workspace-views" aria-label="Investigation views">
+                {viewButtons}
+              </nav>
+              <div
+                className="view"
+                id="workspace-data"
+                hidden={page !== "Data"}
+              >
+                <DataView
+                  key={state.revision}
+                  active={workspaceVisible && page === "Data"}
+                />
               </div>
               {state.summary && (
                 <>
-                  <div className="view" hidden={page !== "Results"}>
-                    <Results key={state.revision} active={page === "Results"} />
-                  </div>
-                  <div className="view" hidden={page !== "Compare"}>
-                    <Compare key={state.revision} active={page === "Compare"} />
-                  </div>
-                  <div className="view" hidden={page !== "Evaluate"}>
-                    <Evaluate
+                  <div
+                    className="view"
+                    id="workspace-results"
+                    hidden={page !== "Results"}
+                  >
+                    <Results
                       key={state.revision}
-                      active={page === "Evaluate"}
+                      active={workspaceVisible && page === "Results"}
                     />
                   </div>
-                  <div className="view" hidden={page !== "Details"}>
-                    <Details active={page === "Details"} />
+                  <div
+                    className="view"
+                    id="workspace-compare"
+                    hidden={page !== "Compare"}
+                  >
+                    <Compare
+                      key={state.revision}
+                      active={workspaceVisible && page === "Compare"}
+                    />
+                  </div>
+                  <div
+                    className="view"
+                    id="workspace-evaluate"
+                    hidden={page !== "Evaluate"}
+                  >
+                    <Evaluate
+                      key={state.revision}
+                      active={workspaceVisible && page === "Evaluate"}
+                    />
+                  </div>
+                  <div
+                    className="view"
+                    id="workspace-details"
+                    hidden={page !== "Details"}
+                  >
+                    <Details active={workspaceVisible && page === "Details"} />
                   </div>
                 </>
               )}
             </fieldset>
-          ) : null}
+          )}
         </main>
-        <footer role="status">
+        <footer
+          role="status"
+          data-quiet={footerText === "Import evidence or open a case."}
+        >
           <span className="status-light" aria-hidden="true" />
           {footerText}
         </footer>
@@ -467,7 +756,7 @@ export default function App() {
               openedCase?.name || savedNotice?.revision === state.revision
                 ? suggestedCopyName(openedCase?.name || savedNotice.name)
                 : state.inspected_capture
-                  ? `Demo investigation — ${new Date().toLocaleDateString(undefined, { month: "short", day: "numeric", year: "numeric" })}`
+                  ? `Capture investigation — ${new Date().toLocaleDateString(undefined, { month: "short", day: "numeric", year: "numeric" })}`
                   : ""
             }
             collecting={capture?.state === "running"}

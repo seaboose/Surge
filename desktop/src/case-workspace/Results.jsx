@@ -15,7 +15,6 @@ export default function Results({ active }) {
   const {
     state: s,
     run,
-    setError,
     capture,
     captureVisible,
     working,
@@ -32,7 +31,8 @@ export default function Results({ active }) {
     );
   const [page, setPage] = useState(0),
     [row, setRow] = useState(null),
-    [reveal, setReveal] = useState(null);
+    [reveal, setReveal] = useState(null),
+    [inspectorOpen, setInspectorOpen] = useState(true);
   const needle = useDebounce(query);
   const [data, error] = useData(
     "findings",
@@ -56,6 +56,7 @@ export default function Results({ active }) {
         row === reveal ||
         data.rows.some((r) => r.row === row && r.numeric_evidence));
   const searchRef = useRef();
+  const listRef = useRef();
   useEffect(() => {
     const handler = (e) => {
       if (active && (e.ctrlKey || e.metaKey) && e.key === "f") {
@@ -77,9 +78,22 @@ export default function Results({ active }) {
   function choose(n) {
     setReveal(n);
     setRow(n);
+    setInspectorOpen(true);
   }
+  function selectRow(n) {
+    setReveal(null);
+    setRow(n);
+    setInspectorOpen(true);
+  }
+  function closeInspector() {
+    setInspectorOpen(false);
+    listRef.current
+      ?.querySelector(`tr[data-row="${row}"] .results-record-open`)
+      ?.focus();
+  }
+  const hasObservations = data?.rows.some((record) => record.observation);
   const left = (
-    <div className="column full">
+    <div className="column full results-observations" ref={listRef}>
       {savedInLibrary && <small>Saved in library</small>}
       {s.observation_counts && (
         <div role="region" aria-label="Observation counts">
@@ -100,7 +114,7 @@ export default function Results({ active }) {
           </InfoBubble>
         </div>
       )}
-      <div className="actions">
+      <div className="actions results-toolbar">
         <Button
           title="Save the inspected evidence, settings and results"
           className={demoReadyToSave ? "primary" : undefined}
@@ -138,10 +152,10 @@ export default function Results({ active }) {
           ]}
         />
       </div>
-      <div className="actions">
+      <div className="actions results-filters">
         <input
           ref={searchRef}
-          className="grow"
+          className="results-search"
           aria-label="Search records"
           placeholder="Record ID, session, user, rule"
           maxLength={4096}
@@ -151,16 +165,14 @@ export default function Results({ active }) {
             if (e.key === "Escape") setQuery("");
           }}
         />
-        <Button onClick={() => setQuery("")}>Clear</Button>
-      </div>
-      <div className="actions">
+        {query && <Button onClick={() => setQuery("")}>Clear</Button>}
         <Select
           label="Priority"
           value={minimum}
           options={["All", "Notice", "Warning", "Error", "Critical"]}
           onChange={setMinimum}
         />
-        <label>
+        <label className="results-findings-filter">
           <input
             type="checkbox"
             checked={hide}
@@ -169,23 +181,12 @@ export default function Results({ active }) {
           Findings only
         </label>
       </div>
-      <small>
-        {data?.total ?? "…"} shown / {s.summary.total} · {s.summary.Review} need
-        review · {s.summary.Unknown} unknown
-      </small>
-      <details className="result-guide">
-        <summary>What the results mean</summary>
-        <p>
-          No finding: no issue detected in checked evidence; this does not prove
-          whole-process integrity. Review: evidence needs investigation.
-          Unknown: evidence is missing or inconclusive.
-        </p>
-        <p>Priority keeps gaps visible. Exports use priority.</p>
-        <p>
-          Search and Findings only filter the displayed records. Clear the
-          filters to show all observations.
-        </p>
-      </details>
+      <div className="results-list-title">
+        <h2>Observations</h2>
+        <small>
+          {data?.total ?? "…"} shown / {s.summary.total}
+        </small>
+      </div>
       {(query || minimum !== "All" || hide) && (
         <small aria-label="Active filters">
           {[
@@ -206,13 +207,10 @@ export default function Results({ active }) {
       {error && <p role="alert">{error}</p>}
       <div className="scroll grow">
         <table className="results-table" aria-label="Results">
-          {(s.inspected_capture || s.saved_result) && (
-            <caption>Observations</caption>
-          )}
           <thead>
             <tr>
               <th>Record</th>
-              <th>Priority</th>
+              <th>{hasObservations ? "Range" : "Priority"}</th>
               <th>Result</th>
               <th>Reason</th>
             </tr>
@@ -221,29 +219,62 @@ export default function Results({ active }) {
             {data?.rows.map((r, i) => (
               <tr
                 key={r.row}
+                data-row={r.row}
                 className={row === r.row ? "selected" : ""}
                 tabIndex={row === r.row || (!row && i === 0) ? 0 : -1}
                 aria-selected={row === r.row}
-                onClick={() => {
-                  setReveal(null);
-                  setRow(r.row);
-                }}
-                onKeyDown={(e) =>
-                  rowKey(e, data.rows, r.row, (n) => {
-                    setReveal(null);
-                    setRow(n);
-                  })
-                }
+                onClick={() => selectRow(r.row)}
+                onKeyDown={(e) => rowKey(e, data.rows, r.row, selectRow)}
               >
-                <td>{r.row}</td>
-                <td
-                  className={
-                    ["Critical", "Error"].includes(r.priority) ? "danger" : ""
-                  }
-                >
-                  {r.priority || "—"}
+                <td>
+                  <button
+                    className="results-record-open"
+                    type="button"
+                    tabIndex={-1}
+                    aria-label={`Inspect record ${r.row}`}
+                    aria-expanded={inspectorOpen && row === r.row}
+                    onClick={(event) => {
+                      event.stopPropagation();
+                      selectRow(r.row);
+                    }}
+                  >
+                    {r.row}
+                  </button>
                 </td>
-                <td>{r.status}</td>
+                {hasObservations ? (
+                  <td className="results-range">
+                    {r.observation ? (
+                      <>
+                        <strong title={r.observation.range_name}>
+                          {r.observation.range_name}
+                        </strong>
+                        <small title={r.observation.time}>
+                          {r.observation.sample !== null
+                            ? `Sample ${r.observation.sample}`
+                            : "Range observation"}
+                        </small>
+                      </>
+                    ) : (
+                      <span>Collection notice</span>
+                    )}
+                  </td>
+                ) : (
+                  <td
+                    className={
+                      ["Critical", "Error"].includes(r.priority) ? "danger" : ""
+                    }
+                  >
+                    {r.priority || "—"}
+                  </td>
+                )}
+                <td data-result={r.status}>
+                  <span>{r.status}</span>
+                  {hasObservations && r.priority && (
+                    <small className="results-priority">
+                      {r.priority} priority
+                    </small>
+                  )}
+                </td>
                 <td>{r.reason}</td>
               </tr>
             ))}
@@ -292,20 +323,57 @@ export default function Results({ active }) {
       {data?.outside && (
         <Button onClick={() => setReveal(null)}>Return to filters</Button>
       )}
+      <details className="result-guide">
+        <summary>What the results mean</summary>
+        <p>
+          No finding: no issue detected in checked evidence; this does not prove
+          whole-process integrity. Review: evidence needs investigation.
+          Unknown: evidence is missing or inconclusive.
+        </p>
+        <p>Priority keeps gaps visible. Exports use priority.</p>
+        <p>
+          Search and Findings only filter the displayed records. Clear the
+          filters to show all observations.
+        </p>
+      </details>
     </div>
   );
   return (
-    <Split
-      name="surge.findings.split"
-      left={left}
-      right={
-        row ? (
-          <Evidence row={row} active={active} />
-        ) : (
-          <p>Select a record to inspect evidence.</p>
-        )
-      }
-    />
+    <div
+      className={`results-surface ${inspectorOpen && row ? "" : "results-inspector-closed"}`}
+    >
+      <div className="results-summary" aria-label="Analysis summary">
+        <span>
+          <strong>{s.summary.total}</strong> records
+        </span>
+        <span className="review">
+          <strong>{s.summary.Review}</strong> need review
+        </span>
+        <span className="unknown">
+          <strong>{s.summary.Unknown}</strong> unknown
+        </span>
+      </div>
+      <Split
+        name="surge.findings.split"
+        defaultSize={70}
+        left={left}
+        right={
+          <aside className="results-inspector" hidden={!inspectorOpen || !row}>
+            <div className="results-inspector-heading">
+              <h2>Record {row}</h2>
+              <Button
+                className="inspector-close"
+                aria-label="Close inspector"
+                onClick={closeInspector}
+              >
+                <span aria-hidden="true">×</span>
+              </Button>
+            </div>
+            {row && <Evidence row={row} active={active && inspectorOpen} />}
+          </aside>
+        }
+      />
+    </div>
   );
 }
 
